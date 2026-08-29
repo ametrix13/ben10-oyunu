@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Rol Senin</title>
+<style>
+html,body{margin:0;min-height:100%;background:#070b16;color:#fff;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}#load{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px;box-sizing:border-box}.logo{font-size:30px;font-weight:900;letter-spacing:-.04em}.logo b{color:#a78bfa}small{display:block;margin-top:10px;color:#9ca3af;line-height:1.5}.spin{width:28px;height:28px;border:3px solid rgba(255,255,255,.14);border-top-color:#a78bfa;border-radius:50%;margin:22px auto 0;animation:s .8s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="load"><div><div class="logo">ROL <b>SENİN</b></div><small>Oyun yükleniyor…</small><div class="spin"></div></div></div>
+<script>
+(async()=>{
+ try{
+   const r=await fetch('https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-stabil-web',{cache:'no-store'});
+   if(!r.ok) throw new Error('Sunucu '+r.status);
+   const html=await r.text();
+   if(!/<html[\s>]/i.test(html)) throw new Error('Oyun verisi geçersiz');
+   document.open();
+   document.write(html);
+   document.close();
+ }catch(e){
+   document.querySelector('#load').innerHTML='<div><div class="logo">ROL <b>SENİN</b></div><small>Oyun yüklenemedi.<br>Sayfayı yenilemeyi dene.</small></div>';
+   console.error(e);
+ }
+})();
+</script>
+</body>
+</html>
