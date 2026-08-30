@@ -20,6 +20,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          echo "Checking Vercel deployment protection..."
           if [ -z "${VERCEL_TOKEN:-}" ]; then
             echo "TOKEN_MISSING"
             exit 0
