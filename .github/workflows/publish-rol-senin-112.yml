@@ -1,0 +1,45 @@
+name: Publish Rol Senin 1.1.2
+
+on:
+  push:
+    branches: [rol-senin-live]
+    paths:
+      - '.github/workflows/publish-rol-senin-112.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout live branch
+        uses: actions/checkout@v4
+        with:
+          ref: rol-senin-live
+
+      - name: Fetch current game build
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 4 --retry-delay 2 \
+            'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-stabil-web?release=1.1.2-full' \
+            --output r112-full.html
+          test -s r112-full.html
+          grep -q 'LOUNGE' r112-full.html
+          grep -q '1.1.2' r112-full.html
+          echo "bytes=$(wc -c < r112-full.html)"
+          sha256sum r112-full.html
+
+      - name: Commit direct HTML
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add r112-full.html
+          if git diff --cached --quiet; then
+            echo 'No changes.'
+          else
+            git commit -m 'Publish direct Rol Senin 1.1.2 build'
+            git push origin HEAD:rol-senin-live
+          fi
