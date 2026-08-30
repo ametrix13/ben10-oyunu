@@ -762,5 +762,34 @@ body.ui-lounge .social-panel112{background:#fbfaf7;color:#171719;box-shadow:0 35
   }
 })();
 </script>
+<script id="rs113StablePatch">
+(()=>{
+ const VERSION='1.1.3';
+ const tag=document.querySelector('.vtag'); if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112'); if(live)live.textContent='v1.1.3 · STABLE';
+ // Yeni sürümde Lounge'u göster; klasik tasarımı bilinçli seçen oyuncuya dokunma.
+ if((state.uiMode||'lounge')!=='classic'){ state.uiMode='lounge'; try{applyUIMode();save()}catch(_){} }
+ const modal=document.querySelector('#updateModal');
+ if(modal){
+  const h=modal.querySelector('h2'),p=modal.querySelector('p'),list=modal.querySelector('.update-list'),enter=modal.querySelector('#updateClose'),x=modal.querySelector('.update-x');
+  if(h)h.textContent='ROL SENİN 1.1.3 — STABLE';
+  if(p)p.textContent='İstediğin tüm sistemler tek final build’de toplandı. Bu sürüm Lounge tasarımı, Ayarlar Merkezi, yeni enerji ve sosyal medya akışını birlikte getiriyor.';
+  if(list)list.innerHTML=`
+   <div class="update-item"><b>🌿 Lounge — gerçekten farklı tema</b>Açık ve ferah yüzeyler, siyah sinematik profil kartı, farklı tipografi, yeni kartlar ve yüzen alt menü.</div>
+   <div class="update-item"><b>🎨 3 görünüm</b>Yeni Lounge · Önceki Flow · Klasik 1.0.3. Ayarlar’dan istediğin zaman değiştir.</div>
+   <div class="update-item"><b>⚙️ Ayarlar Merkezi</b>Oyunu sıfırla, oyuncu adını değiştir, şifre değiştir ve online hesaptan çık.</div>
+   <div class="update-item"><b>✏️ İsim değiştirme</b>İlk değişiklik ücretsiz; sonraki her değişiklik ₺2.000.000.000.</div>
+   <div class="update-item"><b>⚡ Enerji Kazan</b>Uyu, su iç, atıştırmalık, kahve, sıcak yemek veya spa seç. Hepsi farklı enerji verir.</div>
+   <div class="update-item"><b>📱 Sosyal Medya</b>Fotoğraf veya yazı paylaş; caption yaz ya da 🎲 ile 12 hazır caption arasından rastgele seç.</div>
+  `;
+  const close=()=>{localStorage.setItem('rolSeninSeenVersion',VERSION);modal.classList.remove('show')};
+  if(enter){enter.textContent="1.1.3'e Gir";enter.onclick=close}
+  if(x)x.onclick=close;
+  modal.onclick=e=>{if(e.target===modal)close()};
+  if(localStorage.getItem('rolSeninSeenVersion')!==VERSION)setTimeout(()=>modal.classList.add('show'),250);
+ }
+ document.title='Rol Senin 1.1.3 — STABLE';
+})();
+</script>
 </body>
 </html>
