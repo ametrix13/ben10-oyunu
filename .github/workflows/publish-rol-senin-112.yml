@@ -1,4 +1,4 @@
-name: Publish Rol Senin 1.1.3
+name: Publish Rol Senin 1.1.4
 
 on:
   push:
@@ -23,12 +23,13 @@ jobs:
         run: |
           set -euo pipefail
           curl --fail --location --retry 4 --retry-delay 2 \
-            'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-stabil-web?release=1.1.3-stable' \
+            'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-stabil-web?release=1.1.4-social' \
             --output r112-full.html
           test -s r112-full.html
           grep -q 'LOUNGE' r112-full.html
-          grep -q '1.1.3' r112-full.html
-          grep -q 'socialSheet112' r112-full.html
+          grep -q '1.1.4' r112-full.html
+          grep -q 'social114' r112-full.html
+          grep -q 'Rol Social' r112-full.html
           grep -q 'energySheet111' r112-full.html
           grep -q 'changePasswordBtn' r112-full.html
           echo "bytes=$(wc -c < r112-full.html)"
@@ -43,6 +44,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'No changes.'
           else
-            git commit -m 'Publish direct Rol Senin 1.1.3 stable build'
+            git commit -m 'Publish direct Rol Senin 1.1.4 social build'
             git push origin HEAD:rol-senin-live
           fi
