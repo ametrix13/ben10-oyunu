@@ -1,0 +1,29 @@
+name: Make Rol Senin Vercel Public
+
+on:
+  push:
+    branches: [rol-senin-live]
+    paths:
+      - '.github/workflows/vercel-public.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Disable Vercel Authentication
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${VERCEL_TOKEN:-}" ]; then
+            echo "TOKEN_MISSING"
+            exit 0
+          fi
+          npm install -g vercel@latest
+          vercel project protection disable rolsenin --sso --token="$VERCEL_TOKEN" --scope=ametrix
+          vercel project protection rolsenin --format json --token="$VERCEL_TOKEN" --scope=ametrix
