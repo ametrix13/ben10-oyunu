@@ -1025,5 +1025,79 @@ body:not(.ui-lounge) .rs116-card,body.ui-modern .rs116-card{background:#191a1f;b
  saveI();
 })();
 </script>
+<style id="rs117PolishStyle">
+:root{--rs117-ease:cubic-bezier(.2,.75,.2,1);--rs117-shadow:0 14px 38px rgba(17,18,22,.08)}
+html{scroll-behavior:smooth}
+body.rs117-polish{letter-spacing:-.005em}
+body.rs117-polish button,body.rs117-polish .card,body.rs117-polish .job,body.rs117-polish .feature-card,body.rs117-polish .career-card,body.rs117-polish .modal-card,body.rs117-polish .rs115-card,body.rs117-polish .rs116-card,body.rs117-polish .social114-card{transition:transform .18s var(--rs117-ease),box-shadow .22s var(--rs117-ease),border-color .2s var(--rs117-ease),background .2s var(--rs117-ease)}
+body.rs117-polish button:active{transform:scale(.975)}
+@media(hover:hover){body.rs117-polish .job:hover,body.rs117-polish .feature-card:hover,body.rs117-polish .career-card:hover,body.rs117-polish .rs116-card:hover{transform:translateY(-2px)}}
+body.rs117-polish .shell{max-width:1160px;padding-top:10px}
+body.rs117-polish .topbar{padding:11px 0 13px;gap:12px}
+body.rs117-polish .brand h1{font-weight:950;letter-spacing:-.45px}.brand small{font-size:11px}
+body.rs117-polish .section-title{margin:28px 3px 11px;align-items:center}.section-title h3{font-size:18px;letter-spacing:-.35px}.section-title p{line-height:1.45}
+body.rs117-polish .quick{padding:20px}.quick h3{font-size:17px;letter-spacing:-.3px}.quick-grid{gap:9px}.quick-grid button{min-height:52px;padding:13px 14px;border-radius:16px;line-height:1.2}
+body.rs117-polish .jobs{gap:12px}.job{padding:18px;border-radius:22px}.job h4{letter-spacing:-.25px}.job p{min-height:0}.job button{border-radius:14px}
+body.rs117-polish .feature-grid{gap:12px}.feature-card{border-radius:22px}.feature-card h4{letter-spacing:-.2px}
+body.rs117-polish .career-grid{gap:12px}.career-card{border-radius:22px}
+body.rs117-polish .history{border-radius:22px}.history-list{padding-right:3px}.event{border-radius:14px}
+body.rs117-polish .tabs{bottom:12px;padding:7px;gap:5px;border-radius:22px;box-shadow:0 14px 38px rgba(0,0,0,.16)}.tab{border-radius:15px;padding:9px 6px}.tab span{font-size:18px}
+body.rs117-polish .modal{padding:12px}.modal.show .modal-card{animation:rs117Pop .26s var(--rs117-ease)}
+@keyframes rs117Pop{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+body.rs117-polish .modal-card{border-radius:28px;padding:22px}
+body.rs117-polish input,body.rs117-polish textarea,body.rs117-polish select{transition:border-color .18s,box-shadow .18s,background .18s}
+body.rs117-polish input:focus,body.rs117-polish textarea:focus,body.rs117-polish select:focus{box-shadow:0 0 0 4px rgba(100,120,255,.09)}
+body.ui-lounge.rs117-polish{background:radial-gradient(circle at 10% -10%,#fffdf8 0,#f5f1e9 35%,#ece8df 100%);color:#161719}
+body.ui-lounge.rs117-polish .topbar{background:linear-gradient(180deg,rgba(245,241,233,.96),rgba(245,241,233,.76),transparent);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+body.ui-lounge.rs117-polish .card,body.ui-lounge.rs117-polish .feature-card,body.ui-lounge.rs117-polish .career-card,body.ui-lounge.rs117-polish .history{background:rgba(255,255,255,.78);border-color:rgba(48,44,36,.08);box-shadow:var(--rs117-shadow);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+body.ui-lounge.rs117-polish .profile{background:linear-gradient(145deg,#111216,#202126)!important;color:#fff;border-color:#111216!important;box-shadow:0 24px 60px rgba(18,18,20,.18)!important}
+body.ui-lounge.rs117-polish .profile .stat{background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.08)}
+body.ui-lounge.rs117-polish .profile .stat span,body.ui-lounge.rs117-polish .profile .day{color:#b8bbc3}
+body.ui-lounge.rs117-polish .quick-grid button:not(.primary){background:#ece8df;color:#26231f}.ui-lounge.rs117-polish .quick-grid button.primary{background:#111;color:#fff}
+body.ui-lounge.rs117-polish .job{background:#fffdf9;border-color:#e8e2d7;box-shadow:0 10px 28px rgba(50,42,30,.06)}
+body.ui-lounge.rs117-polish .job button{background:#161616;color:#fff}
+body.ui-lounge.rs117-polish .badge{background:#ebe6dc;border-color:#ded7ca;color:#6d665d}
+body.ui-lounge.rs117-polish .tabs{background:rgba(255,253,249,.9);border-color:rgba(30,27,23,.09);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+body.ui-lounge.rs117-polish .tab{color:#827d76}.ui-lounge.rs117-polish .tab.active{background:#111;color:#fff;box-shadow:0 7px 18px rgba(0,0,0,.12)}
+body.ui-modern.rs117-polish{background:radial-gradient(circle at 12% -10%,#242936 0,#11131a 38%,#090a0e 100%)}
+body.ui-modern.rs117-polish .card,body.ui-modern.rs117-polish .feature-card,body.ui-modern.rs117-polish .career-card,body.ui-modern.rs117-polish .history{border-color:rgba(255,255,255,.07);box-shadow:0 14px 40px rgba(0,0,0,.2)}
+body.rs117-polish .rs115-fab{right:16px;bottom:96px;border-radius:16px;padding:11px 13px;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+body.rs117-polish .rs115-shell{border-radius:30px}.rs115-top h2{letter-spacing:-.5px}.rs115-tab{transition:.18s var(--rs117-ease)}
+body.rs117-polish .rs115-body{padding:14px}.rs115-card{border-radius:23px}.rs115-hero{border-radius:25px}
+body.ui-lounge.rs117-polish .rs115-shell{background:#f5f1e9}.ui-lounge.rs117-polish .rs115-card{background:#fffdf9;border-color:#e7e0d4;box-shadow:0 8px 24px rgba(50,42,30,.05)}
+body.rs117-polish .rs116-wrap{gap:10px}.rs116-hero{border-radius:24px}.rs116-grid{gap:10px}.rs116-card{border-radius:20px;padding:14px}.rs116-line{padding:9px 0}.rs116-btn{border-radius:10px}.rs116-news{border-radius:13px}
+body.ui-lounge.rs117-polish .rs116-card{background:#fffdf9;border-color:#e7e0d4}.ui-lounge.rs117-polish .rs116-news{background:#f2eee6}.ui-lounge.rs117-polish .rs116-btn.alt{background:#eee9df;color:#5e574d}
+body.rs117-polish .social114-shell{box-shadow:0 0 70px rgba(0,0,0,.12)}.social114-card{border-radius:22px}.social114-compose{border-radius:24px}.social114-hero{border-radius:25px}.social114-tab{border-radius:13px}
+body.ui-lounge.rs117-polish .social114-shell,body.ui-lounge.rs117-polish .social114-top,body.ui-lounge.rs117-polish .social114-tabs{background:#f7f3ec}.ui-lounge.rs117-polish .social114-card,.ui-lounge.rs117-polish .social114-compose,.ui-lounge.rs117-polish .social114-profile-box{background:#fffdf9;border-color:#e7e0d4}
+body.rs117-polish .rs117-polish-note{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:rgba(127,127,127,.10);font-size:10px;font-weight:850;margin-left:6px;vertical-align:middle}
+@media(max-width:680px){
+ body.rs117-polish .shell{padding:8px 9px 90px}.topbar{padding-top:7px}.section-title{margin-top:22px}.quick{padding:16px}.quick-grid{grid-template-columns:1fr 1fr}.jobs{grid-template-columns:1fr}.feature-grid,.career-grid{grid-template-columns:1fr}.tabs{bottom:7px;width:calc(100% - 14px)}.tab{font-size:10px}.tab span{font-size:17px}.modal{align-items:flex-end;padding:0}.modal-card{width:100%;max-height:88vh;overflow:auto;border-radius:28px 28px 0 0;padding-bottom:calc(22px + env(safe-area-inset-bottom));animation:rs117Sheet .25s var(--rs117-ease)!important}.rs115-fab{right:9px;bottom:82px}.rs115-fab span{display:none}.rs115-fab{width:46px;height:46px;justify-content:center;padding:0;border-radius:16px}.rs115-body{padding:10px}.rs116-kpis{gap:6px}.rs116-kpi{padding:9px 7px}.rs116-kpi b{font-size:15px}.social114-body{padding-left:9px;padding-right:9px}}
+@keyframes rs117Sheet{from{transform:translateY(100%)}to{transform:none}}
+@media(prefers-reduced-motion:reduce){body.rs117-polish *,body.rs117-polish *:before,body.rs117-polish *:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+<script id="rs117PolishScript">
+(()=>{
+ const VERSION='1.1.7';
+ document.body.classList.add('rs117-polish');
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.1.7 · POLISH';
+ document.title='Rol Senin 1.1.7 — POLISH';
+ const sub=document.querySelector('.brand small');if(sub&&!sub.querySelector?.('.rs117-polish-note')){
+   const n=document.createElement('span');n.className='rs117-polish-note';n.textContent='POLISH';sub.appendChild(n);
+ }
+ const modal=document.querySelector('#updateModal');
+ if(modal){
+   const h=modal.querySelector('h2'),p=modal.querySelector('p'),list=modal.querySelector('.update-list'),enter=modal.querySelector('#updateClose'),x=modal.querySelector('.update-x');
+   if(h)h.textContent='ROL SENİN 1.1.7 — POLISH';
+   if(p)p.textContent='Yeni sistem yok; mevcut oyunun düzeni, okunabilirliği ve mobil hissi toparlandı. Oynanış aynı.';
+   if(list)list.innerHTML='<div class="update-item"><b>✨ Daha temiz ana ekran</b>Kart aralıkları, başlık hiyerarşisi ve buton ölçüleri daha dengeli.</div><div class="update-item"><b>🌿 Lounge iyileştirildi</b>Daha sıcak, premium ve ferah yüzeyler; profil kartı daha güçlü odak noktası.</div><div class="update-item"><b>📱 Mobil düzen</b>Alt menü, modallar ve Kariyer Dünyası butonu telefonda daha az yer kaplıyor.</div><div class="update-item"><b>🎬 Kariyer Dünyası</b>İmaj, reyting, paparazzi ve Sektör kartları daha kompakt ve tutarlı.</div><div class="update-item"><b>💬 Rol Social</b>Akış ve paylaşım ekranlarının kartları ana tasarımla daha uyumlu.</div><div class="update-item"><b>🫧 Akıcılık</b>Dokunma, açılma ve hover geçişleri yumuşatıldı; azaltılmış hareket ayarına da uyuyor.</div>';
+   const done=()=>{localStorage.setItem('rolSeninSeenVersion',VERSION);modal.classList.remove('show')};
+   if(enter){enter.textContent="1.1.7'ye Gir";enter.onclick=done}if(x)x.onclick=done;
+   modal.onclick=e=>{if(e.target===modal)done()};
+   if(localStorage.getItem('rolSeninSeenVersion')!==VERSION)setTimeout(()=>modal.classList.add('show'),220);
+ }
+ try{if(typeof update==='function')update()}catch(_){}
+})();
+</script>
 </body>
 </html>
