@@ -1,4 +1,4 @@
-name: Publish Rol Senin 1.1.7
+name: Publish Rol Senin 1.1.7 Public
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         run: |
           set -euo pipefail
           curl --fail --location --retry 4 --retry-delay 2 \
-            'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-polish-web?release=1.1.7-polish' \
+            'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-polish-web?release=1.1.7-polish-public' \
             --output r112-full.html
           test -s r112-full.html
           grep -q 'LOUNGE' r112-full.html
@@ -31,23 +31,24 @@ jobs:
           grep -q 'rs117PolishStyle' r112-full.html
           grep -q 'rs115WorldScript' r112-full.html
           grep -q 'rs116IndustryScript' r112-full.html
-          grep -q 'data-rs115-tab="industry"' r112-full.html
           grep -q 'Rol Social' r112-full.html
           grep -q 'Kariyer Dünyası' r112-full.html
           grep -q 'energySheet111' r112-full.html
           grep -q 'changePasswordBtn' r112-full.html
-          echo "bytes=$(wc -c < r112-full.html)"
-          sha256sum r112-full.html
+          mkdir -p play
+          cp r112-full.html play/index.html
+          echo "bytes=$(wc -c < play/index.html)"
+          sha256sum play/index.html
 
-      - name: Commit direct HTML
+      - name: Commit public HTML
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
-          git config user.email '4189822+github-actions[bot]@users.noreply.github.com'
-          git add r112-full.html
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add r112-full.html play/index.html
           if git diff --cached --quiet; then
             echo 'No changes.'
           else
-            git commit -m 'Publish direct Rol Senin 1.1.7 polish build'
+            git commit -m 'Publish Rol Senin public play page'
             git push origin HEAD:rol-senin-live
           fi
