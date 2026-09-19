@@ -1,0 +1,89 @@
+<style id="rs118StabilityStyle">
+html.rs118-lite *,html.rs118-lite *::before,html.rs118-lite *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.12s!important;scroll-behavior:auto!important}
+html.rs118-lite .rs115,html.rs118-lite .social114,html.rs118-lite [class*="rs116"],html.rs118-lite [class*="sheet"],html.rs118-lite [class*="modal"]{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.rs118-lite .rs115-shell,html.rs118-lite .social114-shell{box-shadow:0 12px 36px rgba(0,0,0,.16)!important}
+.rs118-busy{pointer-events:none!important;opacity:.72!important}
+@media(max-width:600px){.rs115-body,.social114-body{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}.rs115-shell,.social114-shell{contain:layout paint}}
+</style>
+<script id="rs118StabilityScript">
+(()=>{
+ if(window.__RS118_STABILITY__)return;window.__RS118_STABILITY__=true;
+ const VERSION='1.1.8';
+ const SAVE_KEY='rolSeninSave',BACKUP_KEY='rolSeninSaveBackup118',ERR_KEY='rolSeninErrors118';
+ const $=s=>document.querySelector(s);
+ function validJson(v){if(!v)return false;try{JSON.parse(v);return true}catch(_){return false}}
+ function backupNow(){try{const raw=localStorage.getItem(SAVE_KEY);if(validJson(raw))localStorage.setItem(BACKUP_KEY,raw)}catch(_){}}
+ function logErr(kind,e){try{const a=JSON.parse(localStorage.getItem(ERR_KEY)||'[]');a.push({t:Date.now(),kind,msg:String(e?.message||e||'unknown').slice(0,220)});localStorage.setItem(ERR_KEY,JSON.stringify(a.slice(-8)))}catch(_){}}
+ function prune(hard=false){try{
+  if(typeof state==='undefined'||!state)return;
+  if(Array.isArray(state.history)&&state.history.length>(hard?90:160))state.history=state.history.slice(-(hard?90:160));
+  if(Array.isArray(state.filmography)&&state.filmography.length>(hard?50:90))state.filmography=state.filmography.slice(-(hard?50:90));
+  if(state.social114&&Array.isArray(state.social114.posts)&&state.social114.posts.length>(hard?24:36))state.social114.posts=state.social114.posts.slice(-(hard?24:36));
+  ['money','fame','followers','day','energy','acting'].forEach(k=>{if(k in state&&!Number.isFinite(Number(state[k])))state[k]=0});
+  if('energy'in state)state.energy=Math.max(0,Math.min(100,Number(state.energy)||0));
+  if('day'in state)state.day=Math.max(1,Math.floor(Number(state.day)||1));
+ }catch(e){logErr('prune',e)}}
+ try{
+  const raw=localStorage.getItem(SAVE_KEY),bak=localStorage.getItem(BACKUP_KEY);
+  if(raw&&!validJson(raw)&&validJson(bak))localStorage.setItem(SAVE_KEY,bak);
+ }catch(e){logErr('recover',e)}
+ const lowPower=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4)||innerWidth<620||matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(lowPower)document.documentElement.classList.add('rs118-lite');
+ let saveBusy=false,saveCount=0;
+ try{if(typeof save==='function'){
+  const prevSave=save;
+  save=function(...args){
+   if(saveBusy)return;
+   saveBusy=true;
+   try{
+    prune(false);
+    const out=prevSave.apply(this,args);
+    if((++saveCount%4)===0)backupNow();
+    return out;
+   }catch(e){
+    logErr('save',e);
+    try{prune(true);const out=prevSave.apply(this,args);backupNow();return out}catch(e2){logErr('save-retry',e2)}
+   }finally{saveBusy=false}
+  };
+ }}catch(e){logErr('wrap-save',e)}
+ let updateBusy=false;
+ try{if(typeof update==='function'){
+  const prevUpdate=update;
+  update=function(...args){
+   if(updateBusy)return;
+   updateBusy=true;
+   try{return prevUpdate.apply(this,args)}catch(e){logErr('update',e);console.error('[Rol Senin] update error',e)}finally{updateBusy=false}
+  };
+ }}catch(e){logErr('wrap-update',e)}
+ const guarded='[data-rs115-pr],[data-rs115-prep],[data-rs115-air],[data-rs115-choice],[data-rs116-contract],[data-rs116-contact],[data-rs116-rival],[data-rs116-talk],#social114Share';
+ const lastTap=new WeakMap();
+ document.addEventListener('click',e=>{
+  const b=e.target.closest?.(guarded);if(!b)return;
+  const n=performance.now(),p=lastTap.get(b)||0;
+  if(n-p<380){e.preventDefault();e.stopImmediatePropagation();return}
+  lastTap.set(b,n);b.classList.add('rs118-busy');setTimeout(()=>b.classList.remove('rs118-busy'),360);
+ },true);
+ const social=$('#socialBtn'),career=$('#rs115Fab');
+ social?.addEventListener('click',()=>{$('#rs115App')?.classList.remove('show');$('#rs115App')?.setAttribute('aria-hidden','true')},true);
+ career?.addEventListener('click',()=>{$('#social114')?.classList.remove('show');$('#social114')?.setAttribute('aria-hidden','true')},true);
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){try{prune(false);save?.();backupNow()}catch(e){logErr('hidden-save',e)}}});
+ addEventListener('pagehide',()=>{try{prune(false);save?.();backupNow()}catch(e){logErr('pagehide-save',e)}});
+ addEventListener('error',e=>logErr('window',e.error||e.message));
+ addEventListener('unhandledrejection',e=>logErr('promise',e.reason));
+ setInterval(()=>{try{if(document.hidden)return;prune(false);backupNow()}catch(_){}},45000);
+ prune(false);backupNow();
+ const tag=$('.vtag');if(tag)tag.textContent=VERSION;
+ const live=$('#liveBuildBadge112');if(live)live.textContent='v1.1.8 · STABILITY';
+ document.title='Rol Senin 1.1.8 — STABILITY';
+ const modal=$('#updateModal');
+ if(modal){const h=modal.querySelector('h2'),p=modal.querySelector('p'),list=modal.querySelector('.update-list'),enter=modal.querySelector('#updateClose'),x=modal.querySelector('.update-x');
+  if(h)h.textContent='ROL SENİN 1.1.8 — STABILITY';
+  if(p)p.textContent='Yeni özellik yerine performans, kayıt güvenliği ve ekran çakışmaları iyileştirildi. Oynanış aynı.';
+  if(list)list.innerHTML='<div class="update-item"><b>⚙️ Daha stabil güncelleme döngüsü</b>Tekrarlanan update/save çağrıları ve çift dokunmalar korunuyor.</div><div class="update-item"><b>💾 Kayıt koruması</b>Kayıt boyutu kontrol ediliyor ve geçerli kayıt periyodik olarak yedekleniyor.</div><div class="update-item"><b>📱 Daha hafif mobil kullanım</b>Düşük güçlü cihazlarda ağır blur ve animasyonlar otomatik azaltılıyor.</div><div class="update-item"><b>🪟 Ekran çakışması düzeltmeleri</b>Rol Social ve Kariyer Dünyası aynı anda üst üste açılmıyor.</div><div class="update-item"><b>🧹 Uzun kariyer temizliği</b>Aşırı büyüyen geçmiş listeleri güvenli sınırda tutuluyor; kariyer verileri korunuyor.</div>';
+  const close=()=>{localStorage.setItem('rolSeninSeenVersion',VERSION);modal.classList.remove('show')};
+  if(enter){enter.textContent="1.1.8'e Gir";enter.onclick=close}if(x)x.onclick=close;
+  modal.onclick=e=>{if(e.target===modal)close()};
+  if(localStorage.getItem('rolSeninSeenVersion')!==VERSION)setTimeout(()=>modal.classList.add('show'),240);
+ }
+})();
+</script>
