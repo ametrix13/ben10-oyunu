@@ -1,4 +1,4 @@
-name: Publish Rol Senin 1.1.7 Public
+name: Publish Rol Senin 1.1.8 Stability
 
 on:
   push:
@@ -22,12 +22,11 @@ jobs:
       - name: Fetch current game build
         run: |
           set -euo pipefail
-          curl --fail --location --retry 4 --retry-delay 2 \
-            'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-polish-web?release=1.1.7-polish-public' \
-            --output r112-full.html
+          curl --fail --location --retry 4 --retry-delay 2             'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-stability-web?release=1.1.8-stability-public'             --output r112-full.html
           test -s r112-full.html
           grep -q 'LOUNGE' r112-full.html
-          grep -q '1.1.7' r112-full.html
+          grep -q '1.1.8' r112-full.html
+          grep -q 'rs118StabilityScript' r112-full.html
           grep -q 'rs117PolishStyle' r112-full.html
           grep -q 'rs115WorldScript' r112-full.html
           grep -q 'rs116IndustryScript' r112-full.html
@@ -49,6 +48,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'No changes.'
           else
-            git commit -m 'Publish Rol Senin public play page'
+            git commit -m 'Publish Rol Senin 1.1.8 stability build'
             git push origin HEAD:rol-senin-live
           fi
