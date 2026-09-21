@@ -22,8 +22,9 @@ jobs:
       - name: Fetch and validate current game build
         run: |
           set -euo pipefail
+          # 1.1.9 retry after repairing legacy social script syntax
           curl --fail --location --retry 4 --retry-delay 2 \
-            'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-refine-web?release=1.1.9-refine-public' \
+            'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-refine-web?release=1.1.9-refine-public-r2' \
             --output r112-full.html
           test -s r112-full.html
           grep -q 'LOUNGE' r112-full.html
