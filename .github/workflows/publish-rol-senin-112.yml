@@ -1,4 +1,4 @@
-name: Publish Rol Senin 1.1.8 Stability
+name: Publish Rol Senin 1.1.9 Refine
 
 on:
   push:
@@ -19,13 +19,17 @@ jobs:
         with:
           ref: rol-senin-live
 
-      - name: Fetch current game build
+      - name: Fetch and validate current game build
         run: |
           set -euo pipefail
-          curl --fail --location --retry 4 --retry-delay 2             'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-stability-web?release=1.1.8-stability-public'             --output r112-full.html
+          curl --fail --location --retry 4 --retry-delay 2 \
+            'https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-refine-web?release=1.1.9-refine-public' \
+            --output r112-full.html
           test -s r112-full.html
           grep -q 'LOUNGE' r112-full.html
-          grep -q '1.1.8' r112-full.html
+          grep -q '1.1.9' r112-full.html
+          grep -q 'rs119RefineScript' r112-full.html
+          grep -q 'Günün Fırsatı' r112-full.html
           grep -q 'rs118StabilityScript' r112-full.html
           grep -q 'rs117PolishStyle' r112-full.html
           grep -q 'rs115WorldScript' r112-full.html
@@ -34,6 +38,19 @@ jobs:
           grep -q 'Kariyer Dünyası' r112-full.html
           grep -q 'energySheet111' r112-full.html
           grep -q 'changePasswordBtn' r112-full.html
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('r112-full.html').read_text()
+          out=Path('/tmp/rs-scripts')
+          out.mkdir(exist_ok=True)
+          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',html,re.S|re.I)
+          for i,s in enumerate(scripts):
+              if s.strip():
+                  (out/f'script-{i:02}.js').write_text(s)
+          print('inline_scripts=',len(list(out.glob('*.js'))))
+          PY
+          for f in /tmp/rs-scripts/*.js; do node --check "$f"; done
           mkdir -p play
           cp r112-full.html play/index.html
           echo "bytes=$(wc -c < play/index.html)"
@@ -48,6 +65,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'No changes.'
           else
-            git commit -m 'Publish Rol Senin 1.1.8 stability build'
+            git commit -m 'Publish Rol Senin 1.1.9 refine build'
             git push origin HEAD:rol-senin-live
           fi
