@@ -723,7 +723,7 @@ body.ui-lounge .social-panel112{background:#fbfaf7;color:#171719;box-shadow:0 35
  let postType112='photo';
  function esc112(s){return String(s).replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]))}
  function config112(){return postType112==='photo'?{energy:12,min:240,max:680,fameChance:.72,fameMax:3,label:'Fotoğraf'}:{energy:8,min:110,max:390,fameChance:.38,fameMax:2,label:'Yazı'}}
- function syncSocial112(){const c=config112(),txt=caption?.value.trim()||'caption burada görünecek.';if(captionPreview)captionPreview.textContent=txt;if(count)count.textContent=`${caption?.value.length||0} / 120`;if(costElIcostEl.textContent=`-${c.energy} ⚡`;if(share)share.disabled=state.energy<c.energy;if(preview){preview.classList.toggle('photo',postType112==='photo');preview.classList.toggle('text',postType112==='text')}if(avatar)avatar.textContent=state.avatar||'🎬';if(nameEl)nameEl.textContent=state.name||'Oyuncu';document.querySelectorAll('[data-social-type112]').forEach(b=>b.classList.toggle('active',b.dataset.socialType112===postType112))}
+ function syncSocial112(){const c=config112(),txt=caption?.value.trim()||'caption burada görünecek.';if(captionPreview)captionPreview.textContent=txt;if(count)count.textContent=`${caption?.value.length||0} / 120`;if(costEl)costEl.textContent=`-${c.energy} ⚡`;if(share)share.disabled=state.energy<c.energy;if(preview){preview.classList.toggle('photo',postType112==='photo');preview.classList.toggle('text',postType112==='text')}if(avatar)avatar.textContent=state.avatar||'🎬';if(nameEl)nameEl.textContent=state.name||'Oyuncu';document.querySelectorAll('[data-social-type112]').forEach(b=>b.classList.toggle('active',b.dataset.socialType112===postType112))}
  function openSocial112(){postType112='photo';if(caption)caption.value='';sheet?.classList.add('show');sheet?.setAttribute('aria-hidden','false');syncSocial112();setTimeout(()=>caption?.focus(),160)}
  function closeSocial112(){sheet?.classList.remove('show');sheet?.setAttribute('aria-hidden','true')}
  function roll112(){if(!caption)return;let next=captions112[Math.floor(Math.random()*captions112.length)];if(next===caption.value&&captions112.length>1)next=captions112[(captions112.indexOf(next)+1)%captions112.length];caption.value=next;caption.classList.remove('caption-pop112');void caption.offsetWidth;caption.classList.add('caption-pop112');syncSocial112()}
@@ -1187,5 +1187,160 @@ html.rs118-lite .rs115-shell,html.rs118-lite .social114-shell{box-shadow:0 12px 
   if(localStorage.getItem('rolSeninSeenVersion')!==VERSION)setTimeout(()=>modal.classList.add('show'),240);
  }
 })();
-</script></body>
+</script><style id="rs119RefineStyle">
+:root{--rs119-shadow:0 16px 42px rgba(20,18,15,.075);--rs119-border:rgba(31,28,24,.08);--rs119-ease:cubic-bezier(.2,.78,.2,1)}
+body.rs119-refine .shell{max-width:1180px}
+body.rs119-refine .hero{gap:14px;align-items:stretch}
+body.rs119-refine .profile,body.rs119-refine .quick{border-radius:26px}
+body.rs119-refine .profile{padding:21px}
+body.rs119-refine .profile-row{align-items:center}
+body.rs119-refine .profile h2{letter-spacing:-.55px;margin-top:2px}
+body.rs119-refine .stats{gap:7px;margin-top:17px}
+body.rs119-refine .stat{border-radius:15px;padding:10px 9px}
+body.rs119-refine .stat b{font-size:15px;letter-spacing:-.25px}
+body.rs119-refine .stat span{font-size:9px;text-transform:uppercase;letter-spacing:.06em}
+body.rs119-refine .energy-wrap{margin-top:14px;padding-top:12px;border-top:1px solid rgba(127,127,127,.10)}
+body.rs119-refine .quick{display:flex;flex-direction:column;justify-content:center}
+body.rs119-refine .quick>h3{margin-bottom:3px;font-size:16px}
+body.rs119-refine .quick>p{margin-top:0;margin-bottom:12px;font-size:10.5px}
+body.rs119-refine .quick-grid button{position:relative;overflow:hidden}
+body.rs119-refine .quick-grid button small{opacity:.72;font-weight:700}
+body.rs119-refine .section-title{position:relative}
+body.rs119-refine .section-title h3{font-size:17px}
+body.rs119-refine .section-title p{font-size:10.5px;margin-top:3px}
+body.rs119-refine .jobs{align-items:stretch}
+body.rs119-refine .job{display:flex;flex-direction:column;min-height:100%}
+body.rs119-refine .job>button:last-child{margin-top:auto}
+body.rs119-refine .feature-grid{align-items:stretch}
+body.rs119-refine .feature-card{min-height:100%}
+body.rs119-refine .history-list{max-height:350px}
+body.rs119-refine .badge{font-size:9.5px;font-weight:850}
+body.rs119-refine button:focus-visible{outline:3px solid rgba(93,109,255,.24);outline-offset:2px}
+
+/* Small optional daily opportunity */
+.rs119-opportunity{margin:14px 0 4px;border:1px solid var(--rs119-border);border-radius:23px;padding:14px 15px;background:linear-gradient(135deg,rgba(255,255,255,.88),rgba(248,245,238,.92));box-shadow:var(--rs119-shadow);display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;position:relative;overflow:hidden}
+.rs119-opportunity:after{content:"";position:absolute;width:130px;height:130px;border-radius:50%;right:-55px;top:-70px;background:radial-gradient(circle,rgba(255,255,255,.9),transparent 68%);pointer-events:none}
+.rs119-opp-icon{width:44px;height:44px;border-radius:15px;background:#111;color:#fff;display:grid;place-items:center;font-size:21px;box-shadow:0 9px 24px rgba(0,0,0,.13);position:relative;z-index:1}
+.rs119-opp-copy{min-width:0;position:relative;z-index:1}.rs119-opp-copy small{display:block;color:#8a847b;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}.rs119-opp-copy b{display:block;font-size:13.5px;letter-spacing:-.2px}.rs119-opp-copy span{display:block;color:#746f67;font-size:10px;line-height:1.4;margin-top:3px}
+.rs119-opp-btn{position:relative;z-index:1;border:0;border-radius:13px;background:#111;color:#fff;padding:10px 12px;font-weight:900;font-size:10px;white-space:nowrap}.rs119-opp-btn:disabled{background:#d8d4cc;color:#8e8980;box-shadow:none}
+.rs119-opp-done{background:#eeeae2!important;color:#6d675f!important}
+
+body.ui-modern.rs119-refine .rs119-opportunity,body:not(.ui-lounge).rs119-refine .rs119-opportunity{background:linear-gradient(135deg,#191b21,#131419);border-color:rgba(255,255,255,.07);box-shadow:0 16px 42px rgba(0,0,0,.22)}
+body.ui-modern.rs119-refine .rs119-opp-copy span,body.ui-modern.rs119-refine .rs119-opp-copy small,body:not(.ui-lounge).rs119-refine .rs119-opp-copy span,body:not(.ui-lounge).rs119-refine .rs119-opp-copy small{color:#a6a8b0}
+body.ui-modern.rs119-refine .rs119-opp-copy b,body:not(.ui-lounge).rs119-refine .rs119-opp-copy b{color:#f6f6f7}
+body.ui-modern.rs119-refine .rs119-opp-icon,body:not(.ui-lounge).rs119-refine .rs119-opp-icon{background:#f2f2f4;color:#111}
+
+/* Lounge refinement */
+body.ui-lounge.rs119-refine{background:radial-gradient(circle at 8% -8%,#fffef9 0,#f6f2ea 32%,#eee9e0 72%,#ebe6dd 100%)}
+body.ui-lounge.rs119-refine .card,body.ui-lounge.rs119-refine .feature-card,body.ui-lounge.rs119-refine .career-card,body.ui-lounge.rs119-refine .history{border-color:var(--rs119-border);box-shadow:var(--rs119-shadow)}
+body.ui-lounge.rs119-refine .quick{background:rgba(255,253,249,.88)}
+body.ui-lounge.rs119-refine .quick-grid button:not(.primary){background:#f0ebe2;border-color:#e4ddd2}
+body.ui-lounge.rs119-refine .quick-grid button:not(.primary):hover{background:#e9e3d8}
+body.ui-lounge.rs119-refine .feature-card{background:rgba(255,254,251,.82)}
+body.ui-lounge.rs119-refine .history{background:rgba(255,254,251,.75)}
+
+/* Career World refinement: 5 tabs should never feel cramped */
+body.rs119-refine .rs115-tabs{display:flex!important;overflow-x:auto;gap:7px;padding:9px 12px;scrollbar-width:none;scroll-snap-type:x proximity}
+body.rs119-refine .rs115-tabs::-webkit-scrollbar{display:none}
+body.rs119-refine .rs115-tab{flex:1 0 auto;min-width:112px;scroll-snap-align:start;padding:10px 12px;white-space:nowrap}
+body.rs119-refine .rs115-top{padding:16px 18px 12px}
+body.rs119-refine .rs115-top small{font-size:10px}
+body.rs119-refine .rs115-card{box-shadow:0 8px 24px rgba(0,0,0,.045)}
+body.rs119-refine .rs116-kpis{margin-bottom:10px}
+body.rs119-refine .rs116-card h4{letter-spacing:-.25px}
+body.rs119-refine .rs116-news{line-height:1.45}
+
+/* Rol Social refinement */
+body.rs119-refine .social114-top{padding-left:16px;padding-right:16px}
+body.rs119-refine .social114-tabs{padding:8px 12px}
+body.rs119-refine .social114-card{padding:13px 14px}
+body.rs119-refine .social114-eng{padding-top:9px;margin-top:2px}
+body.rs119-refine .social114-compose{box-shadow:0 10px 30px rgba(0,0,0,.05)}
+body.rs119-refine .social114-profile-box{border-radius:19px}
+
+/* Mobile simplification */
+@media(max-width:760px){
+ body.rs119-refine .shell{padding-left:8px;padding-right:8px}
+ body.rs119-refine .top-actions{gap:5px}
+ body.rs119-refine .savepill{display:none}
+ body.rs119-refine .hero{grid-template-columns:1fr!important;gap:9px}
+ body.rs119-refine .profile,body.rs119-refine .quick{border-radius:22px}
+ body.rs119-refine .profile{padding:17px}.quick{padding:15px!important}
+ body.rs119-refine .stats{grid-template-columns:repeat(4,1fr);gap:5px}.stat{padding:9px 4px!important}.stat b{font-size:13px!important}.stat span{font-size:8px!important}
+ body.rs119-refine .quick-grid{gap:7px}.quick-grid button{min-height:50px!important;padding:11px 9px!important;border-radius:14px!important;font-size:10px}.quick-grid button small{font-size:8.5px}
+ .rs119-opportunity{grid-template-columns:auto 1fr;gap:9px;border-radius:19px;padding:12px}.rs119-opp-icon{width:40px;height:40px;border-radius:13px}.rs119-opp-btn{grid-column:1/-1;width:100%;padding:10px}
+ body.rs119-refine .section-title{margin-top:20px!important;margin-bottom:9px!important}
+ body.rs119-refine .section-title h3{font-size:16px}.section-title p{font-size:10px}
+ body.rs119-refine .rs115-tabs{padding:7px 9px}.rs115-tab{min-width:104px;padding:9px 10px}
+ body.rs119-refine .social114-tabs{position:sticky;top:0;z-index:2}
+}
+@media(max-width:430px){
+ body.rs119-refine .brand small{max-width:180px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ body.rs119-refine .trendpill{display:none}
+ body.rs119-refine .stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+<script id="rs119RefineScript">
+(()=>{
+ const VERSION='1.1.9';
+ const KEY='rolSeninOpportunity119';
+ const defs=[
+   {icon:'🎬',title:'Kısa cameo çağrısı',desc:'Yakındaki bir projede birkaç sahnelik hızlı bir iş var.',cost:4,reward:'₺350 · +30 takipçi',apply:s=>{s.money=(s.money||0)+350;s.followers=(s.followers||0)+30}},
+   {icon:'☕',title:'Sektör kahvesi',desc:'Kısa bir networking buluşması için davet aldın.',cost:3,reward:'+1 şöhret · +25 takipçi',apply:s=>{s.fame=(s.fame||0)+1;s.followers=(s.followers||0)+25}},
+   {icon:'📸',title:'Mini marka çekimi',desc:'Küçük bir sosyal medya markası kısa çekim teklif etti.',cost:5,reward:'₺450 · +40 takipçi',apply:s=>{s.money=(s.money||0)+450;s.followers=(s.followers||0)+40}},
+   {icon:'🎙️',title:'Kısa podcast konukluğu',desc:'10 dakikalık eğlenceli bir oyunculuk sohbetine çağrıldın.',cost:4,reward:'+1 şöhret · +35 takipçi',apply:s=>{s.fame=(s.fame||0)+1;s.followers=(s.followers||0)+35}}
+ ];
+ function game(){try{return typeof state!=='undefined'?state:null}catch(_){return null}}
+ function read(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(_){return{}}}
+ function write(v){localStorage.setItem(KEY,JSON.stringify(v))}
+ function defFor(day){return defs[Math.abs((Number(day)||1)-1)%defs.length]}
+ function log(text){try{if(typeof addHistory==='function')addHistory(text,'good')}catch(_){}}
+ function mount(){
+   const jobs=document.querySelector('.page[data-page="home"] #homeJobs');
+   if(!jobs||document.querySelector('#rs118Opportunity'))return;
+   jobs.insertAdjacentHTML('afterend','<div class="rs119-opportunity" id="rs118Opportunity"></div>');
+ }
+ function render(){
+   mount();
+   const el=document.querySelector('#rs118Opportunity'),s=game();if(!el||!s)return;
+   const day=Number(s.day)||1,d=defFor(day),meta=read(),done=Number(meta.claimedDay)===day;
+   const enough=(Number(s.energy)||0)>=d.cost;
+   el.innerHTML='<div class="rs119-opp-icon">'+d.icon+'</div><div class="rs119-opp-copy"><small>Günün Fırsatı · Gün '+day+'</small><b>'+d.title+'</b><span>'+d.desc+' · '+d.reward+' · -'+d.cost+' enerji</span></div><button class="rs119-opp-btn '+(done?'rs119-opp-done':'')+'" id="rs118OppClaim" '+((done||!enough)?'disabled':'')+'>'+(done?'Bugün tamamlandı':enough?'Değerlendir':'Enerji yetersiz')+'</button>';
+   const btn=document.querySelector('#rs118OppClaim');if(btn&&!done&&enough)btn.onclick=claim;
+ }
+ function claim(){
+   const s=game();if(!s)return;const day=Number(s.day)||1,d=defFor(day),meta=read();
+   if(Number(meta.claimedDay)===day)return;
+   if((Number(s.energy)||0)<d.cost){try{toast('Enerjin yetmiyor')}catch(_){}return}
+   s.energy-=d.cost;d.apply(s);meta.claimedDay=day;meta.lastTitle=d.title;write(meta);
+   log('✨ Günün fırsatı: '+d.title+' değerlendirdin. '+d.reward+'.');
+   try{if(typeof save==='function')save()}catch(_){}
+   try{if(typeof update==='function')update()}catch(_){}
+   render();
+ }
+ function polishCopy(){
+   const h=document.querySelector('.quick>h3');if(h)h.textContent='Hızlı İşlemler';
+   const p=document.querySelector('.quick>p');if(p)p.textContent='Kariyerini ilerletmek için hızlı bir seçim yap.';
+   const homeTitle=document.querySelector('.page[data-page="home"] .section-title h3');if(homeTitle&&homeTitle.textContent.includes('Önerilen'))homeTitle.textContent='Sana Uygun Seçmeler';
+ }
+ document.body.classList.add('rs119-refine');polishCopy();mount();render();
+ try{const prev=update;update=function(){prev();polishCopy();render()}}catch(_){}
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.1.9 · REFINE';
+ document.title='Rol Senin 1.1.9 — REFINE';
+ const note=document.querySelector('.rs117-polish-note');if(note)note.textContent='REFINE';
+ const modal=document.querySelector('#updateModal');
+ if(modal){
+   const h=modal.querySelector('h2'),p=modal.querySelector('p'),list=modal.querySelector('.update-list'),enter=modal.querySelector('#updateClose'),x=modal.querySelector('.update-x');
+   if(h)h.textContent='ROL SENİN 1.1.9 — REFINE';
+   if(p)p.textContent='Küçük bir yenilik, daha temiz bir arayüz. Oynanış ve mevcut sistemler aynı kaldı.';
+   if(list)list.innerHTML='<div class="update-item"><b>✨ Günün Fırsatı</b>Her oyun gününde ana ekranda tek, küçük ve isteğe bağlı bir sektör fırsatı çıkar. Zorunlu değil.</div><div class="update-item"><b>🏠 Ana ekran düzeni</b>Profil, hızlı işlemler, seçmeler ve kart aralıkları daha dengeli ve daha az kalabalık.</div><div class="update-item"><b>🎬 Kariyer Dünyası</b>Beş sekme artık özellikle telefonda sıkışmadan kaydırılabiliyor.</div><div class="update-item"><b>📱 Mobil temizlik</b>Gereksiz üst bilgi azaltıldı, istatistik ve buton ölçüleri daha okunaklı hale geldi.</div><div class="update-item"><b>💬 Rol Social</b>Akış, paylaşım ve profil kartları daha tutarlı boşluk ve köşe ölçülerine kavuştu.</div>';
+   const done=()=>{localStorage.setItem('rolSeninSeenVersion',VERSION);modal.classList.remove('show')};
+   if(enter){enter.textContent="1.1.9'a Gir";enter.onclick=done}if(x)x.onclick=done;
+   modal.onclick=e=>{if(e.target===modal)done()};
+   if(localStorage.getItem('rolSeninSeenVersion')!==VERSION)setTimeout(()=>modal.classList.add('show'),220);
+ }
+})();
+</script>
+</body>
 </html>
