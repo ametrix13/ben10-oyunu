@@ -23,7 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
-    private static final String GAME_URL = "https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-polish-web";
+    private static final String GAME_URL = "https://wruxmjgzosrmblbkfwde.supabase.co/functions/v1/rol-senin-refine-web?release=1.1.9-refine-public-r2";
     private WebView webView;
     private LinearLayout errorView;
     private ProgressBar progressBar;
