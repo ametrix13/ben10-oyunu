@@ -1,0 +1,55 @@
+name: Build Rol Senin Android AAB
+
+on:
+  push:
+    branches: [rol-senin-android-release]
+    paths:
+      - 'android/**'
+      - '.github/workflows/build-rol-senin-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Android release branch
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle 9.6
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.6.0'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android 16 SDK
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+
+      - name: Build release app bundle
+        working-directory: android
+        run: gradle :app:bundleRelease --stacktrace
+
+      - name: Collect AAB
+        run: |
+          mkdir -p release-artifact
+          cp android/app/build/outputs/bundle/release/app-release.aab release-artifact/Rol-Senin-1.0.0-unsigned.aab
+          ls -lh release-artifact
+
+      - name: Upload unsigned AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: rol-senin-unsigned-aab
+          path: release-artifact/Rol-Senin-1.0.0-unsigned.aab
+          retention-days: 7
