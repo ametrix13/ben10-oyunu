@@ -1370,5 +1370,147 @@ body.rs119-refine .social114-profile-box{border-radius:19px}
  }
 })();
 </script>
+<style id="rs120Style">
+/* 1.2.0 — Last Seen + Simple Studio */
+.rs120-seen{font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap}
+.rs120-seen.online{color:var(--good)}
+.rs120-studio-extra{display:none!important}
+.rs120-studio-extra.rs120-show{display:block!important}
+.rs120-studio-core{display:block!important}
+.rs120-studio-more{grid-column:1/-1;display:flex;justify-content:center;padding:2px 0 4px}
+.rs120-studio-more button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:13px;padding:10px 14px;font-weight:850;font-size:11px}
+.rs120-studio-hint{grid-column:1/-1;padding:11px 13px;border-radius:15px;border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--muted);font-size:11px;line-height:1.45}
+.page[data-page="studio"] .rs120-active-card{grid-column:span 7!important}
+.page[data-page="studio"] .rs120-manager-card{grid-column:span 5!important}
+.page[data-page="studio"] .rs120-profile-card{grid-column:span 12!important}
+.page[data-page="studio"] .rs120-profile-card .metric-row{grid-template-columns:repeat(3,1fr)}
+.direct-meta .rs120-direct-seen{display:block;margin-top:2px;font-size:9px;color:var(--muted)}
+@media(max-width:760px){
+ .page[data-page="studio"] .rs120-active-card,.page[data-page="studio"] .rs120-manager-card,.page[data-page="studio"] .rs120-profile-card{grid-column:1/-1!important}
+ .rs120-studio-hint{font-size:10px}
+ .rs120-seen{white-space:normal}
+}
+</style>
+<script id="rs120Script">
+(()=>{
+ const VERSION='1.2.0';
+ function seen120(v,online=false){
+   if(online)return '● Çevrimiçi';
+   if(!v)return 'Son görülme bilinmiyor';
+   const d=new Date(v),now=new Date();
+   if(Number.isNaN(d.getTime()))return 'Son görülme bilinmiyor';
+   const diff=Math.max(0,now-d);
+   const min=Math.floor(diff/60000),hr=Math.floor(diff/3600000),day=Math.floor(diff/86400000);
+   if(min<1)return 'Son görülme az önce';
+   if(min<60)return `Son görülme ${min} dk önce`;
+   const same=now.toDateString()===d.toDateString();
+   if(same)return `Son görülme bugün ${d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}`;
+   const y=new Date(now);y.setDate(now.getDate()-1);
+   if(y.toDateString()===d.toDateString())return `Son görülme dün ${d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}`;
+   if(day<7)return `Son görülme ${day} gün önce`;
+   return `Son görülme ${d.toLocaleDateString('tr-TR',{day:'numeric',month:'short'})} ${d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}`;
+ }
+ window.rsLastSeen=seen120;
+
+ function simplifyStudio120(){
+   const page=document.querySelector('.page[data-page="studio"]');
+   const grid=page?.querySelector('.studio-grid');
+   if(!page||!grid)return;
+   const title=page.querySelector('.section-title h3');
+   const desc=page.querySelector('.section-title p');
+   if(title)title.textContent='🎥 Stüdyo';
+   if(desc)desc.textContent='Aktif projelerini, menajerini ve kariyer özetini tek yerde yönet.';
+
+   const active=document.querySelector('#activeContracts')?.closest('.studio-card');
+   const manager=document.querySelector('#managerList')?.closest('.studio-card');
+   const profile=document.querySelector('#criticMetric')?.closest('.studio-card');
+   const core=new Set([active,manager,profile].filter(Boolean));
+   [...grid.children].forEach(card=>{
+     if(!(card instanceof HTMLElement))return;
+     if(card.classList.contains('rs120-studio-more')||card.classList.contains('rs120-studio-hint'))return;
+     if(core.has(card)){
+       card.classList.add('rs120-studio-core');
+       card.classList.remove('rs120-studio-extra');
+     }else if(card.classList.contains('studio-card')){
+       card.classList.add('rs120-studio-extra');
+     }
+   });
+   active?.classList.add('rs120-active-card');
+   manager?.classList.add('rs120-manager-card');
+   profile?.classList.add('rs120-profile-card');
+   const ap=active?.querySelector('p');if(ap)ap.textContent='Devam eden dizi ve sözleşmelerin burada. Bölüm çek, reytingi takip et.';
+   const mp=manager?.querySelector('p');if(mp)mp.textContent='Kariyerine uygun menajeri seç.';
+   const pp=profile?.querySelector('p');if(pp)pp.textContent='Eleştirmen, fan sadakati ve piyasa değerin.';
+
+   let hint=grid.querySelector('.rs120-studio-hint');
+   if(!hint){hint=document.createElement('div');hint.className='rs120-studio-hint';hint.innerHTML='<b>✨ Stüdyo sadeleştirildi.</b> Ana ekranda yalnız en çok kullanılan üç bölüm var. Eski ileri kariyer özellikleri silinmedi.';grid.appendChild(hint)}
+   let more=grid.querySelector('.rs120-studio-more');
+   if(!more){more=document.createElement('div');more.className='rs120-studio-more';more.innerHTML='<button id="rs120StudioMore">＋ Diğer seçenekler</button>';grid.appendChild(more)}
+   const btn=more.querySelector('button');
+   if(btn&&!btn.dataset.bound){btn.dataset.bound='1';btn.onclick=()=>{const open=btn.dataset.open==='1';btn.dataset.open=open?'0':'1';grid.querySelectorAll('.rs120-studio-extra').forEach(x=>x.classList.toggle('rs120-show',!open));btn.textContent=open?'＋ Diğer seçenekler':'− Daha az göster'}}
+ }
+
+ try{const prev=renderStudio;renderStudio=function(){prev();simplifyStudio120()}}catch(_){}
+ simplifyStudio120();
+
+ function patchOnlineRows120(){
+   if(!onlineData)return;
+   const leaders=[...(onlineData.leaders||[])];
+   leaders.sort((a,b)=>leaderboardSort==='awards'?(b.awards-a.awards)||(b.fame-a.fame):leaderboardSort==='collabs'?(b.collabs-a.collabs)||(b.fame-a.fame):(b.fame-a.fame)||(b.followers-a.followers));
+   [...(document.querySelector('#leaderList')?.children||[])].forEach((row,i)=>{const u=leaders[i];if(!u||!row.classList.contains('online-row'))return;const span=row.querySelector(':scope > span');if(span){span.className='rs120-seen'+(u.online?' online':'');span.textContent=seen120(u.last_seen,u.online)}});
+   [...(document.querySelector('#friendsList')?.children||[])].forEach((row,i)=>{const f=(onlineData.friends||[])[i];if(!f||!row.classList.contains('online-row'))return;const small=row.querySelector('.meta small');if(small)small.textContent=`@${f.nickname} · ${f.fame} şöhret · ${seen120(f.last_seen,f.online)}`});
+ }
+ try{const oldRenderOnline=renderOnline;renderOnline=function(){oldRenderOnline();patchOnlineRows120()}}catch(_){}
+
+ searchFriends=async function(){
+   const q=document.querySelector('#friendSearch').value.trim();if(q.length<2)return;
+   try{const rows=await rpc('actor_search_users',{p_token:onlineToken,p_query:q});document.querySelector('#searchResults').innerHTML=rows.length?rows.map(u=>`<div class="online-row"><div class="meta"><button class="profile-link" onclick="showOnlineProfile('${esc(u.nickname)}')"><b>${esc(u.avata)} ${esc(u.actor_name)}</b></button><small>@${esc(u.nickname)} · ${u.fame} şöhret · ${esc(seen120(u.last_seen,u.online))}</small></div><div class="actions"><button class="online-btn mini" onclick="showOnlineProfile('${esc(u.nickname)}')">Profil</button><button class="online-btn mini primary" onclick="addFriend('${esc(u.nickname)}')">Ekle</button></div></div>`).join(''):'<div class="empty">Oyuncu bulunamadı.</div>'}catch(e){toast(e.message)}
+ };
+ const fsb=document.querySelector('#friendSearchBtn');if(fsb)fsb.onclick=searchFriends;
+
+ window.showOnlineProfile=async function(nick){
+   if(!onlineToken)return;
+   try{
+     const p=await rpc('actor_profile',{p_token:onlineToken,p_nickname:nick});
+     document.querySelector('#profileModalAvatar').textContent=p.avatar||'🎬';
+     document.querySelector('#profileModalName').textContent=p.actor_name||p.nickname;
+     document.querySelector('#profileModalNick').textContent=`Z{p.nickname} · ${seen120(p.last_seen,p.online)}`;
+     document.querySelector('#profileModalStats').innerHTML=`<div class="profile-mini-stat"><b>${p.fame||0}</b><small>Şöhret</small></div><div class="profile-mini-stat"><b>${Number(p.followers||0).toLocaleString('tr-TR')}</b><small>Takipçi</small></div><div class="profile-mini-stat"><b>${p.skill||0}</b><small>Oyunculuk</small></div><div class="profile-mini-stat"><b>${p.roles||0}</b><small>Rol</small></div><div class="profile-mini-stat"><b>${p.awards||0}</b><small>Ödül</small></div><div class="profile-mini-stat"><b>${p.collabs||0}</b><small>Ortak Proje</small></div>`;
+     document.querySelector('#profileModalRelation').textContent=p.relationship_status==='single'?'İlişki durumu: Bekar':p.relationship_status==='dating'?`İlişki durumu: @${p.partner_nickname||'?'} ile sevgili`:`İlişki durumu: @${p.partner_nickname||'?'} ile evli`;
+     let actions='';if(!p.is_self){if(p.friend_status==='accepted'){actions=`<button class="online-btn primary" onclick="closeProfileAndChat('${esc(p.nickname)}')">Mesaj</button><button class="online-btn" onclick="closeProfileAndProject('${esc(p.nickname)}')">🎞️ Proje Daveti</button>`}else if(p.friend_status==='pending'){actions='<button class="online-btn" disabled>Arkadaşlık isteği bekliyor</button>'}else actions=`<button class="online-btn primary" onclick="addFriend('${esc(p.nickname)}')">Arkadaş Ekle</button>`}
+     document.querySelector('#profileModalActions').innerHTML=actions;document.querySelector('#playerProfileModal').classList.add('show');
+   }catch(e){toast(e.message)}
+ };
+
+ renderInbox103=function(){
+   const q=document.querySelector('#dmConversationSearch').value.trim().toLowerCase();
+   const base=(dmInbox103&&dmInbox103.length)?dmInbox103:((onlineData?.friends||[]).map(f=>({nickname:f.nickname,actor_name:f.actor_name,avatar:f.avatar,online:f.online,last_seen:f.last_seen,unread:0,last_message:'Henüz mesaj yok'})));
+   const rows=base.filter(x=>!q||String(x.nickname).toLowerCase().includes(q)||String(x.actor_name||'').toLowerCase().includes(q));
+   document.querySelector('#dmConversationList').innerHTML=rows.length?rows.map(x=>`<button class="direct-person ${activeChat===x.nickname?'active':''}" onclick="openChat('${esc(x.nickname)}')"><span class="direct-avatar">${esc(x.avatar||'🎬')}${x.online?'<i class="direct-dot"></i>':''}</span><span class="direct-meta"><b>${esc(x.actor_name||x.nickname)}</b><small>${esc(x.last_message||'Mesaj göndermeye başla')}</small><small class="rs120-direct-seen">${esc(seen120(x.last_seen,x.online))}</small></span>${Number(x.unread||0)>0?`<span class="unread-badge">${Number(x.unread)}</span>`:''}</button>`).join(''):'<div class="direct-empty">Konuşma bulunamadı.</div>';
+   if(activeChat){const a=base.find(x=>x.nickname===activeChat);if(a){const hs=document.querySelector('#dmHeaderStatus');if(hs)hs.textContent=seen120(a.last_seen,a.online)}}
+ };
+
+ window.openChat=async function(nick){
+   if(!onlineToken)return;activeChat=nick;document.querySelector('#dmMessenger').classList.add('show');document.querySelector('#dmApp').classList.add('chat-open');
+   const f=(dmInbox103||[]).find(x=>x.nickname===nick)||(onlineData?.friends||[]).find(x=>x.nickname===nick)||{};
+   document.querySelector('#dmTitle').textContent=f.actor_name||`@${nick}`;document.querySelector('#dmHeaderAvatar').textContent=f.avatar||'🎬';document.querySelector('#dmHeaderStatus').textContent=seen120(f.last_seen,f.online);document.querySelector('#dmInput').disabled=false;document.querySelector('#dmSend').disabled=false;await loadDM();await loadInbox103(true);renderInbox103();
+ };
+
+ try{patchOnlineRows120();renderInbox103()}catch(_){}
+
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.0 · SIMPLE';
+ document.title='Rol Senin 1.2.0 — SIMPLE';
+ const guide=document.querySelector('[data-guide-content103="studio"]');if(guide)guide.innerHTML='<h3>🎥 Stüdyo</h3><p>Stüdyo artık sade: aktif projeler, menajer ve kariyer özeti ana ekranda. Diğer ileri özellikleri istersen “Diğer seçenekler” ile açabilirsin.</p>';
+ const modal=document.querySelector('#updateModal');if(modal){
+   const h=modal.querySelector('h2'),p=modal.querySelector('p'),list=modal.querySelector('.update-list'),enter=modal.querySelector('#updateClose'),x=modal.querySelector('.update-x');
+   if(h)h.textContent='ROL SENİN 1.2.0 — SIMPLE';
+   if(p)p.textContent='Online daha canlı, Stüdyo daha sade. Oynanış ve kayıtların korunuyor.';
+   if(list)list.innerHTML='<div class="update-item"><b>🕒 Son görülme</b>Offline oyuncularda gerçek son görülme zamanı artık görünüyor.</div><div class="update-item"><b>✉️ Direct durumu</b>Sohbet listesi ve konuşma başlığında çevrimiçi / son görülme bilgisi var.</div><div class="update-item"><b>👩 Arkadaş ve profil</b>Arkadaş listesi, arama, sıralama ve oyuncu profilinde durum daha net.</div><div class="update-item"><b>🎥 Sade Stüdyo</b>Ana ekranda yalnız Aktif Projeler, Menajer ve Kariyer Profili kaldı.</div><div class="update-item"><b>＋ Diğer seçenekler</b>Eski ileri özellikler silinmedi; tek düğmeyle gerektiğinde açılıyor.</div>';
+   const done=()=>{localStorage.setItem('rolSeninSeenVersion',VERSION);modal.classList.remove('show')};if(enter){enter.textContent="1.2.0'a Gir";enter.onclick=done}if(x)x.onclick=done;modal.onclick=e=>{if(e.target===modal)done()};if(localStorage.getItem('rolSeninSeenVersion')!==VERSION)setTimeout(()=>modal.classList.add('show'),240)
+ }
+})();
+</script>
+
 </body>
 </html>
