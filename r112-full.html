@@ -283,10 +283,10 @@ const milestones = [
   {label:'Başrol oyuncusu',sub:'Prime Time Başrol seçmesini kazan.',test:s=>s.leadWon}
 ];
 const romanceNPCs=[
-  {id:'deniz',emoji:'🧑🏻',name:'Deniz Aras',job:'Oyuncu'},
-  {id:'lina',emoji:'👩🏻',name:'Lina Kaya',job:'Şarkıcı'},
-  {id:'arda',emoji:'🧑🏼',name:'Arda Eren',job:'Yönetmen'},
-  {id:'selin',emoji:'👩🏼',name:'Selin Bora',job:'Model'}
+  {id:'deniz',emoji:'🧑🏻',name:'James Walker',job:'Oyuncu'},
+  {id:'lina',emoji:'👩🏻',name:'Tori Bennett',job:'Şarkıcı'},
+  {id:'arda',emoji:'🧑🏼',name:'Logan Reed',job:'Yönetmen'},
+  {id:'selin',emoji:'👩🏼',name:'Elizabeth Carter',job:'Model'}
 ];
 const dailyMissionDefs=[
   {id:'audition',icon:'🎬',label:'Bir seçmeye gir',need:1,reward:'₺750 + 2 şöhret'},
@@ -978,9 +978,9 @@ body:not(.ui-lounge) .rs116-card,body.ui-modern .rs116-card{background:#191a1f;b
   {id:'selin',name:'Selin Bora',emoji:'🌟',base:27}
  ];
  const contacts=[
-  {id:'director',name:'Selin Yalçın',role:'Yönetmen',emoji:'🎬'},
-  {id:'producer',name:'Bora Demir',role:'Yapımcı',emoji:'💼'},
-  {id:'casting',name:'Derya Aydın',role:'Casting Direktörü',emoji:'🎟️'}
+  {id:'director',name:'Olivia Reed',role:'Yönetmen',emoji:'🎬'},
+  {id:'producer',name:'Ethan Cole',role:'Yapımcı',emoji:'💼'},
+  {id:'casting',name:'Sophia Grant',role:'Casting Direktörü',emoji:'🎟️'}
  ];
  const talkQs=[
   {q:'Sunucu soruyor: “Şöhret seni değiştirdi mi?”',opts:[['“Umarım sadece daha iyi oyuncu yaptı.”','safe'],['“Biraz değişmek kötü değil.”','cool'],['“Şöhret beni yakaladı, ben onu değil.”','chaos']]},
@@ -1337,6 +1337,34 @@ body.rs119-refine .social114-profile-box{border-radius:19px}
    if(list)list.innerHTML='<div class="update-item"><b>✨ Günün Fırsatı</b>Her oyun gününde ana ekranda tek, küçük ve isteğe bağlı bir sektör fırsatı çıkar. Zorunlu değil.</div><div class="update-item"><b>🏠 Ana ekran düzeni</b>Profil, hızlı işlemler, seçmeler ve kart aralıkları daha dengeli ve daha az kalabalık.</div><div class="update-item"><b>🎬 Kariyer Dünyası</b>Beş sekme artık özellikle telefonda sıkışmadan kaydırılabiliyor.</div><div class="update-item"><b>📱 Mobil temizlik</b>Gereksiz üst bilgi azaltıldı, istatistik ve buton ölçüleri daha okunaklı hale geldi.</div><div class="update-item"><b>💬 Rol Social</b>Akış, paylaşım ve profil kartları daha tutarlı boşluk ve köşe ölçülerine kavuştu.</div>';
    const done=()=>{localStorage.setItem('rolSeninSeenVersion',VERSION);modal.classList.remove('show')};
    if(enter){enter.textContent="1.1.9'a Gir";enter.onclick=done}if(x)x.onclick=done;
+   modal.onclick=e=>{if(e.target===modal)done()};
+   if(localStorage.getItem('rolSeninSeenVersion')!==VERSION)setTimeout(()=>modal.classList.add('show'),220);
+ }
+})();
+</script>
+
+<style id="rs119LayoutPatch">
+/* 1.1.9 — small layout/name polish */
+.rs115-fab{right:78px!important}
+@media(max-width:680px){
+  .rs115-fab{right:68px!important;bottom:82px!important}
+}
+</style>
+<script id="rs119UpdateScript">
+(()=>{
+ const VERSION='1.1.9';
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.1.9 · LAYOUT FIX';
+ document.title='Rol Senin 1.1.9';
+ const modal=document.querySelector('#updateModal');
+ if(modal){
+   const h=modal.querySelector('h2'),p=modal.querySelector('p'),list=modal.querySelector('.update-list'),enter=modal.querySelector('#updateClose'),x=modal.querySelector('.update-x');
+   if(h)h.textContent='ROL SENİN 1.1.9';
+   if(p)p.textContent='Küçük düzen ve isim güncellemesi.';
+   if(list)list.innerHTML='<div class="update-item"><b>🎬 Kariyer Dünyası konumu</b>Sağ alttaki yukarı/aşağı oklarla çakışmaması için buton biraz sola taşındı.</div><div class="update-item"><b>🤝 Sektör bağlantıları</b>Yönetmen, yapımcı ve casting bağlantılarının isimleri İngilizce isimlerle yenilendi.</div><div class="update-item"><b>❤️ NPC ilişkileri</b>NPC sevgili adaylarının isimleri İngilizce isimlerle yenilendi. Mevcut ilişki kayıtların korunur.</div>';
+   const done=()=>{localStorage.setItem('rolSeninSeenVersion',VERSION);modal.classList.remove('show')};
+   if(enter){enter.textContent="1.1.9'a Gir";enter.onclick=done}
+   if(x)x.onclick=done;
    modal.onclick=e=>{if(e.target===modal)done()};
    if(localStorage.getItem('rolSeninSeenVersion')!==VERSION)setTimeout(()=>modal.classList.add('show'),220);
  }
