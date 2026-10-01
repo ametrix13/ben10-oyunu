@@ -1512,5 +1512,91 @@ body.rs119-refine .social114-profile-box{border-radius:19px}
 })();
 </script>
 
+
+<style id="rs121Style">
+/* Rol Senin 1.2.1 — avatars + guided spotlight */
+#startModal .faces{grid-template-columns:repeat(4,1fr)!important;max-height:226px;overflow:auto;padding:3px}
+#startModal .face{min-height:52px;font-size:27px;cursor:pointer;position:relative}
+#startModal .face:hover{transform:translateY(-1px);border-color:var(--accent)}
+#startModal .avatar-note{font-size:10px;color:var(--muted);margin:-1px 0 7px}
+.rs121-tour-target{position:relative!important;z-index:160!important;outline:3px solid var(--accent)!important;outline-offset:5px!important;box-shadow:0 0 0 8px color-mix(in srgb,var(--accent) 22%,transparent),0 0 42px color-mix(in srgb,var(--accent) 35%,transparent)!important;animation:rs121Pulse 1.15s ease-in-out infinite alternate}
+@keyframes rs121Pulse{from{outline-offset:4px}to{outline-offset:8px}}
+#rs121TourArrow{position:fixed;z-index:170;display:none;font-size:30px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));pointer-events:none;animation:rs121Arrow .72s ease-in-out infinite alternate}
+#rs121TourArrow.show{display:block}
+@keyframes rs121Arrow{from{transform:translateY(-3px)}to{transform:translateY(5px)}}
+.tour103{z-index:180!important}
+.tour103 .rs121-tip{display:block;margin-top:5px;color:var(--accent);font-size:9px;font-weight:900}
+@media(max-width:560px){#startModal .faces{grid-template-columns:repeat(4,1fr)!important;max-height:205px}.tour103{bottom:84px}}
+</style>
+<script id="rs121Script">
+(()=>{
+ const VERSION='1.2.1';
+ const faces=document.querySelector('#faces');
+ if(faces){
+   faces.innerHTML=['🎬','😎','✨','🎭','🕶️','👑','🎤','🎥','🌟','🔥','💜','🦋','🐈','🪽','⚡','🪩'].map((e,i)=>'<button class="face'+(i===0?' sel':'')+'">'+e+'</button>').join('');
+   let note=faces.previousElementSibling;
+   if(note && !document.querySelector('#startModal .avatar-note')){
+     const n=document.createElement('div');n.className='avatar-note';n.textContent='16 avatar seçeneği · daha sonra Ayarlar’dan adını değiştirebilirsin.';faces.parentNode.insertBefore(n,faces);
+   }
+   document.querySelectorAll('#faces .face').forEach(b=>b.onclick=()=>{document.querySelectorAll('#faces .face').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selectedAvatar=b.textContent});
+ }
+ const steps=[
+  ['home','Profilin ve temel değerlerin','Burada paranı, şöhretini, oyunculuk seviyeni, takipçini ve enerjini görürsün. Enerjin eylemlerde harcanır; para ve şöhret ilerledikçe daha büyük fırsatlar açılır.','.profile'],
+  ['home','Günün hızlı eylemleri','Oyunculuk dersiyle yeteneğini artırabilir, dinlenerek enerji toplayabilir, sosyal medya ve portfolyo ile görünürlüğünü büyütebilirsin.','.quick'],
+  ['castings','Seçmeler','Yeni rollerin ana kapısı burası. Her kartta gereken oyunculuk, şöhret, enerji ve başarı şansını kontrol et; uygun role girip performans tercihini yap.','#allJobs'],
+  ['career','Kariyer','Ajansın, ödüllerin, sosyal hayatın ve filmografin burada. Bu ekran yaptığın işlerin uzun vadeli kariyer sonucunu gösterir.','.page[data-page="career"] .career-grid'],
+  ['studio','Sade Stüdyo','Stüdyo artık daha temiz: aktif projeler, menajer ve kariyer profilin önde. İleri özellikler gerekiyorsa “Diğer seçenekler” düğmesiyle açılır.','.page[data-page="studio"] .studio-grid'],
+  ['online','Online dünya','Nick + şifre ile online hesaba bağlanırsın. Arkadaş ekleme, proje daveti, ilişki ve Direct burada; oyuncuların çevrimiçi/son görülme bilgisi de görünür.','.page[data-page="online"] .online-shell'],
+  ['home','Alt menü','Oyunun ana bölümleri arasında buradan geçiş yaparsın. Hangi sayfadaysan o sekme vurgulanır.','.tabs'],
+  ['home','Rehber ve görünüm','Sağ üstteki ❔ ile bu rehberi tekrar açabilir, 🎨 ile görünümü değiştirebilirsin. Ayarlar da kariyer kaydını yönetir.','.top-actions'],
+  ['home','Hazırsın!','Önce küçük seçmelerle oyunculuğunu ve şöhretini yükselt. Enerjini sıfırlama, kazancını gelişime ayır ve kariyer büyüdükçe Stüdyo ile Online özelliklerini kullan.','.profile']
+ ];
+ let arrow=document.querySelector('#rs121TourArrow');
+ if(!arrow){arrow=document.createElement('div');arrow.id='rs121TourArrow';arrow.textContent='👇';document.body.appendChild(arrow)}
+ function clearSpot(){
+   document.querySelectorAll('.rs121-tour-target').forEach(x=>x.classList.remove('rs121-tour-target'));
+   arrow.classList.remove('show');
+ }
+ function spot(selector){
+   clearSpot();
+   let el=document.querySelector(selector);
+   if(!el||el.offsetParent===null){
+     const page=document.querySelector('.page.active'); if(page) el=page;
+   }
+   if(!el)return;
+   try{el.scrollIntoView({behavior:'smooth',block:'center'})}catch(_){}
+   setTimeout(()=>{
+     el.classList.add('rs121-tour-target');
+     const r=el.getBoundingClientRect();
+     const x=Math.max(12,Math.min(innerWidth-45,r.left+r.width/2-15));
+     const roomBelow=innerHeight-r.bottom;
+     arrow.textContent=roomBelow>125?'👇':'☝️';
+     arrow.style.left=x+'px';
+     arrow.style.top=(roomBelow>125?Math.min(innerHeight-60,r.bottom+8):Math.max(8,r.top-43))+'px';
+     arrow.classList.add('show');
+   },180);
+ }
+ window.renderTour103=function(){
+   const step=steps[Math.min(tourIndex103,steps.length-1)], [page,title,text,selector]=step;
+   goPage103(page);
+   document.querySelector('#tourCount103').textContent=(tourIndex103+1)+' / '+steps.length;
+   document.querySelector('#tourTitle103').textContent=title;
+   document.querySelector('#tourText103').innerHTML=text+'<span class="rs121-tip">Vurgulanan alanı ekranda görebilirsin.</span>';
+   document.querySelector('#tourPrev103').disabled=tourIndex103===0;
+   document.querySelector('#tourNext103').textContent=tourIndex103===steps.length-1?'Bitir ✓':'İleri →';
+   document.querySelector('#tour103').classList.add('show');
+   spot(selector);
+ };
+ const oldFinish=window.finishTour103||finishTour103;
+ window.finishTour103=function(){clearSpot();document.querySelector('#tour103').classList.remove('show');localStorage.setItem('rolSeninTour103','done')};
+ document.querySelector('#tourSkip103').onclick=window.finishTour103;
+ document.querySelector('#tourNext103').onclick=()=>{if(tourIndex103<steps.length-1){tourIndex103++;window.renderTour103()}else window.finishTour103()};
+ document.querySelector('#tourPrev103').onclick=()=>{if(tourIndex103>0){tourIndex103--;window.renderTour103()}};
+ document.querySelector('#startTour103').onclick=()=>{closeGuide103();tourIndex103=0;window.renderTour103()};
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.1 · GUIDE';
+ document.title='Rol Senin 1.2.1 — GUIDE';
+})();
+</script>
 </body>
 </html>
