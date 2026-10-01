@@ -1622,5 +1622,22 @@ body.rs119-refine .social114-profile-box{border-radius:19px}
  setTimeout(()=>{const m=document.querySelector('#updateModal');if(m)m.classList.remove('show')},350);
 })();
 </script>
+
+<script id="rs121PlayPrivacyScript">
+(()=>{
+ const privacyUrl='https://rol-senin-gizlilik-politikasi.ametrix.chatgpt.site/privacy/';
+ function addPlayLinks(){
+   if(document.getElementById('rolSeninPrivacyLinks'))return;
+   const host=document.querySelector('#settingsModal .settings-card, #settingsModal .modal-card, #settingsModal');
+   if(!host)return;
+   const box=document.createElement('div');box.id='rolSeninPrivacyLinks';box.style.cssText='display:flex;flex-wrap:wrap;gap:12px;padding:12px 2px 2px;font:700 11px system-ui,sans-serif';
+   const a=document.createElement('a');a.href=privacyUrl;a.textContent='Gizlilik Politikası';a.target='_blank';a.rel='noopener';a.style.cssText='color:var(--accent);text-decoration:underline';
+   const d=document.createElement('a');d.href=privacyUrl+'#hesap-silme';d.textContent='Hesap silme talebi';d.target='_blank';d.rel='noopener';d.style.cssText=a.style.cssText;
+   box.append(a,d);host.appendChild(box);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addPlayLinks,{once:true});else addPlayLinks();
+ document.querySelector('#settingsBtn')?.addEventListener('click',()=>setTimeout(addPlayLinks,50));
+})();
+</script>
 </body>
 </html>
