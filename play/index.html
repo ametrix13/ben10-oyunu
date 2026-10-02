@@ -2064,14 +2064,14 @@ body.rs123-large .settings-section>p{font-size:13px!important}
    if(!list||!badge)return;
    if(!onlineToken){
      badge.classList.remove('show');badge.textContent='0';
-     list.innerHTML='<div class="rs125-inbox-empty">Online bildirimlerini görmek için Online hesabına giriş yap.<br><button class="online-btn primary" style="margin-top:10px" onclick="goPage103(\\'online\\');document.querySelector(\\'#rs125Inbox\\')?.classList.remove(\\'show\\')">Online’a Git</button></div>';
+     list.innerHTML='<div class="rs125-inbox-empty">Online bildirimlerini görmek için Online hesabına giriş yap.<br><button class="online-btn primary" style="margin-top:10px" onclick="goPage103(\'online\');document.querySelector(\'#rs125Inbox\')?.classList.remove(\'show\')">Online’a Git</button></div>';
      return;
    }
    const rows=[];
    (onlineData?.incoming_requests||[]).forEach(r=>rows.push('<div class="rs125-inbox-row"><span class="rs125-inbox-icon">👥</span><div><b>@'+esc(r.nickname)+' arkadaşlık isteği gönderdi</b><small>Arkadaşlarına eklemek için kabul et.</small></div><button class="online-btn mini primary" onclick="friendRespond('+r.id+',true)">Kabul</button></div>'));
    (onlineData?.project_invites||[]).forEach(i=>rows.push('<div class="rs125-inbox-row"><span class="rs125-inbox-icon">🎞️</span><div><b>@'+esc(i.sender_nickname)+' proje daveti gönderdi</b><small>'+esc(i.project_title)+' · '+esc(i.project_type)+'</small></div><button class="online-btn mini primary" onclick="respondProject('+i.id+',true)">Aç</button></div>'));
    (onlineData?.social_invites||[]).forEach(i=>rows.push('<div class="rs125-inbox-row"><span class="rs125-inbox-icon">'+(i.invite_type==='marry'?'💍':'❤️')+'</span><div><b>@'+esc(i.sender_nickname)+' '+(i.invite_type==='marry'?'evlenme':'çıkma')+' daveti gönderdi</b><small>Online sosyal davet bekliyor.</small></div><button class="online-btn mini primary" onclick="respondRelationship('+i.id+',true)">Aç</button></div>'));
-   if(typeof dmInbox103!=='undefined')(dmInbox103||[]).filter(x=>Number(x.unread||0)>0).forEach(x=>rows.push('<div class="rs125-inbox-row"><span class="rs125-inbox-icon">'+esc(x.avatar||'✉️')+'</span><div><b>'+esc(x.actor_name||('@'+x.nickname))+' mesaj attı</b><small>'+esc(x.last_message||'Yeni mesaj')+' · '+Number(x.unread||0)+' okunmamış</small></div><button class="online-btn mini primary" onclick="document.querySelector(\\'#rs125Inbox\\')?.classList.remove(\\'show\\');openChat(\\''+esc(x.nickname)+'\\')">Mesaj</button></div>'));
+   if(typeof dmInbox103!=='undefined')(dmInbox103||[]).filter(x=>Number(x.unread||0)>0).forEach(x=>rows.push('<div class="rs125-inbox-row"><span class="rs125-inbox-icon">'+esc(x.avatar||'✉️')+'</span><div><b>'+esc(x.actor_name||('@'+x.nickname))+' mesaj attı</b><small>'+esc(x.last_message||'Yeni mesaj')+' · '+Number(x.unread||0)+' okunmamış</small></div><button class="online-btn mini primary" onclick="document.querySelector(\'#rs125Inbox\')?.classList.remove(\'show\');openChat(\''+esc(x.nickname)+'\')">Mesaj</button></div>'));
    list.innerHTML=rows.length?rows.join(''):'<div class="rs125-inbox-empty">Yeni bildirimin yok ✨</div>';
    const n=inboxCount125();badge.textContent=n>99?'99+':String(n);badge.classList.toggle('show',n>0);
  }
