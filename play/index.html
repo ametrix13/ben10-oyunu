@@ -1703,63 +1703,171 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
  function closeMini(){mini.classList.remove('show');mini.setAttribute('aria-hidden','true');game.innerHTML='';miniBusy=false}
  function finishMini(perf,score){const bonus=score>=80?10:score>=55?5:score>=30?1:-4;miniScore.textContent=`Skor ${score} · ${bonus>=0?'+':''}${bonus}%`;miniNote.textContent=bonus>=5?'Harika! Jüride güçlü bir izlenim bıraktın.':bonus>=0?'Fena değil. Seçme devam ediyor.':'Zorlandın ama seçme devam ediyor.';setTimeout(()=>{closeMini();const oldChance=chance;try{chance=function(j){return Math.max(7,Math.min(98,oldChance(j)+bonus))};baseResolve(perf)}finally{chance=oldChance}},650)}
 
+
  function mole(perf){
-   miniTitle.textContent='🔨 Casting Refleksi';miniScore.textContent='0 / 10';miniNote.textContent='Sahnedeki deliklerden çıkan fareye hızlıca dokun. Yanlış deliğe dokunma.';
-   let hit=0,round=0,timer=null,active=-1;
-   game.innerHTML='<div class="rs125-mole-stage"><div class="rs125-curtain">CASTING STAGE</div><div class="rs125-hole-grid"></div></div>';
-   const grid=game.querySelector('.rs125-hole-grid');
-   for(let i=0;i<9;i++){const h=document.createElement('button');h.className='rs125-hole';h.innerHTML='<span class="rs125-hole-shadow"></span><span class="rs125-mouse">🐭</span>';h.onclick=()=>{if(i!==active||h.classList.contains('hit'))return;h.classList.add('hit');hit++;miniScore.textContent=hit+' / 10';clearTimeout(timer);setTimeout(()=>{h.classList.remove('up','hit');spawn()},120)};grid.appendChild(h)}
+   miniTitle.textContent='🔨 Casting Refleksi';
+   miniScore.textContent='0 / 12';
+   miniNote.textContent='Fare çıkar çıkmaz dokun. Tur ilerledikçe daha hızlı olacak.';
+   let hit=0,round=0,timer=null,active=-1,ended=false;
+   game.innerHTML='<div class="rs127-mole-stage"><div class="rs127-game-status"><span>🎬 CANLI CASTING</span><b id="rs127MoleRound">1 / 12</b></div><div class="rs127-hole-grid"></div></div>';
+   const grid=game.querySelector('.rs127-hole-grid'),roundEl=game.querySelector('#rs127MoleRound');
+   for(let i=0;i<9;i++){
+     const h=document.createElement('button');
+     h.className='rs127-hole';
+     h.innerHTML='<span class="rs127-hole-dark"></span><span class="rs127-mouse">🐭</span><span class="rs127-hitfx">✨</span>';
+     h.addEventListener('pointerdown',()=>{
+       if(ended||i!==active||!h.classList.contains('up'))return;
+       h.classList.remove('up');h.classList.add('hit');active=-1;hit++;miniScore.textContent=hit+' / 12';
+       clearTimeout(timer);setTimeout(()=>{h.classList.remove('hit');spawn()},75);
+     });
+     grid.appendChild(h);
+   }
    const holes=[...grid.children];
    function spawn(){
-     holes.forEach(h=>h.classList.remove('up','hit'));active=-1;
-     if(round>=10)return finishMini(perf,Math.round(hit/10*100));
-     round++;active=Math.floor(Math.random()*holes.length);holes[active].classList.add('up');
-     timer=setTimeout(()=>{holes[active]?.classList.remove('up');spawn()},780-Math.min(220,round*14));
+     holes.forEach(h=>h.classList.remove('up','hit'));
+     if(round>=12){ended=true;return finishMini(perf,Math.round(hit/12*100))}
+     round++;roundEl.textContent=round+' / 12';
+     let next=Math.floor(Math.random()*holes.length);
+     if(next===active)next=(next+1)%holes.length;
+     active=next;holes[active].classList.add('up');
+     const speed=Math.max(390,650-round*18);
+     timer=setTimeout(()=>{holes[active]?.classList.remove('up');active=-1;spawn()},speed);
    }
-   setTimeout(spawn,250);
+   setTimeout(spawn,180);
  }
  function memory(perf){
-   miniTitle.textContent='🃏 Hafıza Provası';miniScore.textContent='Kartları ezberle';miniNote.textContent='12 kart 2 saniye açık kalacak. Sonra kapanınca 6 çifti hafızandan eşleştir.';
-   const vals=['🎬','🎭','⭐','🎤','🎥','🏆','🎬','🎭','⭐','🎤','🎥','🏆'].sort(()=>Math.random()-.5);
-   let open=[],done=0,mist=0,locked=true;
-   const wrap=document.createElement('div');wrap.className='rs122-memory rs125-memory';
-   vals.forEach((v,i)=>{const b=document.createElement('button');b.textContent=v;b.dataset.i=i;b.classList.add('open','preview');b.onclick=()=>{if(locked||b.classList.contains('done')||b.classList.contains('open')||open.length>=2)return;b.classList.add('open');open.push(b);if(open.length===2){locked=true;setTimeout(()=>{if(open[0].textContent===open[1].textContent){open.forEach(x=>x.classList.add('done'));done++;miniScore.textContent=done+' / 6 çift';if(done===6)return finishMini(perf,Math.max(25,100-mist*9))}else{mist++;open.forEach(x=>x.classList.remove('open'))}open=[];locked=false},430)}};wrap.appendChild(b)});
-   game.innerHTML='';game.appendChild(wrap);
-   let left=2;miniScore.textContent='2 sn';
-   setTimeout(()=>{left=1;miniScore.textContent='1 sn'},1000);
-   setTimeout(()=>{wrap.querySelectorAll('button').forEach(b=>b.classList.remove('open','preview'));locked=false;miniScore.textContent='0 / 6 çift';miniNote.textContent='Şimdi eşleştir — kartlar tekrar açılmayacak.'},2000);
+   miniTitle.textContent='🃏 Hafıza Provası';
+   miniScore.textContent='2.0 sn';
+   miniNote.textContent='12 kartı tam 2 saniye ezberle. Sonra hepsi kapanacak ve 6 çifti bulacaksın.';
+   const icons=['🎬','🎭','⭐','🎤','🎥','🏆'];
+   const vals=[...icons,...icons].sort(()=>Math.random()-.5);
+   let first=null,second=null,done=0,mist=0,locked=true,started=false;
+   game.innerHTML='<div class="rs127-memory-top"><b id="rs127MemoryState">EZBERLE</b><span id="rs127MemoryTimer">2.0 sn</span></div><div class="rs127-memory-grid"></div>';
+   const grid=game.querySelector('.rs127-memory-grid'),timerEl=game.querySelector('#rs127MemoryTimer'),stateEl=game.querySelector('#rs127MemoryState');
+   vals.forEach((v,i)=>{
+     const b=document.createElement('button');
+     b.className='rs127-memory-card preview';
+     b.dataset.value=v;b.dataset.i=i;
+     b.innerHTML='<span class="rs127-card-back">?</span><span class="rs127-card-face">'+v+'</span>';
+     b.onclick=()=>{
+       if(locked||!started||b.classList.contains('matched')||b.classList.contains('revealed'))return;
+       b.classList.add('revealed');
+       if(!first){first=b;return}
+       second=b;locked=true;
+       setTimeout(()=>{
+         if(first.dataset.value===second.dataset.value){
+           first.classList.add('matched');second.classList.add('matched');done++;
+           miniScore.textContent=done+' / 6 çift';
+           if(done===6)return finishMini(perf,Math.max(25,100-mist*10));
+         }else{
+           mist++;first.classList.remove('revealed');second.classList.remove('revealed');
+         }
+         first=null;second=null;locked=false;
+       },360);
+     };
+     grid.appendChild(b);
+   });
+   const start=performance.now();
+   function countdown(now){
+     if(started)return;
+     const left=Math.max(0,2000-(now-start));
+     timerEl.textContent=(left/1000).toFixed(1)+' sn';
+     miniScore.textContent=(left/1000).toFixed(1)+' sn';
+     if(left>0){requestAnimationFrame(countdown);return}
+     grid.querySelectorAll('.rs127-memory-card').forEach(b=>b.classList.remove('preview'));
+     stateEl.textContent='EŞLEŞTİR';timerEl.textContent='Başla';miniScore.textContent='0 / 6 çift';locked=false;started=true;
+   }
+   requestAnimationFrame(countdown);
  }
  function timing(perf){
-   miniTitle.textContent='🎯 Kamera Zamanlaması';miniScore.textContent='3 deneme';miniNote.textContent='Hareketli noktayı yeşil alandayken durdur.';
-   let tries=0,total=0,raf=0,start=performance.now();const wrap=document.createElement('div');wrap.className='rs122-timing-wrap';wrap.innerHTML='<div class="rs122-timing-bar"><i class="rs122-timing-zone"></i><b class="rs122-timing-dot"></b></div><button class="rs122-tap">ŞİMDİ!</button>';game.innerHTML='';game.appendChild(wrap);const dot=wrap.querySelector('.rs122-timing-dot'),btn=wrap.querySelector('.rs122-tap');function frame(t){const p=((t-start)%1450)/1450;const x=p<.5?p*2:(1-p)*2;dot.style.left='calc('+(x*100)+'% - 13px)';dot.dataset.x=x;raf=requestAnimationFrame(frame)}raf=requestAnimationFrame(frame);btn.onclick=()=>{const x=Number(dot.dataset.x||0),dist=Math.abs(x-.5),score=Math.max(0,100-Math.round(dist*260));total+=score;tries++;miniScore.textContent=tries+'/3 · '+score+' puan';if(tries>=3){cancelAnimationFrame(raf);finishMini(perf,Math.round(total/3))}}
+   miniTitle.textContent='🎯 Kamera Zamanlaması';
+   miniScore.textContent='0 / 4';
+   miniNote.textContent='Nokta yeşil alandayken ŞİMDİ’ye bas. 4 hızlı deneme var.';
+   let tries=0,total=0,raf=0,start=performance.now();
+   game.innerHTML='<div class="rs127-timing"><div class="rs127-timing-label">KAMERA HAZIR</div><div class="rs127-timing-bar"><i class="rs127-timing-zone"></i><b class="rs127-timing-dot"></b></div><button class="rs127-action">ŞİMDİ!</button></div>';
+   const dot=game.querySelector('.rs127-timing-dot'),btn=game.querySelector('.rs127-action');
+   function frame(t){const p=((t-start)%1000)/1000;const x=p<.5?p*2:(1-p)*2;dot.style.left='calc('+(x*100)+'% - 14px)';dot.dataset.x=x;raf=requestAnimationFrame(frame)}
+   raf=requestAnimationFrame(frame);
+   btn.onclick=()=>{
+     const x=Number(dot.dataset.x||0),dist=Math.abs(x-.5),score=Math.max(0,100-Math.round(dist*280));
+     total+=score;tries++;miniScore.textContent=tries+' / 4 · '+score+' puan';
+     btn.classList.add(score>=75?'good':'bad');setTimeout(()=>btn.classList.remove('good','bad'),120);
+     start=performance.now();
+     if(tries>=4){cancelAnimationFrame(raf);setTimeout(()=>finishMini(perf,Math.round(total/4)),120)}
+   };
  }
  function spotlight(perf){
-   miniTitle.textContent='💡 Spot Işığı';miniScore.textContent='0 / 8';miniNote.textContent='Spot ışığı nereye düşerse oraya dokun. Hızlı ol.';
-   let hit=0,round=0,timer=null;
-   game.innerHTML='<div class="rs125-spot-stage"><div class="rs125-stage-line"></div></div>';const stage=game.firstElementChild;
-   function next(){stage.querySelector('.rs125-spot')?.remove();if(round>=8)return finishMini(perf,Math.round(hit/8*100));round++;const b=document.createElement('button');b.className='rs125-spot';b.textContent='✨';b.style.left=(8+Math.random()*78)+'%';b.style.top=(8+Math.random()*68)+'%';b.onclick=()=>{hit++;miniScore.textContent=hit+' / 8';clearTimeout(timer);b.classList.add('caught');setTimeout(next,100)};stage.appendChild(b);timer=setTimeout(next,700)}
-   next();
+   miniTitle.textContent='💡 Spot Işığı';
+   miniScore.textContent='0 / 10';
+   miniNote.textContent='Spot belirir belirmez yakala. Her tur biraz hızlanır.';
+   let hit=0,round=0,timer=null,alive=false;
+   game.innerHTML='<div class="rs127-spot-stage"><div class="rs127-stage-floor"></div><div class="rs127-spot-label">STAGE</div></div>';
+   const stage=game.firstElementChild;
+   function next(){
+     stage.querySelector('.rs127-spot')?.remove();alive=false;
+     if(round>=10)return finishMini(perf,Math.round(hit/10*100));
+     round++;
+     const b=document.createElement('button');b.className='rs127-spot';b.textContent='✨';
+     b.style.left=(10+Math.random()*80)+'%';b.style.top=(12+Math.random()*64)+'%';alive=true;
+     b.onpointerdown=()=>{if(!alive)return;alive=false;hit++;miniScore.textContent=hit+' / 10';clearTimeout(timer);b.classList.add('caught');setTimeout(next,70)};
+     stage.appendChild(b);timer=setTimeout(next,Math.max(370,610-round*18));
+   }
+   setTimeout(next,180);
  }
  function sequence(perf){
-   miniTitle.textContent='🎬 Yönetmen Komutları';miniScore.textContent='İzle';miniNote.textContent='Komut sırasını izle, sonra aynı sırayla dokun.';
-   const icons=['⬅️','⬆️','➡️','⬇️'];const seq=Array.from({length:5},()=>Math.floor(Math.random()*4));let idx=0,wrong=0;
-   game.innerHTML='<div class="rs125-seq-display">Hazır</div><div class="rs125-seq-buttons">'+icons.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('')+'</div>';
-   const display=game.querySelector('.rs125-seq-display'),buttons=[...game.querySelectorAll('.rs125-seq-buttons button')];buttons.forEach(b=>b.disabled=true);
-   let p=0;const show=()=>{if(p>=seq.length){display.textContent='Şimdi sen!';buttons.forEach(b=>b.disabled=false);miniScore.textContent='0 / 5';return}display.textContent=icons[seq[p]];display.classList.add('flash');setTimeout(()=>{display.classList.remove('flash');display.textContent='•';p++;setTimeout(show,180)},520)};setTimeout(show,350);
-   buttons.forEach(b=>b.onclick=()=>{const v=Number(b.dataset.i);if(v===seq[idx]){idx++;miniScore.textContent=idx+' / 5';b.classList.add('ok');setTimeout(()=>b.classList.remove('ok'),130);if(idx===seq.length)finishMini(perf,Math.max(30,100-wrong*18))}else{wrong++;b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),150)}});
+   miniTitle.textContent='🎬 Yönetmen Komutları';
+   miniScore.textContent='İzle';
+   miniNote.textContent='6 komutu hızlıca izle; sonra aynı sırayla bas.';
+   const icons=['⬅️','⬆️','➡️','⬇️'];const seq=Array.from({length:6},()=>Math.floor(Math.random()*4));let idx=0,wrong=0;
+   game.innerHTML='<div class="rs127-seq-display">Hazır</div><div class="rs127-seq-buttons">'+icons.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('')+'</div>';
+   const display=game.querySelector('.rs127-seq-display'),buttons=[...game.querySelectorAll('.rs127-seq-buttons button')];
+   buttons.forEach(b=>b.disabled=true);
+   let p=0;
+   const show=()=>{
+     if(p>=seq.length){display.textContent='Şimdi sen!';buttons.forEach(b=>b.disabled=false);miniScore.textContent='0 / 6';return}
+     display.textContent=icons[seq[p]];display.classList.add('flash');
+     setTimeout(()=>{display.classList.remove('flash');display.textContent='•';p++;setTimeout(show,110)},330);
+   };
+   setTimeout(show,240);
+   buttons.forEach(b=>b.onclick=()=>{
+     const v=Number(b.dataset.i);
+     if(v===seq[idx]){
+       idx++;miniScore.textContent=idx+' / 6';b.classList.add('ok');setTimeout(()=>b.classList.remove('ok'),90);
+       if(idx===seq.length)setTimeout(()=>finishMini(perf,Math.max(25,100-wrong*15)),120);
+     }else{
+       wrong++;b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),110);
+     }
+   });
  }
  function reaction(perf){
-   miniTitle.textContent='🎭 Duygu Yakala';miniScore.textContent='0 / 6';miniNote.textContent='Üstte çıkan duygunun aynısını hızlıca seç.';
-   const moods=[['😢','Hüzün'],['😡','Öfke'],['😄','Neşe'],['😨','Korku']];let round=0,hit=0,target=0,timer=null;
-   game.innerHTML='<div class="rs125-mood-cue">Hazır</div><div class="rs125-mood-buttons">'+moods.map((m,i)=>'<button data-i="'+i+'"><span>'+m[0]+'</span><small>'+m[1]+'</small></button>').join('')+'</div>';
-   const cue=game.querySelector('.rs125-mood-cue'),buttons=[...game.querySelectorAll('.rs125-mood-buttons button')];
-   function next(){if(round>=6)return finishMini(perf,Math.round(hit/6*100));round++;target=Math.floor(Math.random()*moods.length);cue.textContent=moods[target][0]+' '+moods[target][1];clearTimeout(timer);timer=setTimeout(next,1050)}
-   buttons.forEach(b=>b.onclick=()=>{if(Number(b.dataset.i)===target){hit++;miniScore.textContent=hit+' / 6';b.classList.add('ok')}else b.classList.add('bad');setTimeout(()=>b.classList.remove('ok','bad'),130);clearTimeout(timer);next()});setTimeout(next,300);
+   miniTitle.textContent='🎭 Duygu Yakala';
+   miniScore.textContent='0 / 10';
+   miniNote.textContent='Duyguyu görür görmez aynısını seç. Artık çok daha hızlı.';
+   const moods=[['😢','Hüzün'],['😡','Öfke'],['😄','Neşe'],['😨','Korku'],['😐','Soğuk'],['🥹','Duygusal']];
+   let round=0,hit=0,target=0,timer=null,answered=false;
+   game.innerHTML='<div class="rs127-mood-cue">Hazır</div><div class="rs127-mood-buttons">'+moods.map((m,i)=>'<button data-i="'+i+'"><span>'+m[0]+'</span><small>'+m[1]+'</small></button>').join('')+'</div>';
+   const cue=game.querySelector('.rs127-mood-cue'),buttons=[...game.querySelectorAll('.rs127-mood-buttons button')];
+   function next(){
+     clearTimeout(timer);
+     if(round>=10)return finishMini(perf,Math.round(hit/10*100));
+     round++;answered=false;target=Math.floor(Math.random()*moods.length);
+     cue.textContent=moods[target][0]+' '+moods[target][1];
+     cue.classList.remove('pulse');requestAnimationFrame(()=>cue.classList.add('pulse'));
+     timer=setTimeout(()=>{if(answered)return;answered=true;cue.classList.add('miss');setTimeout(()=>{cue.classList.remove('miss');next()},90)},560);
+   }
+   buttons.forEach(b=>b.onpointerdown=()=>{
+     if(answered)return;answered=true;clearTimeout(timer);
+     const ok=Number(b.dataset.i)===target;
+     if(ok){hit++;miniScore.textContent=hit+' / 10';b.classList.add('ok')}else b.classList.add('bad');
+     setTimeout(()=>{b.classList.remove('ok','bad');next()},85);
+   });
+   setTimeout(next,180);
  }
  function startMini(perf){
-   if(miniBusy||!pendingAudition)return;miniBusy=true;document.querySelector('#auditionModal')?.classList.remove('show');mini.classList.add('show');mini.setAttribute('aria-hidden','false');
+   if(miniBusy||!pendingAudition)return;
+   miniBusy=true;document.querySelector('#auditionModal')?.classList.remove('show');mini.classList.add('show');mini.setAttribute('aria-hidden','false');
    const pool=[mole,memory,timing,spotlight,sequence,reaction];
-   const seed=(pendingAudition?.id||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0)+state.day+Math.floor(Math.random()*99);
+   const seed=(pendingAudition?.id||'').split('').reduce((a,c)=>a+c.charCodeAt(0),0)+state.day+Math.floor(Math.random()*999);
    pool[Math.abs(seed)%pool.length](perf);
  }
  resolveAudition=function(perf){startMini(perf)};
@@ -2162,6 +2270,85 @@ body.rs123-large .settings-section>p{font-size:13px!important}
  const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
  const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.6';
  document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.2.6 — Kapalı Beta':'Rol Senin 1.2.6';
+})();
+</script>
+
+<style id="rs127Style">
+/* 1.2.7 — mini-game polish + centered bottom navigation */
+#quickPagesBtn,#quickPages{display:none!important}
+.tabs{
+ left:50%!important;
+ right:auto!important;
+ transform:translateX(-50%)!important;
+ width:min(680px,calc(100% - 20px))!important;
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ justify-items:stretch!important;
+ align-items:stretch!important;
+ gap:6px!important;
+}
+.tabs .tab{width:100%!important;min-width:0!important;text-align:center!important}
+.float-nav{grid-template-columns:1fr!important}
+@media(max-width:560px){
+ .tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important;width:calc(100% - 14px)!important;padding:7px!important;gap:4px!important}
+ .tabs .tab{padding:9px 2px!important;font-size:9px!important}
+ .tabs .tab span{font-size:17px!important}
+}
+
+/* Memory: faces are truly hidden unless preview/revealed/matched */
+.rs127-memory-top{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 10px;font-size:10px;color:var(--muted)}
+.rs127-memory-top b{color:var(--accent);letter-spacing:.8px}
+.rs127-memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.rs127-memory-card{height:58px;border:1px solid var(--line);border-radius:15px;background:var(--panel);position:relative;overflow:hidden;color:var(--text)}
+.rs127-memory-card span{position:absolute;inset:0;display:grid;place-items:center;transition:opacity .12s ease,transform .12s ease}
+.rs127-card-back{font-size:18px;color:var(--muted);opacity:1;transform:scale(1)}
+.rs127-card-face{font-size:25px;opacity:0;transform:scale(.72)}
+.rs127-memory-card.preview .rs127-card-back,.rs127-memory-card.revealed .rs127-card-back,.rs127-memory-card.matched .rs127-card-back{opacity:0;transform:scale(.7)}
+.rs127-memory-card.preview .rs127-card-face,.rs127-memory-card.revealed .rs127-card-face,.rs127-memory-card.matched .rs127-card-face{opacity:1;transform:scale(1)}
+.rs127-memory-card.matched{background:color-mix(in srgb,var(--good) 12%,var(--panel));border-color:color-mix(in srgb,var(--good) 35%,var(--line));opacity:.72}
+
+/* Mouse/reflex polish */
+.rs127-mole-stage{height:100%;min-height:245px;padding:10px;border-radius:18px;background:radial-gradient(circle at 50% -10%,rgba(255,205,90,.16),transparent 42%),linear-gradient(180deg,#171d2b,#0c111b);overflow:hidden}
+.rs127-game-status{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 9px;font-size:9px;color:var(--muted);letter-spacing:1.2px}.rs127-game-status b{color:var(--accent)}
+.rs127-hole-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:340px;margin:auto}
+.rs127-hole{height:62px;border:0;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(0,0,0,.10));position:relative;overflow:hidden}
+.rs127-hole-dark{position:absolute;left:10%;right:10%;bottom:5px;height:22px;border-radius:50%;background:#05070b;box-shadow:inset 0 7px 9px rgba(0,0,0,.55),0 3px 12px rgba(0,0,0,.25)}
+.rs127-mouse{position:absolute;left:50%;bottom:-45px;transform:translateX(-50%);font-size:38px;transition:bottom .09s cubic-bezier(.2,.9,.2,1),transform .08s ease}
+.rs127-hole.up .rs127-mouse{bottom:6px}.rs127-hole.hit .rs127-mouse{bottom:5px;transform:translateX(-50%) scale(.68) rotate(-12deg)}
+.rs127-hitfx{position:absolute;left:50%;top:5px;transform:translateX(-50%) scale(.4);opacity:0;font-size:20px}.rs127-hole.hit .rs127-hitfx{opacity:1;transform:translateX(-50%) scale(1)}
+
+/* Timing */
+.rs127-timing{height:100%;display:grid;align-content:center;gap:18px;padding:12px}
+.rs127-timing-label{text-align:center;color:var(--muted);font-size:9px;letter-spacing:1.5px;font-weight:900}
+.rs127-timing-bar{height:36px;border-radius:999px;background:rgba(255,255,255,.07);position:relative;overflow:hidden;border:1px solid var(--line)}
+.rs127-timing-zone{position:absolute;left:42%;width:16%;height:100%;background:color-mix(in srgb,var(--good) 28%,transparent);border-left:2px solid var(--good);border-right:2px solid var(--good)}
+.rs127-timing-dot{position:absolute;top:4px;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 5px 16px rgba(0,0,0,.32)}
+.rs127-action{border:0;border-radius:16px;padding:14px 22px;background:linear-gradient(135deg,var(--accent),var(--accent2));font-weight:1000;color:#111}.rs127-action.good{outline:3px solid var(--good)}.rs127-action.bad{outline:3px solid var(--bad)}
+
+/* Spotlight */
+.rs127-spot-stage{height:100%;min-height:245px;position:relative;border-radius:17px;background:radial-gradient(circle at 50% 85%,rgba(255,255,255,.08),transparent 35%),linear-gradient(180deg,#111623,#080b12);overflow:hidden}
+.rs127-stage-floor{position:absolute;left:0;right:0;bottom:0;height:28%;background:linear-gradient(180deg,transparent,rgba(255,255,255,.035))}
+.rs127-spot-label{position:absolute;top:10px;left:0;right:0;text-align:center;font-size:9px;letter-spacing:3px;color:var(--muted)}
+.rs127-spot{position:absolute;width:50px;height:50px;border:0;border-radius:50%;background:radial-gradient(circle,#fff7c6 0,#ffd861 34%,rgba(255,216,97,.17) 66%,transparent 72%);font-size:20px;transform:translate(-50%,-50%);box-shadow:0 0 42px rgba(255,220,105,.36)}
+.rs127-spot.caught{transform:translate(-50%,-50%) scale(.55);opacity:.4}
+
+/* Sequence */
+.rs127-seq-display{height:105px;display:grid;place-items:center;font-size:48px;font-weight:1000;border-radius:18px;background:rgba(255,255,255,.035);margin:10px 0}.rs127-seq-display.flash{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.rs127-seq-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.rs127-seq-buttons button{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:15px;min-height:58px;font-size:25px}.rs127-seq-buttons button.ok{outline:2px solid var(--good)}.rs127-seq-buttons button.bad{outline:2px solid var(--bad)}
+
+/* Faster reaction */
+.rs127-mood-cue{height:86px;display:grid;place-items:center;font-size:31px;font-weight:1000;border-radius:18px;background:rgba(255,255,255,.04);margin:7px 0 10px;transition:transform .08s ease,background .08s ease}
+.rs127-mood-cue.pulse{transform:scale(1.025);background:color-mix(in srgb,var(--accent) 10%,transparent)}.rs127-mood-cue.miss{background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.rs127-mood-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.rs127-mood-buttons button{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:14px;min-height:58px;display:grid;place-items:center;gap:1px}.rs127-mood-buttons button span{font-size:24px}.rs127-mood-buttons button small{font-size:8px;color:var(--muted)}.rs127-mood-buttons button.ok{outline:2px solid var(--good)}.rs127-mood-buttons button.bad{outline:2px solid var(--bad)}
+</style>
+<script id="rs127Script">
+(()=>{
+ const VERSION='1.2.7';
+ document.querySelector('#quickPagesBtn')?.remove();
+ document.querySelector('#quickPages')?.remove();
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.7';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.2.7 — Kapalı Beta':'Rol Senin 1.2.7';
 })();
 </script>
 </body>
