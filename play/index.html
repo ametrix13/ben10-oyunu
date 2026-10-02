@@ -1608,16 +1608,16 @@ body.rs119-refine .social114-profile-box{border-radius:19px}
 <script id="rs121PlayScript">
 (()=>{
  document.documentElement.dataset.playConsole='closed-beta';
- localStorage.setItem('rolSeninSeenVersion','1.2.1');
- localStorage.setItem('rolSeninSeenVersion112','1.2.1');
- localStorage.setItem('rolSeninSeenVersion113','1.2.1');
- localStorage.setItem('rolSeninSeenVersion114','1.2.1');
+ localStorage.setItem('rolSeninSeenVersion','1.2.2');
+ localStorage.setItem('rolSeninSeenVersion112','1.2.2');
+ localStorage.setItem('rolSeninSeenVersion113','1.2.2');
+ localStorage.setItem('rolSeninSeenVersion114','1.2.2');
  const up=document.querySelector('#updateModal');if(up){up.classList.remove('show');up.setAttribute('aria-hidden','true')}
  const brand=document.querySelector('.brand');
  if(brand&&!document.querySelector('.rs121-beta-badge')){
    const b=document.createElement('span');b.className='rs121-beta-badge';b.innerHTML='<i class="rs121-beta-dot"></i>KAPALI BETA';brand.querySelector('b,h1,h2')?.appendChild(b)||brand.appendChild(b);
  }
- const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.1 · CLOSED BETA';
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.2 · CLOSED BETA';
  document.title='Rol Senin 1.2.2 — Kapalı Beta';
  setTimeout(()=>{const m=document.querySelector('#updateModal');if(m)m.classList.remove('show')},350);
 })();
@@ -1680,7 +1680,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
  const VERSION='1.2.2';
  const vp=document.querySelector('meta[name="viewport"]');if(vp&&!vp.content.includes('viewport-fit'))vp.content+=', viewport-fit=cover';
  const profile=document.querySelector('.profile'),row=profile?.querySelector('.profile-row'),brand=document.querySelector('.brand');
- if(profile&&row&&brand&&!document.querySelector('.rs122-wordmark')){const w=document.createElement('div');w.className='rs122-wordmark';w.textContent='ROL SENİN';brand.innerHTML='';brand.append(w,row);profile.classList.add('rs122-profile-moved')}
+ if(profile&&row&&brand&&!document.querySelector('.rs122-wordmark')){const w=document.createElement('div');w.className='rs122-wordmark';w.textContent='ROL SENİN';brand.innerHTML='';brand.append(w,row);profile.classList.add('rs122-profile-moved');if(document.documentElement.dataset.playConsole==='closed-beta'){const b=document.createElement('span');b.className='rs121-beta-badge';b.innerHTML='<i class="rs121-beta-dot"></i>KAPALI BETA';w.appendChild(b)}}
  const headshot=document.querySelector('#headshotBtn');if(headshot){headshot.disabled=true;headshot.setAttribute('aria-hidden','true')}
  const classic=document.querySelector('#classicUiBtn');if(classic)classic.remove();document.querySelectorAll('.classic-note').forEach(x=>x.remove());
  const settings=document.querySelector('#settingsModal');if(settings){settings.querySelectorAll('.settings-section').forEach(sec=>{const h=sec.querySelector('h3');if(h?.textContent.includes('Görünüm')){const p=sec.querySelector('p');if(p)p.textContent='Kapalı beta görünümü artık tek ve güncel tasarım üzerinden devam ediyor.'}})}
