@@ -1837,5 +1837,103 @@ body.rs123-large .settings-section>p{font-size:13px!important}
  try{save()}catch(_){}
 })();
 </script>
+
+<style id="rs124Style">
+.rs124-energy-pop{
+ position:fixed;
+ left:50%;
+ bottom:92px;
+ z-index:420;
+ transform:translate(-50%,18px) scale(.96);
+ opacity:0;
+ pointer-events:none;
+ display:flex;
+ align-items:center;
+ gap:8px;
+ max-width:calc(100vw - 28px);
+ padding:9px 13px;
+ border-radius:999px;
+ border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));
+ background:color-mix(in srgb,var(--panel) 92%,transparent);
+ color:var(--text);
+ box-shadow:0 12px 35px rgba(0,0,0,.26);
+ backdrop-filter:blur(16px);
+ -webkit-backdrop-filter:blur(16px);
+ font-size:11px;
+ font-weight:850;
+ white-space:nowrap;
+ transition:opacity .18s ease,transform .18s ease;
+}
+.rs124-energy-pop.show{opacity:1;transform:translate(-50%,0) scale(1)}
+.rs124-energy-pop b{color:var(--accent);font-size:12px}
+.rs124-energy-pop .rs124-bolt{font-size:15px}
+@media(max-width:620px){
+ .rs124-energy-pop{
+   bottom:calc(78px + env(safe-area-inset-bottom));
+   padding:8px 11px;
+   font-size:10px;
+ }
+ .rs124-energy-pop b{font-size:11px}
+}
+</style>
+<div class="rs124-energy-pop" id="rs124EnergyPop" role="status" aria-live="polite" aria-atomic="true">
+ <span class="rs124-bolt">⚡</span>
+ <span id="rs124EnergyPopText"></span>
+</div>
+<script id="rs124Script">
+(()=>{
+ const VERSION='1.2.4';
+ const pop=document.querySelector('#rs124EnergyPop');
+ const text=document.querySelector('#rs124EnergyPopText');
+ let hideTimer=0;
+ let lastEnergy124=Number(typeof state!=='undefined' ? state.energy : 100);
+
+ function showSpend124(spent,left){
+   if(!pop||!text||spent<=0)return;
+   clearTimeout(hideTimer);
+   const s=Math.max(1,Math.round(spent));
+   const l=Math.max(0,Math.round(left));
+   text.innerHTML='Enerjin <b>'+s+'</b> azaldı · <b>'+l+'</b> kaldı';
+   pop.classList.remove('show');
+   requestAnimationFrame(()=>requestAnimationFrame(()=>pop.classList.add('show')));
+   hideTimer=setTimeout(()=>pop.classList.remove('show'),1500);
+ }
+ window.showEnergySpend124=showSpend124;
+
+ try{
+   const prevUpdate124=update;
+   update=function(){
+     const previous=lastEnergy124;
+     const result=prevUpdate124.apply(this,arguments);
+     const current=Number(state.energy);
+     if(Number.isFinite(previous)&&Number.isFinite(current)&&current<previous-.01){
+       showSpend124(previous-current,current);
+     }
+     lastEnergy124=current;
+     return result;
+   };
+ }catch(_){}
+
+ document.addEventListener('visibilitychange',()=>{
+   if(!document.hidden&&typeof state!=='undefined')lastEnergy124=Number(state.energy);
+ });
+
+ const tag=document.querySelector('.vtag');
+ if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');
+ if(live)live.textContent='v1.2.4';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'
+   ? 'Rol Senin 1.2.4 — Kapalı Beta'
+   : 'Rol Senin 1.2.4';
+
+ const um=document.querySelector('#updateModal');
+ if(um&&document.documentElement.dataset.playConsole!=='closed-beta'){
+   const h=um.querySelector('h2'),p=um.querySelector('p'),list=um.querySelector('.update-list');
+   if(h)h.textContent='ROL SENİN 1.2.4';
+   if(p)p.textContent='Enerji harcadığında ne kadar azaldığını artık anında görebilirsin.';
+   if(list)list.innerHTML='<div class="update-item"><b>⚡ Enerji bildirimi</b>Enerji harcayan her işlemden sonra altta kısa bir bildirim çıkar: ne kadar enerji harcadığını ve ne kadar kaldığını gösterir.</div>';
+ }
+})();
+</script>
 </body>
 </html>
