@@ -1711,5 +1711,131 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
  update();
 })();
 </script>
+
+<style id="rs123Style">
+/* 1.2.3 — compact spacing + optional large UI */
+#headshotBtn{display:none!important;visibility:hidden!important;pointer-events:none!important}
+body[data-rs122-page="home"] .hero{gap:5px!important;align-items:start!important}
+body[data-rs122-page="home"] .profile.rs122-profile-moved,
+body[data-rs122-page="home"] .quick{min-height:0!important;height:auto!important;margin:0!important}
+body[data-rs122-page="home"] .profile.rs122-profile-moved .energy-wrap{margin-bottom:0!important}
+body[data-rs122-page="home"] .quick-grid{margin-bottom:0!important}
+.rs123-size-actions{display:flex;gap:7px;flex-wrap:wrap}
+.rs123-size-actions .settings-btn.active{border-color:var(--accent)!important;background:color-mix(in srgb,var(--accent) 16%,var(--panel2))!important;color:var(--text)!important}
+
+/* Large UI is opt-in; default appearance is untouched. */
+body.rs123-large .topbar{min-height:86px!important}
+body.rs123-large .topbar .profile-row .avatar{width:48px!important;height:48px!important;font-size:24px!important}
+body.rs123-large .topbar .profile-row h2{font-size:18px!important;max-width:250px}
+body.rs123-large .topbar .profile-row .rank{font-size:10px!important;max-width:240px}
+body.rs123-large .topbar .profile-row .day{font-size:10px!important}
+body.rs123-large .icon-btn,body.rs123-large .settings-top-btn{min-width:44px!important;min-height:44px!important;font-size:15px!important}
+body.rs123-large .profile.rs122-profile-moved{padding:18px 20px!important}
+body.rs123-large .profile.rs122-profile-moved .stat{padding:13px 10px!important}
+body.rs123-large .profile.rs122-profile-moved .stat b{font-size:17px!important}
+body.rs123-large .profile.rs122-profile-moved .stat span{font-size:10px!important}
+body.rs123-large .energy-head{font-size:13px!important}
+body.rs123-large .bar{height:12px!important}
+body.rs123-large .quick{padding:20px!important}
+body.rs123-large .quick h3{font-size:19px!important}
+body.rs123-large .quick p{font-size:13px!important}
+body.rs123-large .quick-grid button{min-height:78px!important;padding:16px!important;font-size:14px!important;border-radius:18px!important}
+body.rs123-large .quick-grid button small{font-size:11px!important}
+body.rs123-large .section-title h3{font-size:20px!important}
+body.rs123-large .section-title p{font-size:12px!important}
+body.rs123-large .job h4{font-size:19px!important}
+body.rs123-large .job p{font-size:13px!important}
+body.rs123-large .job button,
+body.rs123-large .online-btn,
+body.rs123-large .mini-btn,
+body.rs123-large .settings-btn{min-height:46px!important;font-size:12px!important;padding:11px 13px!important}
+body.rs123-large input,body.rs123-large select,body.rs123-large textarea{min-height:46px!important;font-size:14px!important}
+body.rs123-large .tabs .tab{min-height:64px!important;font-size:11px!important}
+body.rs123-large .tabs .tab span{font-size:21px!important}
+body.rs123-large .settings-section{padding:20px!important}
+body.rs123-large .settings-section h3{font-size:16px!important}
+body.rs123-large .settings-section>p{font-size:13px!important}
+@media(max-width:620px){
+ body[data-rs122-page="home"] .hero{display:flex!important;flex-direction:column!important;gap:4px!important}
+ body[data-rs122-page="home"] .profile.rs122-profile-moved,
+ body[data-rs122-page="home"] .quick{width:100%!important}
+ body[data-rs122-page="home"] .quick-grid{grid-template-columns:1fr 1fr!important;gap:7px!important}
+ body[data-rs122-page="home"] #socialBtn{grid-column:1/-1}
+ body.rs123-large .topbar{min-height:78px!important}
+ body.rs123-large .topbar .profile-row .avatar{width:43px!important;height:43px!important;font-size:22px!important}
+ body.rs123-large .topbar .profile-row h2{font-size:16px!important;max-width:155px}
+ body.rs123-large .topbar .profile-row .rank{max-width:155px}
+ body.rs123-large .quick-grid button{min-height:74px!important;font-size:13px!important}
+ body.rs123-large .tabs .tab{min-height:62px!important}
+}
+</style>
+<script id="rs123Script">
+(()=>{
+ const VERSION='1.2.3';
+ if(typeof state!=='undefined'){
+   state.uiMode='modern';
+   if(!state.uiSize123)state.uiSize123='default';
+ }
+ const headshot=document.querySelector('#headshotBtn');
+ if(headshot){headshot.style.display='none';headshot.disabled=true;headshot.setAttribute('aria-hidden','true')}
+
+ function applySize123(){
+   const large=(state?.uiSize123==='large');
+   document.body.classList.toggle('rs123-large',large);
+   document.querySelector('#rs123DefaultSize')?.classList.toggle('active',!large);
+   document.querySelector('#rs123LargeSize')?.classList.toggle('active',large);
+ }
+ function setSize123(size){
+   if(typeof state==='undefined')return;
+   state.uiSize123=size==='large'?'large':'default';
+   applySize123();
+   try{save()}catch(_){}
+   try{toast(state.uiSize123==='large'?'Büyük görünüm aktif':'Varsayılan görünüm aktif')}catch(_){}
+ }
+ window.setSize123=setSize123;
+
+ const settings=document.querySelector('#settingsModal');
+ if(settings){
+   const appearance=[...settings.querySelectorAll('.settings-section')].find(sec=>sec.querySelector('h3')?.textContent.includes('Görünüm'));
+   if(appearance){
+     const p=appearance.querySelector('p');
+     if(p)p.textContent='Görünüm aynı kalır; yalnızca arayüz boyutunu seçebilirsin.';
+     const row=appearance.querySelector('.setting-row');
+     if(row){
+       const info=row.querySelector('.setting-row-info');
+       if(info)info.innerHTML='<b>Arayüz boyutu</b><small>Varsayılan şu an kullandığın boyuttur. Büyük Görünüm düğmeleri, yazıları ve dokunma alanlarını büyütür.</small>';
+       let actions=row.querySelector('.setting-actions');
+       if(!actions){actions=document.createElement('div');actions.className='setting-actions';row.appendChild(actions)}
+       actions.classList.add('rs123-size-actions');
+       actions.innerHTML='<button class="settings-btn" id="rs123DefaultSize">Varsayılan</button><button class="settings-btn" id="rs123LargeSize">Büyük Görünüm</button>';
+       actions.querySelector('#rs123DefaultSize').onclick=()=>setSize123('default');
+       actions.querySelector('#rs123LargeSize').onclick=()=>setSize123('large');
+     }
+     appearance.querySelectorAll('#modernUiBtn,#classicUiBtn,.classic-note').forEach(x=>x.remove());
+   }
+ }
+ document.querySelector('#settingsBtn')?.addEventListener('click',()=>setTimeout(applySize123,20));
+
+ /* Keep current visual design, remove old Flow naming from the visible UI. */
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.3';
+ document.title='Rol Senin 1.2.3';
+ const updateModal=document.querySelector('#updateModal');
+ if(updateModal){
+   const h=updateModal.querySelector('h2');
+   if(h&&/FLOW/i.test(h.textContent||''))h.textContent='ROL SENİN 1.2.3';
+   const p=updateModal.querySelector('p');
+   if(p&&/flow/i.test(p.textContent||''))p.textContent='Arayüz düzeni sadeleştirildi ve isteğe bağlı Büyük Görünüm eklendi.';
+   updateModal.querySelectorAll('.update-callout').forEach(x=>{if(/klasik|flow|eski tasarım/i.test(x.textContent||''))x.remove()});
+ }
+ document.querySelectorAll('.rs117-polish-note').forEach(x=>x.remove());
+
+ try{
+   const prevUpdate=update;
+   update=function(){prevUpdate();applySize123();if(headshot){headshot.style.display='none';headshot.disabled=true}}
+ }catch(_){}
+ applySize123();
+ try{save()}catch(_){}
+})();
+</script>
 </body>
 </html>
