@@ -2470,7 +2470,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .rs128-page-energy{display:b
     ((p.type||p.post_type)==='photo'?'<div class="social114-photo"><span>'+esc128(style128[p.style]||'📸 Fotoğraf')+'</span></div>':'')+
     '<div class="social114-caption">'+esc128(p.caption||'')+'</div>'+
     '<div class="social114-eng"><span>♥ '+fmt128(p.likes)+'</span><span>💬 '+fmt128(p.comments)+'</span><span>↗ +'+fmt128(p.followers??p.followers_gain)+' takipçi</span></div>'+
-    '<div class="social128-comments">'+cs.map(c=>'<div class="social128-comment"><span>💬</span><div><b>'+esc128(c.h)+'</b>'+esc128(c.t)+'</div></div>').join('')+'</div></article>';
+    '<div class="rs115-social-comments social128-comments">'+cs.map(c=>'<div class="social128-comment"><span>💬</span><div><b>'+esc128(c.h)+'</b>'+esc128(c.t)+'</div></div>').join('')+'</div></article>';
  }
  async function loadRemote128(){
    if(feedLoading128||!onlineToken)return;
@@ -2505,25 +2505,32 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .rs128-page-energy{display:b
      prof.innerHTML=own.length?own.map(x=>card128(x.p,true)).join(''):'<div class="social114-empty">Henüz kendi gönderin yok.</div>';
    }
  }
- async function syncLatestPost128(){
-   if(!onlineToken)return;
-   const posts=state.social114?.posts;if(!Array.isArray(posts)||!posts.length)return;
-   const p=posts[posts.length-1];
+ async function publishOne128(p){
+   if(!onlineToken||!p)return false;
    state.social128Synced=state.social128Synced||[];
-   if(state.social128Synced.includes(p.id))return;
+   if(state.social128Synced.includes(p.id))return true;
    try{
      await rpc('actor_social_publish',{
        p_token:onlineToken,p_type:p.type,p_style:p.type==='text'?'text':p.style,p_caption:p.caption,
        p_likes:Math.round(p.likes||0),p_comments:Math.round(p.comments||0),p_followers:Math.round(p.followers||0),
        p_viral:!!p.viral,p_day:Math.round(p.day||state.day||1)
      });
-     state.social128Synced.push(p.id);state.social128Synced=state.social128Synced.slice(-80);save();
-     await loadRemote128();
-   }catch(_){}
+     state.social128Synced.push(p.id);state.social128Synced=state.social128Synced.slice(-80);save();return true;
+   }catch(_){return false}
+ }
+ async function syncLatestPost128(){
+   const posts=state.social114?.posts;if(!Array.isArray(posts)||!posts.length)return;
+   await publishOne128(posts[posts.length-1]);await loadRemote128();
+ }
+ async function syncBacklog128(){
+   if(!onlineToken)return;
+   const posts=Array.isArray(state.social114?.posts)?state.social114.posts.slice(-12):[];
+   for(const p of posts)await publishOne128(p);
+   await loadRemote128();
  }
  document.querySelector('#social114Share')?.addEventListener('click',()=>setTimeout(syncLatestPost128,120));
  document.querySelectorAll('[data-s114-tab]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{renderSocial128();if(b.dataset.s114Tab==='feed'||b.dataset.s114Tab==='profile')loadRemote128()},80)));
- document.querySelector('#socialBtn')?.addEventListener('click',()=>setTimeout(()=>{renderSocial128();loadRemote128()},120));
+ document.querySelector('#socialBtn')?.addEventListener('click',()=>setTimeout(()=>{renderSocial128();syncBacklog128()},120));
 
  // Keep local UI and secondary pages synced.
  try{
@@ -2538,7 +2545,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .rs128-page-energy{display:b
  const mo128=new MutationObserver(()=>wireEnergyButtons128());
  mo128.observe(document.body,{childList:true,subtree:true});
  wireEnergyButtons128();
- if(onlineToken)setTimeout(loadRemote128,300);
+ if(onlineToken)setTimeout(syncBacklog128,300);
 
  const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
  const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.8';
