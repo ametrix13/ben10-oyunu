@@ -341,7 +341,7 @@ function chance(job){let a=agencies.find(x=>x.id===state.agency),m=managers.find
 function can(job){return state.skill>=job.skill && state.fame>=job.fame && state.energy>=job.energy}
 function update(){
  document.querySelector('#playerName').textContent=state.name||'Oyuncu'; document.querySelector('#avatar').textContent=state.avatar; document.querySelector('#rank').textContent=rank(); document.querySelector('#day').textContent=state.day; document.querySelector('#level').textContent=level();
- document.querySelector('#money').textContent=fmt(state.money); document.querySelector('#fame').textContent=Math.round(state.fame); document.querySelector('#skill').textContent=Math.round(state.skill); document.querySelector('#followers').textContent=Math.round(state.followers).toLocaleString('tr-TR'); document.querySelector('#energyText').textContent=`${Math.round(state.energy)} / ${maxEnergy125()}`; document.querySelector('#energyFill').style.width=Math.max(0,Math.min(100,state.energy))+'%';
+ document.querySelector('#money').textContent=fmt(state.money); document.querySelector('#fame').textContent=Math.round(state.fame); document.querySelector('#skill').textContent=Math.round(state.skill); document.querySelector('#followers').textContent=Math.round(state.followers).toLocaleString('tr-TR'); document.querySelector('#energyText').textContent=`${Math.round(state.energy)} / ${maxEnergy125()}`; document.querySelector('#energyFill').style.width=Math.max(0,Math.min(100,state.energy/maxEnergy125()*100))+'%';
  ensureDaily(); renderJobs(); renderHistory(); renderCareer(); renderDailyMissions(); renderFanMeet(); renderStudio(); applyTheme(); checkAchievements(); syncButtons(); save();
 }
 function jobCard(j){const locked=state.skill<j.skill||state.fame<j.fame; const enoughEnergy=state.energy>=j.energy; const c=chance(j),tr=getTrend(),hot=tr.types.includes(j.type); return `<article class="card job ${locked?'locked':''}"><div class="job-top"><div><div class="job-type">${j.type}${hot?' · 🔥 TREND':''}</div><h4>${j.title}</h4></div><div class="job-icon">${j.icon}</div></div><p>${j.desc}</p><div class="chips"><span class="chip">🎭 ${j.skill} oyunculuk</span><span class="chip">⭐ ${j.fame} şöhret</span><span class="chip">⚡ ${j.energy}</span>${hot?'<span class="chip">📈 sektör bonusu</span>':''}</div><div class="pay">${fmt(Math.round(j.pay*(hot?1+tr.pay:1)))}</div><div class="success">Başarı şansı: %${c}</div><button onclick="audition('${j.id}')" ${(!can(j))?'disabled':''}>${locked?'Şartları Tamamla':!enoughEnergy?'Enerji Gerekli':'Seçme Sahnesine Gir'}</button></article>`}
@@ -467,7 +467,7 @@ async function logoutOnline(){try{if(onlineToken)await rpc('actor_logout',{p_tok
 
 // UI EVENTS
 document.querySelector('#trainBtn').onclick=()=>{if(state.money<500||state.energy<20)return;state.money-=500;state.energy-=20;state.skill+=3;state.day++;bumpDaily('training');addHistory('🎭 Oyunculuk dersine katıldın. +3 oyunculuk.','good');toast('+3 oyunculuk');update()};
-document.querySelector('#restBtn').onclick=()=>{state.energy=Math.min(100,state.energy+55);state.day++;addHistory('🛌 Dinlendin ve enerjini topladın.');toast('Enerji yenilendi');update()};
+document.querySelector('#restBtn').onclick=()=>{state.energy=Math.min(maxEnergy125(),state.energy+55);state.day++;addHistory('🛌 Dinlendin ve enerjini topladın.');toast('Enerji yenilendi');update()};
 document.querySelector('#socialBtn').onclick=()=>{if(state.energy<10)return;state.energy-=10;state.day++;bumpDaily('social');const f=120+Math.floor(Math.random()*420);state.followers+=f;if(Math.random()>.55)state.fame+=2;addHistory(`📱 Sosyal medyada paylaşım yaptın. +${f} takipçi.`,'good');maybeScandal('social');toast(`+${f} takipçi`);update()};
 document.querySelector('#headshotBtn').onclick=()=>{if(state.money<1000||state.energy<12)return;state.money-=1000;state.energy-=12;state.day++;state.fame+=5;state.followers+=180;addHistory('📸 Yeni portfolyo fotoğrafları çektirdin. +5 şöhret.','good');toast('+5 şöhret');update()};
 document.querySelector('#awardBtn').onclick=attendAwards;document.querySelector('#fanMeetBtn').onclick=fanMeet;
@@ -621,7 +621,7 @@ body.ui-modern .energy-panel111{background:rgba(18,24,38,.86)}
  ];
  const sheet=document.querySelector('#energySheet111'),list=document.querySelector('#energyList111'),close=document.querySelector('#energyClose111'),rest=document.querySelector('#restBtn');
  function syncEnergy111(){
-   const now=document.querySelector('#energyNow111');if(now)now.textContent=`${Math.round(state.energy)} / 100`;
+   const now=document.querySelector('#energyNow111');if(now)now.textContent=`${Math.round(state.energy)} / ${maxEnergy125()}`;
    if(!list)return;list.innerHTML=opts.map(o=>`<button class="energy-option111" data-energy-id="${o.id}" ${(state.energy>=maxEnergy125()||(o.cost&&state.money<o.cost))?'disabled':''}><span class="energy-gain111">+${o.gain} ⚡</span><span class="energy-icon111">${o.icon}</span><b>${o.name}</b><small>${o.desc}<br><span class="energy-price111">${o.cost?fmt(o.cost):'Ücretsiz'}</span>${o.day?' · +1 gün':''}</small></button>`).join('');
    list.querySelectorAll('[data-energy-id]').forEach(b=>b.onclick=()=>useEnergy111(b.dataset.energyId));
  }
@@ -831,7 +831,7 @@ body:not(.ui-lounge) .social114{background:#0d0e11;color:#f7f7f8}.ui-modern .soc
    <section class="social114-page" data-s114-page="profile">
     <div class="social114-hero"><div class="social114-user"><div class="social114-avatar" id="social114ProfileAv">🎬</div><div><b id="social114ProfileName">Oyuncu</b><small id="social114ProfileHandle">@oyuncu</small></div></div></div>
     <div class="social114-profile-grid"><div class="social114-profile-box"><b id="social114ProfilePosts">0</b><span>Toplam gönderi</span></div><div class="social114-profile-box"><b id="social114ProfileLikes">0</b><span>Toplam beğeni</span></div><div class="social114-profile-box"><b id="social114ProfileComments">0</b><span>Toplam yorum</span></div><div class="social114-profile-box"><b id="social114ProfileGrowth">+0</b><span>Sosyal medyadan takipçi</span></div></div>
-    <div class="social114-tip" id="social114ProfileTip">Düzenli paylaşım yaptıkça profilin güçlenir.</div>
+    <div class="social114-tip" id="social114ProfileTip">Düzenli paylaşım yaptıkça profilin güçlenir.</div><div class="social114-section-title rs128-profile-post-title"><b>Gönderilerin</b><span>Profilinde görünen paylaşımlar</span></div><div class="social114-feed" id="rs128ProfilePosts"></div>
    </section>
   </div>
   <div class="social114-toast" id="social114Toast">Paylaşıldı</div>
@@ -911,7 +911,7 @@ body:not(.ui-lounge) .rs115-shell,body.ui-modern .rs115-shell{background:#101116
  const VERSION='1.1.5';
  const KEY='rolSeninWorld115';
  const imageLabels={cool:'😎 Cool',sweet:'💗 Tatlı',rebel:'⚡ Asi',mystery:'🌙 Gizemli',scandal:'🔥 Skandallı'};
- const commentPools={fan:['ikon yine ikon.','bu aura yasal mı?','yeni projeyi bekliyoruz 😭','başrol enerjisi.','bunu duvar kağıdı yaptım.'],press:['Basın bu paylaşımı konuşuyor.','Yeni imaj değişimi dikkat çekti.','Sektörde etkisi merak konusu.'],hater:['abartıldığı kadar yok.','PR ekibi yine çalışmış.','tamam da oyunculuk?'],npc:['sette de böyle rahatsın umarım 😌','bunu gördüm ve sustum.','yarın sette konuşuyoruz.']};
+ const commentPools={fan:['ikon yine ikon.','bu aura yasal mı?','yeni projeyi bekliyoruz 😭','başrol enerjisi.','bunu duvar kağıdı yaptım.','çok iyi görünüyorsun ya','bu paylaşım günümü düzeltti','yeni bölüm ne zaman?','favorim sensin','caption ayrı iyi olmuş 😭','set fotoğrafları gelsin lütfen','bu enerjiye bayıldım','yine timeline kurtuldu','gala look aşırı iyi','bunu kaydettim.'],press:['Basın bu paylaşımı konuşuyor.','Yeni imaj değişimi dikkat çekti.','Sektörde etkisi merak konusu.','Yeni paylaşım kısa sürede gündem oldu.','Magazin hesapları detayları inceliyor.','Oyuncunun yeni dönem imajı dikkat çekiyor.','Markaların ilgisi artabilir.','Yeni proje söylentileri yeniden başladı.'],hater:['abartıldığı kadar yok.','PR ekibi yine çalışmış.','tamam da oyunculuk?','her paylaşım aynı enerji','bence biraz fazla zorlanmış','yorumlar yine aşırı abartıyor','ben ikna olmadım','gündemde kalma çabası gibi.'],npc:['sette de böyle rahatsın umarım 😌','bunu gördüm ve sustum.','yarın sette konuşuyoruz.','bu fotoğrafı kim çekti acaba 👀','bugün sette bunun lafı dönecek','kostümü geri getirmen gerekiyordu 😭','kamerada daha da iyi duruyordu','after party konusu açılmasın bence','seninle aynı projede olmak tehlikeli 😭','yönetmen bunu görmesin.']};
  const papEvents=[
   {title:'Gizemli biriyle görüntülendin',text:'Bir kafeden çıkarken yanında kimliği bilinmeyen biriyle fotoğrafın çekildi. Magazin hesapları ilişki iddiası yazıyor.',choices:[['Açıkla: sadece arkadaş','sweet',6,-2,2],['Hiç yorum yapma','mystery',9,0,4],['Şakaya vur','cool',7,-1,6]]},
   {title:'Gece kulübü çıkışı',text:'Sabaha karşı bir mekândan çıkarken görüntülendin. Fotoğraflar hızla yayılıyor.',choices:[['“Eğlendim, ne var?”','rebel',9,5,7],['Kısa bir açıklama yap','cool',4,-3,2],['Sessiz kal','mystery',7,2,4]]},
@@ -1689,7 +1689,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
      let next=Math.floor(Math.random()*holes.length);
      if(next===active)next=(next+1)%holes.length;
      active=next;holes[active].classList.add('up');
-     const speed=Math.max(390,650-round*18);
+     const speed=Math.max(500,760-round*16);
      timer=setTimeout(()=>{holes[active]?.classList.remove('up');active=-1;spawn()},speed);
    }
    setTimeout(spawn,180);
@@ -1745,10 +1745,10 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
    let tries=0,total=0,raf=0,start=performance.now();
    game.innerHTML='<div class="rs127-timing"><div class="rs127-timing-label">KAMERA HAZIR</div><div class="rs127-timing-bar"><i class="rs127-timing-zone"></i><b class="rs127-timing-dot"></b></div><button class="rs127-action">ŞİMDİ!</button></div>';
    const dot=game.querySelector('.rs127-timing-dot'),btn=game.querySelector('.rs127-action');
-   function frame(t){const p=((t-start)%1000)/1000;const x=p<.5?p*2:(1-p)*2;dot.style.left='calc('+(x*100)+'% - 14px)';dot.dataset.x=x;raf=requestAnimationFrame(frame)}
+   function frame(t){const p=((t-start)%1250)/1250;const x=p<.5?p*2:(1-p)*2;dot.style.left='calc('+(x*100)+'% - 14px)';dot.dataset.x=x;raf=requestAnimationFrame(frame)}
    raf=requestAnimationFrame(frame);
    btn.onclick=()=>{
-     const x=Number(dot.dataset.x||0),dist=Math.abs(x-.5),score=Math.max(0,100-Math.round(dist*280));
+     const x=Number(dot.dataset.x||0),dist=Math.abs(x-.5),score=Math.max(0,100-Math.round(dist*220));
      total+=score;tries++;miniScore.textContent=tries+' / 4 · '+score+' puan';
      btn.classList.add(score>=75?'good':'bad');setTimeout(()=>btn.classList.remove('good','bad'),120);
      start=performance.now();
@@ -1764,34 +1764,34 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
    const stage=game.firstElementChild;
    function next(){
      stage.querySelector('.rs127-spot')?.remove();alive=false;
-     if(round>=10)return finishMini(perf,Math.round(hit/10*100));
+     if(round>=8)return finishMini(perf,Math.round(hit/8*100));
      round++;
      const b=document.createElement('button');b.className='rs127-spot';b.textContent='✨';
      b.style.left=(10+Math.random()*80)+'%';b.style.top=(12+Math.random()*64)+'%';alive=true;
-     b.onpointerdown=()=>{if(!alive)return;alive=false;hit++;miniScore.textContent=hit+' / 10';clearTimeout(timer);b.classList.add('caught');setTimeout(next,70)};
-     stage.appendChild(b);timer=setTimeout(next,Math.max(370,610-round*18));
+     b.onpointerdown=()=>{if(!alive)return;alive=false;hit++;miniScore.textContent=hit+' / 8';clearTimeout(timer);b.classList.add('caught');setTimeout(next,70)};
+     stage.appendChild(b);timer=setTimeout(next,Math.max(480,760-round*16));
    }
    setTimeout(next,180);
  }
  function sequence(perf){
    miniTitle.textContent='🎬 Yönetmen Komutları';
    miniScore.textContent='İzle';
-   miniNote.textContent='6 komutu hızlıca izle; sonra aynı sırayla bas.';
-   const icons=['⬅️','⬆️','➡️','⬇️'];const seq=Array.from({length:6},()=>Math.floor(Math.random()*4));let idx=0,wrong=0;
+   miniNote.textContent='5 komutu izle; sonra aynı sırayla bas.';
+   const icons=['⬅️','⬆️','➡️','⬇️'];const seq=Array.from({length:5},()=>Math.floor(Math.random()*4));let idx=0,wrong=0;
    game.innerHTML='<div class="rs127-seq-display">Hazır</div><div class="rs127-seq-buttons">'+icons.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('')+'</div>';
    const display=game.querySelector('.rs127-seq-display'),buttons=[...game.querySelectorAll('.rs127-seq-buttons button')];
    buttons.forEach(b=>b.disabled=true);
    let p=0;
    const show=()=>{
-     if(p>=seq.length){display.textContent='Şimdi sen!';buttons.forEach(b=>b.disabled=false);miniScore.textContent='0 / 6';return}
+     if(p>=seq.length){display.textContent='Şimdi sen!';buttons.forEach(b=>b.disabled=false);miniScore.textContent='0 / 5';return}
      display.textContent=icons[seq[p]];display.classList.add('flash');
-     setTimeout(()=>{display.classList.remove('flash');display.textContent='•';p++;setTimeout(show,110)},330);
+     setTimeout(()=>{display.classList.remove('flash');display.textContent='•';p++;setTimeout(show,140)},430);
    };
    setTimeout(show,240);
    buttons.forEach(b=>b.onclick=()=>{
      const v=Number(b.dataset.i);
      if(v===seq[idx]){
-       idx++;miniScore.textContent=idx+' / 6';b.classList.add('ok');setTimeout(()=>b.classList.remove('ok'),90);
+       idx++;miniScore.textContent=idx+' / 5';b.classList.add('ok');setTimeout(()=>b.classList.remove('ok'),90);
        if(idx===seq.length)setTimeout(()=>finishMini(perf,Math.max(25,100-wrong*15)),120);
      }else{
        wrong++;b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),110);
@@ -1802,7 +1802,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
    miniTitle.textContent='🎭 Duygu Yakala';
    miniScore.textContent='0 / 10';
    miniNote.textContent='Duyguyu görür görmez aynısını seç. Artık çok daha hızlı.';
-   const moods=[['😢','Hüzün'],['😡','Öfke'],['😄','Neşe'],['😨','Korku'],['😐','Soğuk'],['🥹','Duygusal']];
+   const moods=[['😢','Hüzün'],['😡','Öfke'],['😄','Neşe'],['😨','Korku'],['😐','Soğuk']];
    let round=0,hit=0,target=0,timer=null,answered=false;
    game.innerHTML='<div class="rs127-mood-cue">Hazır</div><div class="rs127-mood-buttons">'+moods.map((m,i)=>'<button data-i="'+i+'"><span>'+m[0]+'</span><small>'+m[1]+'</small></button>').join('')+'</div>';
    const cue=game.querySelector('.rs127-mood-cue'),buttons=[...game.querySelectorAll('.rs127-mood-buttons button')];
@@ -1812,7 +1812,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
      round++;answered=false;target=Math.floor(Math.random()*moods.length);
      cue.textContent=moods[target][0]+' '+moods[target][1];
      cue.classList.remove('pulse');requestAnimationFrame(()=>cue.classList.add('pulse'));
-     timer=setTimeout(()=>{if(answered)return;answered=true;cue.classList.add('miss');setTimeout(()=>{cue.classList.remove('miss');next()},90)},560);
+     timer=setTimeout(()=>{if(answered)return;answered=true;cue.classList.add('miss');setTimeout(()=>{cue.classList.remove('miss');next()},90)},780);
    }
    buttons.forEach(b=>b.onpointerdown=()=>{
      if(answered)return;answered=true;clearTimeout(timer);
@@ -2308,6 +2308,203 @@ body.rs123-large .settings-section>p{font-size:13px!important}
  const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
  const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.7';
  document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.2.7 — Kapalı Beta':'Rol Senin 1.2.7';
+})();
+</script>
+
+<style id="rs128Style">
+/* 1.2.8 — energy consistency, compact secondary header, social feed */
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved{
+ padding:9px 12px!important;
+ border-radius:17px!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stats{
+ display:none!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-wrap{
+ margin-top:0!important;
+ display:grid!important;
+ grid-template-columns:1fr auto!important;
+ column-gap:9px!important;
+ align-items:center!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-head{
+ grid-column:1/2!important;
+ font-size:9px!important;
+ margin:0 0 4px!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .bar{
+ grid-column:1/2!important;
+ height:6px!important;
+ margin:0!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) #rs125LevelLine{
+ grid-column:1/2!important;
+ font-size:7px!important;
+ margin-top:4px!important;
+ gap:4px!important;
+ opacity:.82;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .rs125-level-track{
+ grid-column:1/2!important;
+ height:2px!important;
+ margin-top:2px!important;
+}
+.rs128-energy-shortcut{
+ display:none;
+ border:0;
+ border-radius:12px;
+ background:linear-gradient(135deg,var(--accent),var(--accent2));
+ color:#151515;
+ font-weight:950;
+ font-size:9px;
+ padding:8px 9px;
+ white-space:nowrap;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .rs128-energy-shortcut{display:block;grid-column:2;grid-row:1/5}
+.rs128-friend-tag{margin-left:auto;border-radius:999px;padding:4px 7px;background:#eef5ff;color:#4770a7;font-size:8px;font-weight:950}
+.rs128-profile-post-title{margin-top:18px!important}
+.rs128-friend-card .social114-photo{background:linear-gradient(135deg,#242735,#565b70)}
+@media(max-width:620px){
+ body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved{padding:8px 10px!important}
+ body[data-rs122-page]:not([data-rs122-page="home"]) #rs125LevelLine{font-size:6.5px!important}
+ .rs128-energy-shortcut{font-size:8px;padding:7px 8px}
+}
+/* Slightly easier timing target */
+.rs127-timing-zone{left:38%!important;width:24%!important}
+</style>
+<script id="rs128Script">
+(()=>{
+ const VERSION='1.2.8';
+
+ function cap128(){return typeof maxEnergy125==='function'?maxEnergy125():100}
+ function syncEnergy128(){
+   const cap=cap128();
+   if(state.energy>cap)state.energy=cap;
+   const et=document.querySelector('#energyText');if(et)et.textContent=Math.round(state.energy)+' / '+cap;
+   const ef=document.querySelector('#energyFill');if(ef)ef.style.width=Math.max(0,Math.min(100,state.energy/cap*100))+'%';
+   const en=document.querySelector('#energyNow111');if(en)en.textContent=Math.round(state.energy)+' / '+cap;
+ }
+ const ew=document.querySelector('.profile.rs122-profile-moved .energy-wrap')||document.querySelector('.profile .energy-wrap');
+ if(ew&&!document.querySelector('#rs128EnergyShortcut')){
+   const b=document.createElement('button');b.id='rs128EnergyShortcut';b.className='rs128-energy-shortcut';b.textContent='⚡ Enerji Kazan';
+   b.onclick=()=>window.openEnergy111?.();ew.appendChild(b);
+ }
+
+ // Any low-energy action should route to Energy Gain instead of feeling dead.
+ function need128(n,label){
+   if(state.energy>=n)return false;
+   if(typeof rs122NeedEnergy==='function')rs122NeedEnergy(n,label);
+   else window.openEnergy111?.();
+   return true;
+ }
+ const wrapLow=(name,n,label)=>{
+   try{
+     const old=window[name];
+     if(typeof old!=='function')return;
+     window[name]=function(){if(need128(n,label))return;return old.apply(this,arguments)}
+   }catch(_){}
+ };
+ wrapLow('fanMeet',20,'Hayran buluşması');
+ wrapLow('attendAwards',25,'Ödül gecesi');
+ wrapLow('meetNpc',10,'Tanışma');
+ wrapLow('dateNpc',10,'Buluşma');
+ wrapLow('careerInterview',10,'Röportaj');
+
+ // Re-enable buttons when energy is the only missing requirement.
+ function makeEnergyButtons128(){
+   const award=document.querySelector('#awardBtn');
+   if(award&&state.roles>=3&&state.fame>=80&&state.day>=state.awardReadyDay)award.disabled=false;
+   const fan=document.querySelector('#fanMeetBtn');
+   if(fan&&state.fame>=50&&state.money>=1200&&state.day>=state.fanMeetReadyDay)fan.disabled=false;
+   document.querySelectorAll('#romancePanel button').forEach(b=>{
+     const t=b.textContent||'';
+     if(t.includes('Tanış')&&!state.npcPartner)b.disabled=false;
+     if(t.includes('Buluşma')&&state.npcPartner&&state.money>=1000)b.disabled=false;
+   });
+ }
+ document.addEventListener('click',e=>{
+   const b=e.target.closest?.('button');
+   if(!b)return;
+   const txt=(b.textContent||'').trim();
+   const checks=[
+     ['Oyunculuk',20,'Oyunculuk dersi'],['Paylaş',6,'Sosyal medya'],['Buluşma',10,'Buluşma'],
+     ['Tanış',10,'Tanışma'],['Röportaj',10,'Röportaj'],['Ödül',25,'Ödül gecesi'],
+     ['Hayran',20,'Hayran buluşması'],['Bölümü',12,'Bölüm çekimi'],['Çalış',5,'Hazırlık']
+   ];
+   for(const [key,n,label] of checks)if(txt.includes(key)&&state.energy<n){e.preventDefault();e.stopImmediatePropagation();need128(n,label);return}
+ },true);
+
+ // Rol Social: mix own posts with in-world friend posts.
+ const friendCaps=[
+  'sette uzun bir gün ama güzel gidiyor 🎬',
+  'bugün kamera arkası biraz kaotik 😭',
+  'yeni proje için prova günü.',
+  'gala gecesi ✨',
+  'küçük bir set dump bırakıyorum.',
+  'bugün karaktere fazla kaptırmış olabilirim.',
+  'çekim bitti, kahve zamanı ☕',
+  'yakında güzel bir şey geliyor 👀',
+  'bu sahne için çok uğraştık.',
+  'bugünlük benden bu kadar 🎭'
+ ];
+ const comments128=[
+  ['@fanpage','çok iyi olmuş 😭'],['@setdedikodu','bu proje hangisi 👀'],['@oyuncusever','aura yine yerinde'],
+  ['@dizidelisi','yeni bölüm gelsin artık'],['@castnews','setten yeni paylaşım dikkat çekti.'],['@fanclub','favori postum bu olabilir'],
+  ['@geceekrani','caption çok iyi 😭'],['@sinemakolik','kamera arkası içeriklerini özlemişiz'],['@magazingozu','bu detay konuşulur'],
+  ['@roltakip','çok iyi görünüyorsun'],['@setgunlugu','yarın sette bunun lafı döner'],['@izleyici34','projeyi merak ettim'],
+  ['@popcorn','gala look 10/10'],['@screenfan','bu ikiliyi aynı projede istiyoruz'],['@yorumcu','timeline bugün iyi']
+ ];
+ function esc128(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+ function fmt128(n){n=Number(n)||0;return n>=1000000?(n/1000000).toFixed(1)+'M':n>=1000?(n/1000).toFixed(n>=10000?0:1)+'K':String(n)}
+ function miniComments128(seed){
+   const arr=[];for(let i=0;i<3;i++)arr.push(comments128[(seed+i*5)%comments128.length]);
+   return '<div class="rs115-social-comments">'+arr.map(c=>'<div class="rs115-comment"><span>💬</span><div><b>'+c[0]+'</b> '+c[1]+'</div></div>').join('')+'</div>';
+ }
+ function ownCard128(p){
+   const styleNames128={selfie:'🤳 Selfie',set:'🎬 Set',gala:'✨ Gala',backstage:'🎭 Kulisten'};
+   const seed=Math.abs(Number(p.id)||Number(p.day)||1)%comments128.length;
+   return '<article class="social114-card '+(p.viral?'social114-viral':'')+'"><div class="social114-card-head"><div class="social114-card-av">'+esc128(state.avatar||'🎬')+'</div><div><b>'+esc128(state.name||'Oyuncu')+'</b><small>'+(esc128(p.dayLabel||('Gün '+p.day)))+' · Rol Social</small></div>'+(p.viral?'<span class="social114-badge">🔥 VİRAL</span>':'')+'</div>'+(p.type==='photo'?'<div class="social114-photo"><span>'+esc128(styleNames128[p.style]||'📸 Fotoğraf')+'</span></div>':'')+'<div class="social114-caption">'+esc128(p.caption)+'</div><div class="social114-eng"><span>♥ '+fmt128(p.likes)+'</span><span>💬 '+fmt128(p.comments)+'</span><span>↗ +'+fmt128(p.followers)+' takipçi</span></div>'+miniComments128(seed)+'</article>';
+ }
+ function friendCard128(f,i){
+   const seed=[...(String(f.nickname||f.actor_name||i))].reduce((a,c)=>a+c.charCodeAt(0),0)+Math.floor(state.day/2);
+   const cap=friendCaps[Math.abs(seed)%friendCaps.length];
+   const likes=Math.max(24,Math.round((Number(f.fame||20)+Number(f.followers||300)/120)*(2.5+(seed%7)/10)));
+   const comments=Math.max(3,Math.round(likes*.06));
+   const photo=(seed%4)!==0;
+   return '<article class="social114-card rs128-friend-card"><div class="social114-card-head"><div class="social114-card-av">'+esc128(f.avatar||'🎬')+'</div><div><b>'+esc128(f.actor_name||f.nickname||'Arkadaş')+'</b><small>@'+esc128(f.nickname||'oyuncu')+' · Rol Social</small></div><span class="rs128-friend-tag">ARKADAŞ</span></div>'+(photo?'<div class="social114-photo"><span>🎬 Arkadaş paylaşımı</span></div>':'')+'<div class="social114-caption">'+esc128(cap)+'</div><div class="social114-eng"><span>♥ '+fmt128(likes)+'</span><span>💬 '+fmt128(comments)+'</span><span>'+(f.online?'🟢 online':'offline')+'</span></div>'+miniComments128(Math.abs(seed)%comments128.length)+'</article>';
+ }
+ function renderSocialExtras128(){
+   const d=state.social114&&Array.isArray(state.social114.posts)?state.social114.posts:[];
+   const profile=document.querySelector('#rs128ProfilePosts');
+   if(profile)profile.innerHTML=d.length?d.slice().reverse().slice(0,18).map(ownCard128).join(''):'<div class="social114-empty">Henüz profilinde gönderi yok.</div>';
+   const feed=document.querySelector('#social114Feed');
+   if(!feed)return;
+   feed.querySelectorAll('.rs128-friend-card').forEach(x=>x.remove());
+   const friends=(onlineData?.friends||[]).slice(0,6);
+   if(!friends.length)return;
+   const cards=friends.map(friendCard128);
+   cards.forEach((html,i)=>{
+     const temp=document.createElement('div');temp.innerHTML=html;const node=temp.firstElementChild;
+     const own=[...feed.children].filter(x=>!x.classList.contains('rs128-friend-card'));
+     const after=own[Math.min(i*2+1,Math.max(0,own.length-1))];
+     if(after)after.after(node);else feed.appendChild(node);
+   });
+ }
+ const social=document.querySelector('#social114');
+ if(social)new MutationObserver(()=>{if(social.classList.contains('show'))setTimeout(renderSocialExtras128,20)}).observe(social,{attributes:true,attributeFilter:['class']});
+ const feed=document.querySelector('#social114Feed');
+ if(feed)new MutationObserver(()=>setTimeout(renderSocialExtras128,20)).observe(feed,{childList:true});
+ setInterval(()=>{if(document.querySelector('#social114')?.classList.contains('show'))renderSocialExtras128()},3000);
+
+ try{
+   const oldUpdate128=update;
+   update=function(){const r=oldUpdate128.apply(this,arguments);syncEnergy128();makeEnergyButtons128();return r}
+ }catch(_){}
+ syncEnergy128();makeEnergyButtons128();renderSocialExtras128();
+
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.8';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.2.8 — Kapalı Beta':'Rol Senin 1.2.8';
 })();
 </script>
 </body>
