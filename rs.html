@@ -341,7 +341,7 @@ function chance(job){let a=agencies.find(x=>x.id===state.agency),m=managers.find
 function can(job){return state.skill>=job.skill && state.fame>=job.fame && state.energy>=job.energy}
 function update(){
  document.querySelector('#playerName').textContent=state.name||'Oyuncu'; document.querySelector('#avatar').textContent=state.avatar; document.querySelector('#rank').textContent=rank(); document.querySelector('#day').textContent=state.day; document.querySelector('#level').textContent=level();
- document.querySelector('#money').textContent=fmt(state.money); document.querySelector('#fame').textContent=Math.round(state.fame); document.querySelector('#skill').textContent=Math.round(state.skill); document.querySelector('#followers').textContent=Math.round(state.followers).toLocaleString('tr-TR'); document.querySelector('#energyText').textContent=`${Math.round(state.energy)} / ${maxEnergy125()}`; document.querySelector('#energyFill').style.width=Math.max(0,Math.min(100,state.energy))+'%';
+ document.querySelector('#money').textContent=fmt(state.money); document.querySelector('#fame').textContent=Math.round(state.fame); document.querySelector('#skill').textContent=Math.round(state.skill); document.querySelector('#followers').textContent=Math.round(state.followers).toLocaleString('tr-TR'); document.querySelector('#energyText').textContent=`${Math.round(state.energy)} / ${maxEnergy125()}`; document.querySelector('#energyFill').style.width=Math.max(0,Math.min(100,state.energy/(typeof maxEnergy125==='function'?maxEnergy125():100)*100))+'%';
  ensureDaily(); renderJobs(); renderHistory(); renderCareer(); renderDailyMissions(); renderFanMeet(); renderStudio(); applyTheme(); checkAchievements(); syncButtons(); save();
 }
 function jobCard(j){const locked=state.skill<j.skill||state.fame<j.fame; const enoughEnergy=state.energy>=j.energy; const c=chance(j),tr=getTrend(),hot=tr.types.includes(j.type); return `<article class="card job ${locked?'locked':''}"><div class="job-top"><div><div class="job-type">${j.type}${hot?' · 🔥 TREND':''}</div><h4>${j.title}</h4></div><div class="job-icon">${j.icon}</div></div><p>${j.desc}</p><div class="chips"><span class="chip">🎭 ${j.skill} oyunculuk</span><span class="chip">⭐ ${j.fame} şöhret</span><span class="chip">⚡ ${j.energy}</span>${hot?'<span class="chip">📈 sektör bonusu</span>':''}</div><div class="pay">${fmt(Math.round(j.pay*(hot?1+tr.pay:1)))}</div><div class="success">Başarı şansı: %${c}</div><button onclick="audition('${j.id}')" ${(!can(j))?'disabled':''}>${locked?'Şartları Tamamla':!enoughEnergy?'Enerji Gerekli':'Seçme Sahnesine Gir'}</button></article>`}
@@ -467,7 +467,7 @@ async function logoutOnline(){try{if(onlineToken)await rpc('actor_logout',{p_tok
 
 // UI EVENTS
 document.querySelector('#trainBtn').onclick=()=>{if(state.money<500||state.energy<20)return;state.money-=500;state.energy-=20;state.skill+=3;state.day++;bumpDaily('training');addHistory('🎭 Oyunculuk dersine katıldın. +3 oyunculuk.','good');toast('+3 oyunculuk');update()};
-document.querySelector('#restBtn').onclick=()=>{state.energy=Math.min(100,state.energy+55);state.day++;addHistory('🛌 Dinlendin ve enerjini topladın.');toast('Enerji yenilendi');update()};
+document.querySelector('#restBtn').onclick=()=>{state.energy=Math.min((typeof maxEnergy125==='function'?maxEnergy125():100),state.energy+55);state.day++;addHistory('🛌 Dinlendin ve enerjini topladın.');toast('Enerji yenilendi');update()};
 document.querySelector('#socialBtn').onclick=()=>{if(state.energy<10)return;state.energy-=10;state.day++;bumpDaily('social');const f=120+Math.floor(Math.random()*420);state.followers+=f;if(Math.random()>.55)state.fame+=2;addHistory(`📱 Sosyal medyada paylaşım yaptın. +${f} takipçi.`,'good');maybeScandal('social');toast(`+${f} takipçi`);update()};
 document.querySelector('#headshotBtn').onclick=()=>{if(state.money<1000||state.energy<12)return;state.money-=1000;state.energy-=12;state.day++;state.fame+=5;state.followers+=180;addHistory('📸 Yeni portfolyo fotoğrafları çektirdin. +5 şöhret.','good');toast('+5 şöhret');update()};
 document.querySelector('#awardBtn').onclick=attendAwards;document.querySelector('#fanMeetBtn').onclick=fanMeet;
@@ -621,7 +621,7 @@ body.ui-modern .energy-panel111{background:rgba(18,24,38,.86)}
  ];
  const sheet=document.querySelector('#energySheet111'),list=document.querySelector('#energyList111'),close=document.querySelector('#energyClose111'),rest=document.querySelector('#restBtn');
  function syncEnergy111(){
-   const now=document.querySelector('#energyNow111');if(now)now.textContent=`${Math.round(state.energy)} / 100`;
+   const now=document.querySelector('#energyNow111');if(now)now.textContent=`${Math.round(state.energy)} / ${typeof maxEnergy125==='function'?maxEnergy125():100}`;
    if(!list)return;list.innerHTML=opts.map(o=>`<button class="energy-option111" data-energy-id="${o.id}" ${(state.energy>=maxEnergy125()||(o.cost&&state.money<o.cost))?'disabled':''}><span class="energy-gain111">+${o.gain} ⚡</span><span class="energy-icon111">${o.icon}</span><b>${o.name}</b><small>${o.desc}<br><span class="energy-price111">${o.cost?fmt(o.cost):'Ücretsiz'}</span>${o.day?' · +1 gün':''}</small></button>`).join('');
    list.querySelectorAll('[data-energy-id]').forEach(b=>b.onclick=()=>useEnergy111(b.dataset.energyId));
  }
