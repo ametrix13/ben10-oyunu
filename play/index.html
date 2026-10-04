@@ -2770,5 +2770,142 @@ body input,body select,body textarea{
  document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.2.9 — Kapalı Beta':'Rol Senin 1.2.9';
 })();
 </script>
+
+<style id="rs1210Style">
+.rs1210-cap-note{font-size:9px;color:var(--muted);text-align:center;margin:5px 0 0}
+.rs1210-cap-note b{color:var(--accent)}
+</style>
+<script id="rs1210Script">
+(()=>{
+ const VERSION='1.2.10';
+
+ function fameLevel1210(fame){
+   const f=Math.max(0,Number(fame)||0);
+   if(f<50)return 1;
+   return Math.floor(Math.log2(f/50))+2;
+ }
+ function energyLevel1210(){
+   let computed=fameLevel1210(state?.fame);
+   try{
+     const live=Number(typeof level==='function'?level():0);
+     if(Number.isFinite(live)&&live>computed)computed=live;
+   }catch(_){}
+   const shown=parseInt(document.querySelector('#level')?.textContent||'0',10);
+   if(Number.isFinite(shown)&&shown>computed)computed=shown;
+   return Math.max(1,computed);
+ }
+ function cap1210(){
+   const l=energyLevel1210();
+   if(l>=50)return 200;
+   if(l>=30)return 150;
+   if(l>=20)return 120;
+   if(l>=10)return 110;
+   return 100;
+ }
+ window.rsEnergyLevel1210=energyLevel1210;
+ window.rsEnergyCap1210=cap1210;
+ window.maxEnergy125=cap1210;
+ window.maxEnergy129=cap1210;
+
+ function syncEnergyUI1210(){
+   const cap=cap1210();
+   const energy=Math.max(0,Number(state.energy)||0);
+   const t=document.querySelector('#energyText');
+   const f=document.querySelector('#energyFill');
+   const n=document.querySelector('#energyNow111');
+   if(t)t.textContent=Math.round(energy)+' / '+cap;
+   if(f)f.style.width=Math.max(0,Math.min(100,energy/cap*100))+'%';
+   if(n)n.textContent=Math.round(energy)+' / '+cap;
+
+   const line=document.querySelector('#rs125LevelLine');
+   if(line){
+     const left=line.querySelector('span');
+     if(left)left.textContent='Seviye '+energyLevel1210()+' · Maks. enerji '+cap;
+   }
+
+   let note=document.querySelector('#rs1210CapNote');
+   const sheet=document.querySelector('#energySheet111 .energy-sheet111');
+   if(sheet&&!note){
+     note=document.createElement('div');
+     note.id='rs1210CapNote';
+     note.className='rs1210-cap-note';
+     const list=document.querySelector('#energyList111');
+     if(list)list.insertAdjacentElement('beforebegin',note);
+   }
+   if(note)note.innerHTML='Seviye '+energyLevel1210()+' enerji kapasitesi: <b>'+cap+'</b>';
+ }
+
+ const options=[
+   {id:'sleep',icon:'😴',name:'Uyu',desc:'Gerçek bir dinlenme. Bir gün ilerler.',cost:0,gain:65,day:1},
+   {id:'water',icon:'💧',name:'Su İç',desc:'Hızlı ve ücretsiz küçük toparlanma.',cost:0,gain:10,day:0},
+   {id:'snack',icon:'🍪',name:'Atıştırmalık',desc:'Set arasında hızlı enerji.',cost:120,gain:18,day:0},
+   {id:'coffee',icon:'☕',name:'Kahve',desc:'Kısa süreli güçlü destek.',cost:180,gain:26,day:0},
+   {id:'meal',icon:'🍝',name:'Sıcak Yemek',desc:'Daha doyurucu, daha çok enerji.',cost:350,gain:42,day:0},
+   {id:'spa',icon:'🧖',name:'Spa & Dinlenme',desc:'En güçlü toparlanma seçeneği.',cost:750,gain:70,day:0}
+ ];
+ const sheet=document.querySelector('#energySheet111');
+ const list=document.querySelector('#energyList111');
+
+ function renderEnergy1210(){
+   const cap=cap1210();
+   syncEnergyUI1210();
+   if(!list)return;
+   list.innerHTML=options.map(o=>{
+     const disabled=state.energy>=cap||(o.cost&&state.money<o.cost);
+     return '<button class="energy-option111" data-energy-id="'+o.id+'" '+(disabled?'disabled':'')+'>'+
+       '<span class="energy-gain111">+'+o.gain+' ⚡</span>'+
+       '<span class="energy-icon111">'+o.icon+'</span>'+
+       '<b>'+o.name+'</b>'+
+       '<small>'+o.desc+'<br><span class="energy-price111">'+(o.cost?fmt(o.cost):'Ücretsiz')+'</span>'+(o.day?' · +1 gün':'')+'</small>'+
+     '</button>';
+   }).join('');
+   list.querySelectorAll('[data-energy-id]').forEach(btn=>{
+     btn.onclick=()=>useEnergy1210(btn.dataset.energyId);
+   });
+ }
+ function openEnergy1210(){
+   renderEnergy1210();
+   sheet?.classList.add('show');
+   sheet?.setAttribute('aria-hidden','false');
+ }
+ function useEnergy1210(id){
+   const o=options.find(x=>x.id===id);
+   const cap=cap1210();
+   if(!o||state.energy>=cap)return;
+   if(o.cost&&state.money<o.cost){toast('Yeterli paran yok');return}
+   if(o.cost)state.money-=o.cost;
+   const before=Number(state.energy)||0;
+   state.energy=Math.min(cap,before+o.gain);
+   if(o.day)state.day+=o.day;
+   const gained=Math.max(0,Math.round(state.energy-before));
+   addHistory(o.icon+' '+o.name+': +'+gained+' enerji'+(o.cost?' · '+fmt(o.cost):' · ücretsiz')+(o.day?' · +1 gün':'')+'.','good');
+   toast('+'+gained+' enerji · '+Math.round(state.energy)+'/'+cap);
+   update();
+   renderEnergy1210();
+   if(state.energy>=cap)setTimeout(()=>{sheet?.classList.remove('show');sheet?.setAttribute('aria-hidden','true')},280);
+ }
+ window.openEnergy111=openEnergy1210;
+ window.useEnergy111=useEnergy1210;
+ const rest=document.querySelector('#restBtn');
+ if(rest){
+   rest.innerHTML='⚡ Enerji Kazan<br><small>Uyku · yemek · kahve · daha fazlası</small>';
+   rest.onclick=openEnergy1210;
+ }
+
+ const oldUpdate1210=update;
+ update=function(){
+   const r=oldUpdate1210.apply(this,arguments);
+   syncEnergyUI1210();
+   if(sheet?.classList.contains('show'))renderEnergy1210();
+   return r;
+ };
+
+ syncEnergyUI1210();
+
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.10';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.2.10 — Kapalı Beta':'Rol Senin 1.2.10';
+})();
+</script>
 </body>
 </html>
