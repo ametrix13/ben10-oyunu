@@ -1818,8 +1818,8 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
  }
  function spotlight(perf){
    miniTitle.textContent='💡 Spot Işığı';
-   miniScore.textContent='0 / 10';
-   miniNote.textContent='Spot belirir belirmez yakala. Her tur biraz hızlanır.';
+   miniScore.textContent='0 / 8';
+   miniNote.textContent='Spot belirir belirmez yakala. 8 tur; biraz daha rahat tempo.';
    let hit=0,round=0,timer=null,alive=false;
    game.innerHTML='<div class="rs127-spot-stage"><div class="rs127-stage-floor"></div><div class="rs127-spot-label">STAGE</div></div>';
    const stage=game.firstElementChild;
@@ -1837,7 +1837,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
  function sequence(perf){
    miniTitle.textContent='🎬 Yönetmen Komutları';
    miniScore.textContent='İzle';
-   miniNote.textContent='6 komutu hızlıca izle; sonra aynı sırayla bas.';
+   miniNote.textContent='5 komutu izle; sonra aynı sırayla bas.';
    const icons=['⬅️','⬆️','➡️','⬇️'];const seq=Array.from({length:5},()=>Math.floor(Math.random()*4));let idx=0,wrong=0;
    game.innerHTML='<div class="rs127-seq-display">Hazır</div><div class="rs127-seq-buttons">'+icons.map((x,i)=>'<button data-i="'+i+'">'+x+'</button>').join('')+'</div>';
    const display=game.querySelector('.rs127-seq-display'),buttons=[...game.querySelectorAll('.rs127-seq-buttons button')];
@@ -1869,7 +1869,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
    const cue=game.querySelector('.rs127-mood-cue'),buttons=[...game.querySelectorAll('.rs127-mood-buttons button')];
    function next(){
      clearTimeout(timer);
-     if(round>=10)return finishMini(perf,Math.round(hit/10*100));
+     if(round>=8)return finishMini(perf,Math.round(hit/8*100));
      round++;answered=false;target=Math.floor(Math.random()*moods.length);
      cue.textContent=moods[target][0]+' '+moods[target][1];
      cue.classList.remove('pulse');requestAnimationFrame(()=>cue.classList.add('pulse'));
@@ -1878,7 +1878,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
    buttons.forEach(b=>b.onpointerdown=()=>{
      if(answered)return;answered=true;clearTimeout(timer);
      const ok=Number(b.dataset.i)===target;
-     if(ok){hit++;miniScore.textContent=hit+' / 10';b.classList.add('ok')}else b.classList.add('bad');
+     if(ok){hit++;miniScore.textContent=hit+' / 8';b.classList.add('ok')}else b.classList.add('bad');
      setTimeout(()=>{b.classList.remove('ok','bad');next()},85);
    });
    setTimeout(next,180);
