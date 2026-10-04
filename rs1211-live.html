@@ -1124,7 +1124,7 @@ html.rs118-lite .rs115-shell,html.rs118-lite .social114-shell{box-shadow:0 12px 
   if(Array.isArray(state.filmography)&&state.filmography.length>(hard?50:90))state.filmography=state.filmography.slice(-(hard?50:90));
   if(state.social114&&Array.isArray(state.social114.posts)&&state.social114.posts.length>(hard?24:36))state.social114.posts=state.social114.posts.slice(-(hard?24:36));
   ['money','fame','followers','day','energy','acting'].forEach(k=>{if(k in state&&!Number.isFinite(Number(state[k])))state[k]=0});
-  if('energy'in state)state.energy=Math.max(0,Math.min(100,Number(state.energy)||0));
+  if('energy'in state)state.energy=Math.max(0,Math.min(maxEnergy125(),Number(state.energy)||0));
   if('day'in state)state.day=Math.max(1,Math.floor(Number(state.day)||1));
  }catch(e){logErr('prune',e)}}
  try{
