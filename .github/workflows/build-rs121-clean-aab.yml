@@ -1,4 +1,4 @@
-name: Build Rol Senin 1.3.1 Clean AAB
+name: Build Rol Senin 1.3.2 Clean AAB
 
 on:
   push:
@@ -93,8 +93,8 @@ jobs:
                   applicationId 'com.ametrix.rolsenin'
                   minSdk 26
                   targetSdk 36
-                  versionCode 16
-                  versionName '1.3.1'
+                  versionCode 17
+                  versionName '1.3.2'
               }
 
               buildTypes {
@@ -228,7 +228,7 @@ jobs:
             "https://raw.githubusercontent.com/ametrix13/ben10-oyunu/rol-senin-live/play/index.html" \
             -o android-clean/app/src/main/assets/game.html
 
-          grep -q "rs131Script" android-clean/app/src/main/assets/game.html
+          grep -q "rs132Script" android-clean/app/src/main/assets/game.html
           grep -q "KAPALI BETA" android-clean/app/src/main/assets/game.html
 
       - name: Build unsigned release bundle
@@ -247,7 +247,7 @@ jobs:
       - name: Upload unsigned AAB
         uses: actions/upload-artifact@v4
         with:
-          name: RolSenin-1.3.1-unsigned
+          name: RolSenin-1.3.2-unsigned
           path: android-clean/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 7
