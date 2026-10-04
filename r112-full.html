@@ -336,12 +336,13 @@ function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.get
 function ensureDaily(){const k=todayKey();if(state.dailyKey!==k){state.dailyKey=k;state.dailyProgress={audition:0,training:0,social:0};state.dailyClaimed={audition:false,training:false,social:false};state.dailySetClaimed=false}}
 function bumpDaily(id){ensureDaily();state.dailyProgress[id]=(state.dailyProgress[id]||0)+1}
 function rank(){if(state.fame>=700)return 'Süperstar'; if(state.fame>=500)return 'Ekran Yıldızı'; if(state.fame>=250)return 'Başrol Oyuncusu'; if(state.fame>=120)return 'Yükselen Oyuncu'; if(state.fame>=50)return 'Profesyonel Oyuncu'; if(state.roles>=1)return 'Yeni Oyuncu'; return 'Figüran Adayı'}
-function level(){return Math.max(1,Math.floor((state.skill+state.fame/8+state.awards*8)/12))}
+function level(){const f=Math.max(0,Number(state.fame)||0);if(f<50)return 1;return Math.floor(Math.log2(f/50))+2}
+function maxEnergy125(){const l=level();if(l>=50)return 200;if(l>=30)return 150;if(l>=20)return 120;if(l>=10)return 110;return 100}
 function chance(job){let a=agencies.find(x=>x.id===state.agency),m=managers.find(x=>x.id===state.manager);let spec=0;if(['Prestij Film','Tiyatro'].includes(job.type))spec=(state.specialSkills.drama||0)*1.5;if(['Sinema'].includes(job.type))spec=Math.max(state.specialSkills.action||0,state.specialSkills.combat||0)*1.2;if(['Reklam'].includes(job.type))spec=Math.max(state.specialSkills.comedy||0,state.specialSkills.dance||0);if(['Dizi','Platform Dizisi','Başrol'].includes(job.type))spec=(state.specialSkills.diction||0)*1.1;let score=48+(state.skill-job.diff)*1.25+(state.fame-job.fame)*.05+(a?.bonus||0)*20+(m?.chance||0)+state.awards*1.5+spec; return Math.max(12,Math.min(96,Math.round(score)))}
 function can(job){return state.skill>=job.skill && state.fame>=job.fame && state.energy>=job.energy}
 function update(){
  document.querySelector('#playerName').textContent=state.name||'Oyuncu'; document.querySelector('#avatar').textContent=state.avatar; document.querySelector('#rank').textContent=rank(); document.querySelector('#day').textContent=state.day; document.querySelector('#level').textContent=level();
- document.querySelector('#money').textContent=fmt(state.money); document.querySelector('#fame').textContent=Math.round(state.fame); document.querySelector('#skill').textContent=Math.round(state.skill); document.querySelector('#followers').textContent=Math.round(state.followers).toLocaleString('tr-TR'); document.querySelector('#energyText').textContent=`${Math.round(state.energy)} / ${maxEnergy125()}`; document.querySelector('#energyFill').style.width=Math.max(0,Math.min(100,state.energy/maxEnergy125()*100))+'%';
+ document.querySelector('#money').textContent=fmt(state.money); document.querySelector('#fame').textContent=Math.round(state.fame); document.querySelector('#skill').textContent=Math.round(state.skill); document.querySelector('#followers').textContent=Math.round(state.followers).toLocaleString('tr-TR'); document.querySelector('#energyText').textContent=`${Math.round(state.energy)} / ${maxEnergy125()}`; document.querySelector('#energyFill').style.width=Math.max(0,Math.min(100,(state.energy/maxEnergy125())*100))+'%';
  ensureDaily(); renderJobs(); renderHistory(); renderCareer(); renderDailyMissions(); renderFanMeet(); renderStudio(); applyTheme(); checkAchievements(); syncButtons(); save();
 }
 function jobCard(j){const locked=state.skill<j.skill||state.fame<j.fame; const enoughEnergy=state.energy>=j.energy; const c=chance(j),tr=getTrend(),hot=tr.types.includes(j.type); return `<article class="card job ${locked?'locked':''}"><div class="job-top"><div><div class="job-type">${j.type}${hot?' · 🔥 TREND':''}</div><h4>${j.title}</h4></div><div class="job-icon">${j.icon}</div></div><p>${j.desc}</p><div class="chips"><span class="chip">🎭 ${j.skill} oyunculuk</span><span class="chip">⭐ ${j.fame} şöhret</span><span class="chip">⚡ ${j.energy}</span>${hot?'<span class="chip">📈 sektör bonusu</span>':''}</div><div class="pay">${fmt(Math.round(j.pay*(hot?1+tr.pay:1)))}</div><div class="success">Başarı şansı: %${c}</div><button onclick="audition('${j.id}')" ${(!can(j))?'disabled':''}>${locked?'Şartları Tamamla':!enoughEnergy?'Enerji Gerekli':'Seçme Sahnesine Gir'}</button></article>`}
@@ -2799,6 +2800,60 @@ body input,body select,body textarea{
  const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
  const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.10';
  document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.2.10 — Kapalı Beta':'Rol Senin 1.2.10';
+})();
+</script>
+
+<style id="rs1211Style">
+.rs1211-debug-cap{display:inline-flex;align-items:center;gap:5px;font-size:8px;color:var(--muted);margin-left:5px}
+.rs1211-debug-cap b{color:var(--accent)}
+</style>
+<script id="rs1211Script">
+(()=>{
+ const VERSION='1.2.11';
+
+ function enforce1211(){
+   const cap=maxEnergy125();
+   const l=level();
+   const e=Math.max(0,Number(state.energy)||0);
+
+   const et=document.querySelector('#energyText');
+   const ef=document.querySelector('#energyFill');
+   const en=document.querySelector('#energyNow111');
+   const lv=document.querySelector('#level');
+   if(lv)lv.textContent=l;
+   if(et)et.textContent=Math.round(e)+' / '+cap;
+   if(ef)ef.style.width=Math.max(0,Math.min(100,e/cap*100))+'%';
+   if(en)en.textContent=Math.round(e)+' / '+cap;
+
+   const line=document.querySelector('#rs125LevelLine');
+   if(line){
+     const left=line.querySelector('span');
+     if(left)left.textContent='Seviye '+l+' · Maks. enerji '+cap;
+   }
+ }
+ const oldUpdate1211=update;
+ update=function(){
+   const r=oldUpdate1211.apply(this,arguments);
+   enforce1211();
+   return r;
+ };
+ const oldOpen1211=window.openEnergy111;
+ if(typeof oldOpen1211==='function'){
+   window.openEnergy111=function(){
+     const r=oldOpen1211.apply(this,arguments);
+     enforce1211();
+     return r;
+   };
+   const rest=document.querySelector('#restBtn');
+   if(rest)rest.onclick=window.openEnergy111;
+ }
+ enforce1211();
+
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.11';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'
+   ? 'Rol Senin 1.2.11 — Kapalı Beta'
+   : 'Rol Senin 1.2.11';
 })();
 </script>
 </body>
