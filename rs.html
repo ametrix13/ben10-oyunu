@@ -3173,5 +3173,169 @@ body input,body select,body textarea{
  try{save()}catch(_){}
 })();
 </script>
+
+<style id="rs131Style">
+#rs130StartGender .rs130-gender-btn.active,
+#rs131ExistingGender .rs130-gender-btn.active{
+  outline:2px solid var(--accent)!important;
+  background:color-mix(in srgb,var(--accent) 14%,var(--panel2))!important;
+}
+#rs130StartGender .rs131-gender-warning{
+  display:none;
+  margin-top:7px;
+  padding:7px 9px;
+  border-radius:10px;
+  border:1px solid color-mix(in srgb,var(--bad) 35%,var(--line));
+  background:color-mix(in srgb,var(--bad) 8%,transparent);
+  color:var(--bad);
+  font-size:9px;
+  font-weight:800;
+}
+#rs130StartGender .rs131-gender-warning.show{display:block}
+.rs131-lock-note{
+  margin-top:9px;
+  padding:8px 10px;
+  border-radius:11px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.4;
+}
+#rs131GenderConfirm{margin-top:12px}
+</style>
+
+<script id="rs131Script">
+(()=>{
+ const VERSION='1.3.1';
+ const validGender=g=>g==='male'||g==='female';
+
+ function saveGender131(g){
+   if(state.genderLocked131)return false;
+   if(!validGender(g))return false;
+   state.gender=g;
+   state.genderLocked131=true;
+   try{save()}catch(_){}
+   return true;
+ }
+
+ function setupNewCareerGender131(){
+   const box=document.querySelector('#rs130StartGender');
+   const startBtn=document.querySelector('#startBtn');
+   if(!box||!startBtn)return;
+
+   window.rsSelectedGender130='';
+   state.gender='';
+   state.genderLocked131=false;
+
+   const btns=[...box.querySelectorAll('[data-rs130-gender]')];
+   btns.forEach(b=>b.classList.remove('active'));
+
+   let warn=box.querySelector('.rs131-gender-warning');
+   if(!warn){
+     warn=document.createElement('div');
+     warn.className='rs131-gender-warning';
+     warn.textContent='Kariyere başlamadan önce cinsiyetini seçmelisin.';
+     box.appendChild(warn);
+   }
+
+   btns.forEach(btn=>{
+     btn.onclick=()=>{
+       window.rsSelectedGender130=btn.dataset.rs130Gender;
+       btns.forEach(x=>x.classList.toggle('active',x===btn));
+       warn.classList.remove('show');
+     };
+   });
+
+   startBtn.onclick=()=>{
+     const g=window.rsSelectedGender130;
+     if(!validGender(g)){
+       warn.classList.add('show');
+       toast('Önce cinsiyetini seç');
+       return;
+     }
+     const n=(document.querySelector('#nameInput')?.value||'').trim()||'Oyuncu';
+     state.name=n;
+     state.avatar=selectedAvatar;
+     saveGender131(g);
+     addHistory('🎬 Oyunculuk kariyerine başladın. İlk hedef: ilk rolünü kapmak!','good');
+     document.querySelector('#startModal')?.classList.remove('show');
+     update();
+   };
+ }
+
+ function setupExistingGender131(){
+   const modal=document.querySelector('#rs130GenderModal');
+   if(!modal)return;
+   modal.innerHTML=
+    '<div class="modal-card" id="rs131ExistingGender">'+
+      '<div class="rank">TEK SEFERLİK SEÇİM</div>'+
+      '<h2>Cinsiyetini seç</h2>'+
+      '<p>İlişki bölümündeki adaylar buna göre belirlenecek. <b>Bu seçim daha sonra değiştirilemez.</b></p>'+
+      '<div class="rs130-gender-grid">'+
+        '<button type="button" class="rs130-gender-btn" data-rs131-existing="male">♂ Erkek</button>'+
+        '<button type="button" class="rs130-gender-btn" data-rs131-existing="female">♀ Kadın</button>'+
+      '</div>'+
+      '<div class="rs131-lock-note">🔒 Seçimini onayladıktan sonra Ayarlar dahil hiçbir yerden değiştiremezsin.</div>'+
+      '<button class="go" id="rs131GenderConfirm" disabled>Seçimi Onayla</button>'+
+    '</div>';
+
+   let selected='';
+   const confirmBtn=modal.querySelector('#rs131GenderConfirm');
+   const btns=[...modal.querySelectorAll('[data-rs131-existing]')];
+   btns.forEach(btn=>{
+     btn.onclick=()=>{
+       selected=btn.dataset.rs131Existing;
+       btns.forEach(x=>x.classList.toggle('active',x===btn));
+       confirmBtn.disabled=false;
+     };
+   });
+   confirmBtn.onclick=()=>{
+     if(!validGender(selected))return;
+     if(!saveGender131(selected))return;
+     modal.classList.remove('show');
+     renderRomance();
+     update();
+     toast('Cinsiyet seçimi kaydedildi');
+   };
+
+   if(state.name&&!state.genderLocked131){
+     state.gender='';
+     setTimeout(()=>modal.classList.add('show'),60);
+   }else{
+     modal.classList.remove('show');
+   }
+ }
+
+ function removeGenderChangeSurfaces131(){
+   document.querySelectorAll('[data-rs130-migrate]').forEach(x=>x.remove());
+   document.querySelectorAll('[data-change-gender],[data-gender-setting]').forEach(x=>x.remove());
+ }
+
+ const isBrandNew=!state.name && document.querySelector('#startModal')?.classList.contains('show');
+ if(isBrandNew)setupNewCareerGender131();
+ setupExistingGender131();
+ removeGenderChangeSurfaces131();
+
+ // If a locked save already exists, preserve it permanently.
+ const oldUpdate131=update;
+ update=function(){
+   if(state.genderLocked131&&validGender(state.gender)){
+     const locked=state.gender;
+     const r=oldUpdate131.apply(this,arguments);
+     state.gender=locked;
+     state.genderLocked131=true;
+     return r;
+   }
+   return oldUpdate131.apply(this,arguments);
+ };
+
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.3.1';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'
+  ?'Rol Senin 1.3.1 — Kapalı Beta'
+  :'Rol Senin 1.3.1';
+})();
+</script>
 </body>
 </html>
