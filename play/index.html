@@ -2416,90 +2416,118 @@ body.rs123-large .settings-section>p{font-size:13px!important}
 
 
 
-<style id="rs128Style">
-/* Other pages get a compact level/energy footer, home remains unchanged. */
-body:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-wrap{padding-top:5px!important;margin-top:5px!important}
-body:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-head{font-size:9px!important;margin-bottom:3px!important}
-body:not([data-rs122-page="home"]) .profile.rs122-profile-moved .bar{height:5px!important}
-body:not([data-rs122-page="home"]) .rs125-level-line{font-size:7.5px!important;margin-top:4px!important;opacity:.82}
-body:not([data-rs122-page="home"]) .rs125-level-track{height:2px!important;margin-top:3px!important}
-.rs128-energy-shortcut{display:none;border:1px solid var(--line);background:color-mix(in srgb,var(--accent) 9%,var(--panel2));color:var(--text);border-radius:999px;padding:5px 9px;font-size:8px;font-weight:900;margin-top:6px;width:100%}
-body:not([data-rs122-page="home"]) .rs128-energy-shortcut{display:block}
-.rs128-profile-title{margin-top:18px!important}
-#social114ProfileFeed{margin-bottom:12px}
-.social114-card-head small{max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media(max-width:620px){
- body:not([data-rs122-page="home"]) .profile.rs122-profile-moved{padding-bottom:8px!important}
- body:not([data-rs122-page="home"]) .rs125-level-line{font-size:7px!important}
- .rs128-energy-shortcut{padding:5px 8px;font-size:7.5px}
-}
 
-/* A little easier than 1.2.7, memory stays exactly the same. */
-.rs127-timing-zone{left:39%!important;width:22%!important}
+<style id="rs128Style">
+/* 1.2.8 — compact non-home status area only */
+body[data-rs122-page]:not([data-rs122-page="home"]) .hero{
+  display:block!important;
+  margin:5px 0 0!important;
+  gap:0!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved{
+  padding:8px 10px!important;
+  min-height:0!important;
+  height:auto!important;
+  border-radius:17px!important;
+  margin:0!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stats{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:4px!important;
+  margin:0!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stat{
+  padding:5px 6px!important;
+  min-height:0!important;
+  border-radius:10px!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stat b{
+  font-size:11px!important;
+  line-height:1.05!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stat span{
+  font-size:7px!important;
+  line-height:1!important;
+  margin-top:2px!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-wrap{
+  margin:5px 0 0!important;
+  padding:5px 0 0!important;
+  border-top:1px solid rgba(127,127,127,.09)!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-head{
+  font-size:8px!important;
+  line-height:1!important;
+  margin:0 0 3px!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .bar{
+  height:5px!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .rs125-level-line{
+  margin-top:3px!important;
+  font-size:7px!important;
+  line-height:1.05!important;
+  gap:4px!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .rs125-level-line b{
+  font-size:7px!important;
+  opacity:.72!important;
+  font-weight:800!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .rs125-level-track{
+  height:2px!important;
+  margin-top:3px!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .content{
+  margin-top:7px!important;
+}
+body[data-rs122-page]:not([data-rs122-page="home"]) .page.active>.section-title:first-child{
+  margin-top:8px!important;
+}
+@media(max-width:620px){
+  body[data-rs122-page]:not([data-rs122-page="home"]) .hero{
+    margin-top:3px!important;
+  }
+  body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved{
+    padding:7px 8px!important;
+    border-radius:14px!important;
+  }
+  body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stats{
+    gap:3px!important;
+  }
+  body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stat{
+    padding:4px 4px!important;
+    border-radius:9px!important;
+  }
+  body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stat b{
+    font-size:10px!important;
+  }
+  body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stat span{
+    font-size:6.5px!important;
+  }
+  body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-wrap{
+    margin-top:4px!important;
+    padding-top:4px!important;
+  }
+  body[data-rs122-page]:not([data-rs122-page="home"]) .rs125-level-line{
+    font-size:6.5px!important;
+  }
+  body[data-rs122-page]:not([data-rs122-page="home"]) .rs125-level-line b{
+    font-size:6.5px!important;
+  }
+  body[data-rs122-page]:not([data-rs122-page="home"]) .content{
+    margin-top:4px!important;
+  }
+}
 </style>
 <script id="rs128Script">
 (()=>{
  const VERSION='1.2.8';
- function need128(n,label){if(state.energy>=n)return false;window.rs122NeedEnergy?.(n,label);return true}
-
- // Dynamic max energy everywhere.
- const oldOpen=window.openEnergy111;
- if(typeof oldOpen==='function')window.openEnergy111=function(){oldOpen();const n=document.querySelector('#energyNow111');if(n)n.textContent=Math.round(state.energy)+' / '+maxEnergy125()};
- const rest=document.querySelector('#restBtn');if(rest)rest.onclick=()=>window.openEnergy111?.();
- const wrap=document.querySelector('.profile.rs122-profile-moved .energy-wrap');
- if(wrap&&!document.querySelector('#rs128EnergyShortcut')){const b=document.createElement('button');b.id='rs128EnergyShortcut';b.className='rs128-energy-shortcut';b.textContent='⚡ Enerji Kazan';b.onclick=()=>window.openEnergy111?.();wrap.appendChild(b)}
-
- // Energy-aware wrappers for all major actions.
- function wrapEnergy(name,n,label){
-   const fn=window[name];if(typeof fn!=='function'||fn.rs128)return;
-   const w=function(){if(need128(n,label))return;return fn.apply(this,arguments)};w.rs128=true;window[name]=w;
- }
- wrapEnergy('meetNpc',10,'Tanışma');
- wrapEnergy('dateNpc',10,'Buluşma');
- wrapEnergy('trainSpecial',12,'Uzmanlık çalışması');
- wrapEnergy('shootEpisode',18,'Bölüm çekimi');
- wrapEnergy('shootBrand',12,'Kampanya çekimi');
- wrapEnergy('globalAudition',28,'Global seçme');
- wrapEnergy('voiceAct',16,'Seslendirme');
- wrapEnergy('network103',10,'Sektör bağlantısı');
- wrapEnergy('challengeRival103',18,'Kariyer düellosu');
- wrapEnergy('sectorEvent103',15,'Sektör etkinliği');
-
- const oldInterview=window.careerInterview;
- if(typeof oldInterview==='function'){window.careerInterview=function(){if(need128(10,'Röportaj'))return;return oldInterview.apply(this,arguments)}}
- const oldAwards=window.attendAwards;
- if(typeof oldAwards==='function'){window.attendAwards=function(){if(need128(25,'Ödül gecesi'))return;return oldAwards.apply(this,arguments)}}
- const oldFan=window.fanMeet;
- if(typeof oldFan==='function'){window.fanMeet=function(){if(need128(20,'Hayran buluşması'))return;return oldFan.apply(this,arguments)}}
-
- function syncEnergyActions128(){
-   const cap=maxEnergy125();
-   const n=document.querySelector('#energyNow111');if(n)n.textContent=Math.round(state.energy)+' / '+cap;
-   const et=document.querySelector('#energyText');if(et)et.textContent=Math.round(state.energy)+' / '+cap;
-   const ef=document.querySelector('#energyFill');if(ef)ef.style.width=Math.max(0,Math.min(100,state.energy/cap*100))+'%';
-
-   // Buttons remain clickable when only energy is missing, so they can open Energy.
-   document.querySelectorAll('[onclick^="meetNpc("]').forEach(b=>b.disabled=!!state.npcPartner);
-   document.querySelectorAll('[onclick="dateNpc()"]').forEach(b=>b.disabled=state.money<1000);
-   document.querySelectorAll('[onclick^="trainSpecial("]').forEach(b=>{const m=b.getAttribute('onclick').match(/trainSpecial\('([^']+)'\)/);if(!m)return;const lvl=state.specialSkills[m[1]]||0,cost=700+lvl*650;b.disabled=lvl>=10||state.money<cost});
-   document.querySelectorAll('[onclick^="shootEpisode("]').forEach(b=>b.disabled=false);
-   document.querySelectorAll('[onclick="shootBrand()"]').forEach(b=>{b.disabled=/gün sonra/.test(b.textContent)});
-   document.querySelectorAll('[onclick="globalAudition()"]').forEach(b=>b.disabled=(state.specialSkills.language||0)<4||state.fame<300);
-   document.querySelectorAll('[onclick="voiceAct()"]').forEach(b=>b.disabled=state.skill<30);
-   document.querySelectorAll('[onclick^="network103("]').forEach(b=>b.disabled=state.money<900);
-   document.querySelectorAll('[onclick="challengeRival103()"]').forEach(b=>{try{b.disabled=state.day-(state.long103?.lastRivalDay||0)<2}catch(_){}});
-   document.querySelectorAll('[onclick="sectorEvent103()"]').forEach(b=>{try{b.disabled=state.day<(state.long103?.nextEventDay||0)||state.money<1500}catch(_){}});
-   const ib=document.querySelector('#interviewBtn');if(ib){const wait=Math.max(0,(state.interviewReadyDay||1)-state.day);ib.disabled=state.fame<35||wait>0;ib.onclick=window.careerInterview}
-   const ab=document.querySelector('#awardBtn');if(ab){ab.disabled=state.roles<3||state.fame<80||state.day<(state.awardReadyDay||1);ab.onclick=window.attendAwards}
-   const fb=document.querySelector('#fanMeetBtn');if(fb){const wait=Math.max(0,(state.fanMeetReadyDay||1)-state.day);fb.disabled=state.fame<50||state.money<1200||wait>0;fb.onclick=window.fanMeet}
- }
- const oldUpdate128=update;
- update=function(){const r=oldUpdate128.apply(this,arguments);syncEnergyActions128();return r};
- syncEnergyActions128();
-
  const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
  const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.8';
- document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.2.8 — Kapalı Beta':'Rol Senin 1.2.8';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'
+   ? 'Rol Senin 1.2.8 — Kapalı Beta'
+   : 'Rol Senin 1.2.8';
 })();
 </script>
 </body>
