@@ -2689,7 +2689,7 @@ body input,body select,body textarea{
    const ef=document.querySelector('#energyFill');if(ef)ef.style.width=Math.max(0,Math.min(100,state.energy/cap*100))+'%';
    const en=document.querySelector('#energyNow111');if(en)en.textContent=Math.round(state.energy)+' / '+cap;
    const lv=document.querySelector('#level');if(lv)lv.textContent=l;
-   document.querySelectorAll('.energy-option111').forEach(btn=>{if(state.energy<cap&&!(btn.dataset.rs129MoneyDisabled==='1')){const id=btn.dataset.energyId;btn.disabled=false}});
+   
  }
 
  /* Ensure energy sheet shows and fills against the real level cap, never hardcoded 100. */
