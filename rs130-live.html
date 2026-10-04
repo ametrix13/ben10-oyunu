@@ -3002,7 +3002,7 @@ body input,body select,body textarea{
    state.money-=amount;return true;
  }
  function relationshipCandidatesHtml(){
-   return availableCandidates().map(n=>'<div class="rs130-person"><span class="rs130-person-avatar">'+n.emoji+'</span><div><b>'+esc(n.name)+(n.premium?'<span class="rs130-premium">PREMIUM</span>':'')+'</b><small>'+esc(n.job)+(n.premium?' · özel ilişki maliyetleri ×4':'')+'</small></div><button onclick="meetNpc130(\\''+n.id+'\\')">Tanış</button></div>').join('');
+   return availableCandidates().map(n=>'<div class="rs130-person"><span class="rs130-person-avatar">'+n.emoji+'</span><div><b>'+esc(n.name)+(n.premium?'<span class="rs130-premium">PREMIUM</span>':'')+'</b><small>'+esc(n.job)+(n.premium?' · özel ilişki maliyetleri ×4':'')+'</small></div><button onclick="meetNpc130(\''+n.id+'\')">Tanış</button></div>').join('');
  }
 
  window.meetNpc130=function(id){
@@ -3084,9 +3084,9 @@ body input,body select,body textarea{
    }
    const mult=p.premium?' · Premium maliyetler ×4':'';
    let next='';
-   if(state.npcRelationship==='met'&&state.npcBond>=20)next='<button onclick="setRelationStage130(\\'flirting\\')">💞 Flört Ol · '+fmt(cost(50000))+'</button>';
-   if(state.npcRelationship==='flirting'&&state.npcBond>=45)next='<button onclick="setRelationStage130(\\'dating\\')">❤️ Sevgili Ol · '+fmt(cost(100000))+'</button>';
-   if(state.npcRelationship==='dating'&&state.npcBond>=70)next='<button onclick="setRelationStage130(\\'engaged\\')">💍 Nişanlan · '+fmt(cost(250000))+'</button>';
+   if(state.npcRelationship==='met'&&state.npcBond>=20)next='<button onclick="setRelationStage130(\'flirting\')">💞 Flört Ol · '+fmt(cost(50000))+'</button>';
+   if(state.npcRelationship==='flirting'&&state.npcBond>=45)next='<button onclick="setRelationStage130(\'dating\')">❤️ Sevgili Ol · '+fmt(cost(100000))+'</button>';
+   if(state.npcRelationship==='dating'&&state.npcBond>=70)next='<button onclick="setRelationStage130(\'engaged\')">💍 Nişanlan · '+fmt(cost(250000))+'</button>';
    if(state.npcRelationship==='engaged'&&state.npcBond>=90)next='<button onclick="wedding130()">💒 Düğün Yap · '+fmt(cost(1200000))+'</button>';
    const childInfo=state.npcRelationship==='married'
      ? (p.noChildren?'<div class="rs130-child-box">Ayaz ile çocuk sistemi kapalı.</div>':
@@ -3104,11 +3104,11 @@ body input,body select,body textarea{
    const b=monthlyBreakdown(),total=monthlyTotal();
    const houseHtml=houses.slice(1).map(x=>{
      const owned=state.ownedHouses.includes(x.id),active=state.houseId===x.id;
-     return '<div class="rs130-store-card '+(active?'active':'')+'"><div class="rs130-store-top"><div><b>'+x.emoji+' '+x.name+'</b><small>'+x.desc+' · aylık '+fmt(x.monthly)+'</small></div><strong>'+fmt(x.cost)+'</strong></div><button '+(active?'disabled':'')+' onclick="buyHouse130(\\''+x.id+'\\')">'+(active?'Aktif':owned?'Kullan':'Satın Al')+'</button></div>';
+     return '<div class="rs130-store-card '+(active?'active':'')+'"><div class="rs130-store-top"><div><b>'+x.emoji+' '+x.name+'</b><small>'+x.desc+' · aylık '+fmt(x.monthly)+'</small></div><strong>'+fmt(x.cost)+'</strong></div><button '+(active?'disabled':'')+' onclick="buyHouse130(\''+x.id+'\')">'+(active?'Aktif':owned?'Kullan':'Satın Al')+'</button></div>';
    }).join('');
    const carHtml=cars.slice(1).map(x=>{
      const owned=state.ownedCars.includes(x.id),active=state.carId===x.id;
-     return '<div class="rs130-store-card '+(active?'active':'')+'"><div class="rs130-store-top"><div><b>'+x.emoji+' '+x.name+'</b><small>'+x.desc+' · aylık '+fmt(x.monthly)+'</small></div><strong>'+fmt(x.cost)+'</strong></div><button '+(active?'disabled':'')+' onclick="buyCar130(\\''+x.id+'\\')">'+(active?'Aktif':owned?'Kullan':'Satın Al')+'</button></div>';
+     return '<div class="rs130-store-card '+(active?'active':'')+'"><div class="rs130-store-top"><div><b>'+x.emoji+' '+x.name+'</b><small>'+x.desc+' · aylık '+fmt(x.monthly)+'</small></div><strong>'+fmt(x.cost)+'</strong></div><button '+(active?'disabled':'')+' onclick="buyCar130(\''+x.id+'\')">'+(active?'Aktif':owned?'Kullan':'Satın Al')+'</button></div>';
    }).join('');
    root.innerHTML=
     '<div class="rs130-life-grid"><div class="card rs130-life-card"><h4>🏠 Evler</h4><p>Ev yükseldikçe uyku, yemek, kahve ve diğer enerji dolumlarından daha fazla enerji kazanırsın.</p><div class="rs130-store">'+houseHtml+'</div></div>'+
@@ -3138,7 +3138,7 @@ body input,body select,body textarea{
      const faces=start.querySelector('#faces');faces?.insertAdjacentElement('beforebegin',box);
      window.rsSelectedGender130='male';
      box.querySelectorAll('[data-rs130-gender]').forEach(btn=>btn.onclick=()=>{window.rsSelectedGender130=btn.dataset.rs130Gender;box.querySelectorAll('.rs130-gender-btn').forEach(x=>x.classList.toggle('active',x===btn))});
-     document.querySelector('#startBtn')?.addEventListener('click',()=>{state.gender=window.rsSelectedGender130||'male';ensure130();try{save()}catch(_){}}); 
+     document.querySelector('#startBtn')?.addEventListener('click',()=>{state.gender=window.rsSelectedGender130||'male';ensure130();try{update()}catch(_){try{save()}catch(__){}}}); 
    }
    document.querySelectorAll('[data-rs130-migrate]').forEach(btn=>btn.onclick=()=>{
      state.gender=btn.dataset.rs130Migrate;
