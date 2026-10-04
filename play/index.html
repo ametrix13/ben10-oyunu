@@ -2530,5 +2530,245 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .page.active>.section-title:
    : 'Rol Senin 1.2.8';
 })();
 </script>
+
+<style id="rs129Style">
+/* 1.2.9 — progression, audition identities, adjustable control scale */
+.rs129-level-copy{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
+.rs129-level-copy span,.rs129-level-copy b{min-width:0}
+.rs129-level-copy b{text-align:right}
+.rs125-level-track{position:relative!important;overflow:hidden!important;background:rgba(255,255,255,.09)!important}
+.rs125-level-track i{transition:width .35s ease!important}
+.rs129-focus{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 10%,var(--panel2));border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line));color:var(--text);font-size:9px;font-weight:900}
+.rs129-rewards{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 2px}
+.rs129-rewards span{font-size:9px;padding:5px 7px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
+.rs129-job-level{font-size:9px;font-weight:900;color:var(--accent);margin-top:5px}
+.rs129-audition-note{grid-column:1/-1;padding:10px 12px;border-radius:15px;background:rgba(255,255,255,.025);border:1px solid var(--line);color:var(--muted);font-size:10px;line-height:1.45}
+.rs129-scale-box{width:min(320px,100%);display:grid;gap:7px}
+.rs129-scale-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:10px}
+.rs129-scale-head b{color:var(--accent)}
+.rs129-scale-range{width:100%;accent-color:var(--accent)}
+.rs129-scale-marks{display:flex;justify-content:space-between;color:var(--muted);font-size:8px}
+
+/* Slider controls common tap targets without changing card/layout proportions. */
+body{
+ --rs129-control-scale:1;
+}
+body .quick-grid button{
+ min-height:calc(58px * var(--rs129-control-scale))!important;
+ padding:calc(12px * var(--rs129-control-scale))!important;
+ font-size:calc(12px * var(--rs129-control-scale))!important;
+}
+body .quick-grid button small{font-size:calc(9px * var(--rs129-control-scale))!important}
+body .job button,
+body .online-btn,
+body .mini-btn,
+body .settings-btn{
+ min-height:calc(38px * var(--rs129-control-scale))!important;
+ padding:calc(9px * var(--rs129-control-scale)) calc(11px * var(--rs129-control-scale))!important;
+ font-size:calc(10px * var(--rs129-control-scale))!important;
+}
+body .icon-btn,body .settings-top-btn{
+ width:calc(38px * var(--rs129-control-scale))!important;
+ height:calc(38px * var(--rs129-control-scale))!important;
+ min-width:calc(38px * var(--rs129-control-scale))!important;
+ min-height:calc(38px * var(--rs129-control-scale))!important;
+ font-size:calc(14px * var(--rs129-control-scale))!important;
+}
+body .tabs .tab{
+ min-height:calc(54px * var(--rs129-control-scale))!important;
+ font-size:calc(9px * var(--rs129-control-scale))!important;
+ padding:calc(8px * var(--rs129-control-scale)) 2px!important;
+}
+body .tabs .tab span{font-size:calc(17px * var(--rs129-control-scale))!important}
+body input,body select,body textarea{
+ min-height:calc(40px * var(--rs129-control-scale))!important;
+ font-size:calc(12px * var(--rs129-control-scale))!important;
+}
+@media(max-width:620px){
+ .rs129-level-copy{gap:5px!important}
+ .rs129-level-copy b{font-size:6.5px!important}
+ .rs129-focus,.rs129-rewards span{font-size:8px}
+}
+</style>
+<script id="rs129Script">
+(()=>{
+ const VERSION='1.2.9';
+
+ function fameLevel129(fame){
+   const f=Math.max(0,Number(fame)||0);
+   if(f<50)return 1;
+   return Math.floor(Math.log2(f/50))+2;
+ }
+ function threshold129(lvl){
+   if(lvl<=1)return 0;
+   return 50*Math.pow(2,lvl-2);
+ }
+ function maxEnergy129(){
+   const l=fameLevel129(state?.fame);
+   if(l>=50)return 200;
+   if(l>=30)return 150;
+   if(l>=20)return 120;
+   if(l>=10)return 110;
+   return 100;
+ }
+ window.maxEnergy125=maxEnergy129;
+ window.maxEnergy129=maxEnergy129;
+ level=function(){return fameLevel129(state.fame)};
+
+ const profiles={
+   ad:{skill:8,fame:0,energy:15,pay:6000,fameGain:3,followers:80,diff:18,minLevel:1,focus:'💰 Hızlı Para',focusKey:'money'},
+   extra:{skill:12,fame:0,energy:17,pay:1800,fameGain:4,followers:1100,diff:24,minLevel:1,focus:'👥 Takipçi',focusKey:'followers'},
+   theatre:{skill:22,fame:50,energy:21,pay:2600,fameGain:10,followers:220,diff:42,minLevel:2,focus:'🎭 Oyunculuk',focusKey:'skill'},
+   support:{skill:32,fame:100,energy:24,pay:6500,fameGain:12,followers:4200,diff:48,minLevel:3,focus:'📣 Fan Büyümesi',focusKey:'followers'},
+   indie:{skill:42,fame:200,energy:27,pay:5500,fameGain:48,followers:650,diff:56,minLevel:4,focus:'⭐ Şöhret',focusKey:'fame'},
+   series:{skill:55,fame:400,energy:31,pay:36000,fameGain:18,followers:3200,diff:68,minLevel:5,focus:'💵 Düzenli Kazanç',focusKey:'money'},
+   stream:{skill:66,fame:800,energy:35,pay:18000,fameGain:28,followers:18000,diff:76,minLevel:6,focus:'📱 Viral Takipçi',focusKey:'followers'},
+   film:{skill:76,fame:1600,energy:39,pay:82000,fameGain:24,followers:4800,diff:84,minLevel:7,focus:'🎥 Büyük Bütçe',focusKey:'money'},
+   prestige:{skill:86,fame:3200,energy:43,pay:26000,fameGain:150,followers:2600,diff:92,minLevel:8,focus:'🏆 Prestij & Şöhret',focusKey:'fame'},
+   lead:{skill:95,fame:6400,energy:48,pay:110000,fameGain:70,followers:9500,diff:100,minLevel:9,focus:'👑 Başrol Kariyeri',focusKey:'balanced'}
+ };
+ jobs.forEach(j=>{const p=profiles[j.id];if(p)Object.assign(j,p)});
+
+ function relevantJobs129(){
+   const l=level();
+   let rows=jobs.filter(j=>(j.minLevel||1)>=Math.max(1,l-2)&&(j.minLevel||1)<=l+2);
+   if(rows.length<3){
+     rows=[...jobs].sort((a,b)=>Math.abs((a.minLevel||1)-l)-Math.abs((b.minLevel||1)-l)).slice(0,4).sort((a,b)=>(a.minLevel||1)-(b.minLevel||1));
+   }
+   return rows;
+ }
+ function gainLabel129(j){
+   const skillGain=Math.max(1,Math.round(j.diff/22));
+   return [
+    '💰 '+fmt(j.pay),
+    '⭐ +'+j.fameGain,
+    '👥 +'+Number(j.followers||0).toLocaleString('tr-TR'),
+    '🎭 +'+skillGain
+   ];
+ }
+ can=function(job){return state.skill>=job.skill&&state.fame>=job.fame};
+
+ jobCard=function(j){
+   const locked=state.skill<j.skill||state.fame<j.fame;
+   const enoughEnergy=state.energy>=j.energy;
+   const c=chance(j),tr=getTrend(),hot=tr.types.includes(j.type);
+   const reward=gainLabel129(j);
+   return '<article class="card job '+(locked?'locked':'')+'">'+
+    '<div class="job-top"><div><div class="job-type">'+j.type+(hot?' · 🔥 TREND':'')+'</div><h4>'+j.title+'</h4><div class="rs129-job-level">Lv '+(j.minLevel||1)+' seçmesi</div></div><div class="job-icon">'+j.icon+'</div></div>'+
+    '<p>'+j.desc+'</p>'+
+    '<div class="chips"><span class="chip">🎭 '+j.skill+' oyunculuk</span><span class="chip">⭐ '+Number(j.fame).toLocaleString('tr-TR')+' şöhret</span><span class="chip">⚡ '+j.energy+'</span></div>'+
+    '<div class="rs129-focus">'+j.focus+'</div>'+
+    '<div class="rs129-rewards">'+reward.map(x=>'<span>'+x+'</span>').join('')+'</div>'+
+    '<div class="success">Başarı şansı: %'+c+'</div>'+
+    '<button onclick="audition(\''+j.id+'\')" '+(locked?'disabled':'')+'>'+(locked?'Şartları Tamamla':!enoughEnergy?'Enerjiyi Doldur':'Seçme Sahnesine Gir')+'</button>'+
+   '</article>';
+ };
+ renderJobs=function(){
+   const all=relevantJobs129();
+   const unlocked=all.filter(j=>state.skill>=j.skill&&state.fame>=j.fame);
+   const recommended=(unlocked.length?unlocked.slice(-3):all.slice(0,3));
+   const a=document.querySelector('#allJobs'),h=document.querySelector('#homeJobs'),b=document.querySelector('#homeBadge');
+   if(a)a.innerHTML='<div class="rs129-audition-note">Kariyer seviyene göre yalnızca ilgili seçmeler gösteriliyor. Eski, artık gereksiz düşük seviye seçmeler otomatik olarak arşivlenir.</div>'+all.map(jobCard).join('');
+   if(h)h.innerHTML=recommended.map(jobCard).join('');
+   if(b)b.textContent=recommended.length+' uygun seçme';
+ };
+
+ function syncProgress129(){
+   const l=fameLevel129(state.fame),cap=maxEnergy129(),f=Math.max(0,Number(state.fame)||0),next=threshold129(l+1);
+   const remaining=Math.max(0,next-f);
+   const pct=next>0?Math.max(0,Math.min(100,(f/next)*100)):100;
+   const line=document.querySelector('#rs125LevelLine'),fill=document.querySelector('#rs125LevelFill');
+   if(line){
+     line.classList.add('rs129-level-copy');
+     const left=line.querySelector('span'),right=line.querySelector('b');
+     if(left)left.textContent='Seviye '+l+' · Maks. enerji '+cap;
+     if(right)right.textContent='Sonraki seviyeye '+Math.ceil(remaining).toLocaleString('tr-TR')+' şöhret kaldı';
+   }
+   if(fill)fill.style.width=pct+'%';
+   const et=document.querySelector('#energyText');if(et)et.textContent=Math.round(state.energy)+' / '+cap;
+   const ef=document.querySelector('#energyFill');if(ef)ef.style.width=Math.max(0,Math.min(100,state.energy/cap*100))+'%';
+   const en=document.querySelector('#energyNow111');if(en)en.textContent=Math.round(state.energy)+' / '+cap;
+   const lv=document.querySelector('#level');if(lv)lv.textContent=l;
+   document.querySelectorAll('.energy-option111').forEach(btn=>{if(state.energy<cap&&!(btn.dataset.rs129MoneyDisabled==='1')){const id=btn.dataset.energyId;btn.disabled=false}});
+ }
+
+ /* Ensure energy sheet shows and fills against the real level cap, never hardcoded 100. */
+ const oldOpen129=window.openEnergy111;
+ if(typeof oldOpen129==='function'){
+   window.openEnergy111=function(){
+     const r=oldOpen129.apply(this,arguments);
+     syncProgress129();
+     setTimeout(syncProgress129,0);
+     return r;
+   };
+   const rest=document.querySelector('#restBtn');if(rest)rest.onclick=window.openEnergy111;
+ }
+ const oldUse129=window.useEnergy111;
+ if(typeof oldUse129==='function'){
+   window.useEnergy111=function(){
+     const r=oldUse129.apply(this,arguments);
+     syncProgress129();
+     setTimeout(syncProgress129,0);
+     return r;
+   };
+ }
+
+ /* Replace old two-button size setting with a real slider. */
+ if(typeof state!=='undefined'){
+   state.uiSize123='default';
+   if(!Number.isFinite(Number(state.uiScale129)))state.uiScale129=100;
+ }
+ function applyScale129(value,saveIt=false){
+   const v=Math.max(80,Math.min(140,Math.round(Number(value)||100)));
+   state.uiScale129=v;
+   state.uiSize123='default';
+   document.body.classList.remove('rs123-large');
+   document.body.style.setProperty('--rs129-control-scale',(v/100).toFixed(2));
+   const range=document.querySelector('#rs129ScaleRange'),out=document.querySelector('#rs129ScaleValue');
+   if(range&&Number(range.value)!==v)range.value=String(v);
+   if(out)out.textContent=v+'%';
+   if(saveIt){try{save()}catch(_){}}
+ }
+ function mountScale129(){
+   const settings=document.querySelector('#settingsModal');
+   if(!settings)return;
+   const appearance=[...settings.querySelectorAll('.settings-section')].find(sec=>sec.querySelector('h3')?.textContent.includes('Görünüm'));
+   if(!appearance)return;
+   const p=appearance.querySelector('p');if(p)p.textContent='Buton ve dokunma alanlarının boyutunu istediğin seviyeye ayarla.';
+   const row=appearance.querySelector('.setting-row');if(!row)return;
+   const info=row.querySelector('.setting-row-info');
+   if(info)info.innerHTML='<b>Arayüz boyutu</b><small>80% ile 140% arasında ayarlayabilirsin. 100% varsayılan görünüm.</small>';
+   let actions=row.querySelector('.setting-actions');
+   if(!actions){actions=document.createElement('div');actions.className='setting-actions';row.appendChild(actions)}
+   actions.className='setting-actions rs129-scale-box';
+   actions.innerHTML='<div class="rs129-scale-head"><span>Daha küçük</span><b id="rs129ScaleValue">100%</b><span>Daha büyük</span></div><input id="rs129ScaleRange" class="rs129-scale-range" type="range" min="80" max="140" step="5" value="'+state.uiScale129+'"><div class="rs129-scale-marks"><span>80%</span><span>100%</span><span>120%</span><span>140%</span></div>';
+   const range=actions.querySelector('#rs129ScaleRange');
+   range.oninput=()=>applyScale129(range.value,false);
+   range.onchange=()=>applyScale129(range.value,true);
+   appearance.querySelectorAll('#rs123DefaultSize,#rs123LargeSize,#modernUiBtn,#classicUiBtn,.classic-note').forEach(x=>x.remove());
+   applyScale129(state.uiScale129,false);
+ }
+ document.querySelector('#settingsBtn')?.addEventListener('click',()=>setTimeout(mountScale129,30));
+
+ const oldUpdate129=update;
+ update=function(){
+   const r=oldUpdate129.apply(this,arguments);
+   syncProgress129();
+   renderJobs();
+   applyScale129(state.uiScale129,false);
+   return r;
+ };
+
+ mountScale129();
+ applyScale129(state.uiScale129,false);
+ syncProgress129();
+ renderJobs();
+ try{save()}catch(_){}
+
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.9';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.2.9 — Kapalı Beta':'Rol Senin 1.2.9';
+})();
+</script>
 </body>
 </html>
