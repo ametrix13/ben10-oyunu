@@ -3337,5 +3337,187 @@ body input,body select,body textarea{
   :'Rol Senin 1.3.1';
 })();
 </script>
+
+<style id="rs132Style">
+#rs130GenderModal{display:none!important}
+.rs132-gender-row{align-items:flex-start!important}
+.rs132-gender-box{min-width:min(320px,100%);display:grid;gap:8px}
+.rs132-gender-picks{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.rs132-gender-picks button{border:1px solid var(--line);background:#202a42;color:var(--text);padding:10px 12px;border-radius:11px;font-size:11px;font-weight:900}
+.rs132-gender-picks button.active{outline:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 12%,#202a42)}
+.rs132-gender-confirm{width:100%}
+.rs132-gender-lock{padding:9px 10px;border-radius:11px;border:1px solid color-mix(in srgb,var(--good) 24%,var(--line));background:color-mix(in srgb,var(--good) 7%,transparent);font-size:10px;color:var(--muted);line-height:1.4}
+.rs132-gender-lock b{color:var(--text)}
+.rs132-gender-help{font-size:8.5px;color:var(--muted);line-height:1.4}
+@media(max-width:700px){.rs132-gender-box{width:100%;min-width:0}}
+</style>
+
+<script id="rs132Script">
+(()=>{
+ const VERSION='1.3.2';
+ const valid=g=>g==='male'||g==='female';
+ const label=g=>g==='male'?'Erkek':'Kadın';
+
+ // Existing accounts no longer get a forced startup modal.
+ document.querySelector('#rs130GenderModal')?.remove();
+
+ function genderLocked(){
+   return !!state.genderLocked131 && valid(state.gender);
+ }
+
+ function lockGender(g){
+   if(genderLocked()||!valid(g))return false;
+   state.gender=g;
+   state.genderLocked131=true;
+   try{save()}catch(_){}
+   try{renderRomance()}catch(_){}
+   try{update()}catch(_){}
+   return true;
+ }
+
+ // NEW ACCOUNTS: gender remains mandatory inside the original name/avatar onboarding.
+ function enforceNewAccountGender(){
+   const start=document.querySelector('#startModal');
+   const box=document.querySelector('#rs130StartGender');
+   const startBtn=document.querySelector('#startBtn');
+   if(!start||!box||!startBtn||state.name)return;
+
+   let selected='';
+   state.gender='';
+   state.genderLocked131=false;
+   window.rsSelectedGender130='';
+   const btns=[...box.querySelectorAll('[data-rs130-gender]')];
+   btns.forEach(x=>x.classList.remove('active'));
+
+   let warning=box.querySelector('.rs131-gender-warning');
+   if(!warning){
+     warning=document.createElement('div');
+     warning.className='rs131-gender-warning';
+     warning.textContent='Kariyere başlamadan önce Erkek veya Kadın seçmelisin.';
+     box.appendChild(warning);
+   }
+
+   btns.forEach(btn=>{
+     btn.onclick=()=>{
+       selected=btn.dataset.rs130Gender;
+       window.rsSelectedGender130=selected;
+       btns.forEach(x=>x.classList.toggle('active',x===btn));
+       warning.classList.remove('show');
+     };
+   });
+
+   startBtn.onclick=()=>{
+     if(!valid(selected)){
+       warning.classList.add('show');
+       toast('Önce cinsiyetini seç');
+       return;
+     }
+     const n=(document.querySelector('#nameInput')?.value||'').trim()||'Oyuncu';
+     state.name=n;
+     state.avatar=selectedAvatar;
+     state.gender=selected;
+     state.genderLocked131=true;
+     addHistory('🎬 Oyunculuk kariyerine başladın. İlk hedef: ilk rolünü kapmak!','good');
+     start.classList.remove('show');
+     update();
+   };
+ }
+
+ function careerProfileSection(){
+   const modal=document.querySelector('#settingsModal');
+   if(!modal)return null;
+   return [...modal.querySelectorAll('.settings-section')].find(sec=>sec.querySelector('h3')?.textContent.includes('Kariyer Profili'))||null;
+ }
+
+ function mountSettingsGender(){
+   const section=careerProfileSection();
+   if(!section)return;
+   let row=document.querySelector('#rs132GenderRow');
+   if(!row){
+     row=document.createElement('div');
+     row.className='setting-row rs132-gender-row';
+     row.id='rs132GenderRow';
+     row.innerHTML=
+       '<div class="setting-row-info">'+
+         '<b>⚧ Cinsiyet</b>'+
+         '<small id="rs132GenderDesc">İlişki adaylarını belirler. Yalnızca bir kez seçilebilir.</small>'+
+       '</div>'+
+       '<div class="rs132-gender-box" id="rs132GenderBox"></div>';
+     const form=section.querySelector('.settings-form');
+     if(form)form.insertAdjacentElement('afterend',row);
+     else section.appendChild(row);
+   }
+   renderSettingsGender();
+ }
+
+ function renderSettingsGender(){
+   const box=document.querySelector('#rs132GenderBox');
+   const desc=document.querySelector('#rs132GenderDesc');
+   if(!box)return;
+
+   if(genderLocked()){
+     if(desc)desc.textContent='Bu seçim kalıcıdır ve artık değiştirilemez.';
+     box.innerHTML='<div class="rs132-gender-lock">🔒 Cinsiyet: <b>'+label(state.gender)+'</b><br>Seçim kilitlendi. Tekrar değiştirilemez.</div>';
+     return;
+   }
+
+   if(desc)desc.textContent='Eski hesabın için bir kez seç. Onayladıktan sonra değiştirilemez.';
+   box.innerHTML=
+     '<div class="rs132-gender-picks">'+
+       '<button type="button" data-rs132-gender="male">♂ Erkek</button>'+
+       '<button type="button" data-rs132-gender="female">♀ Kadın</button>'+
+     '</div>'+
+     '<button type="button" class="settings-btn primary rs132-gender-confirm" id="rs132GenderConfirm" disabled>Seçimi Onayla</button>'+
+     '<div class="rs132-gender-help">🔒 Onaydan sonra bu ayar kalıcı olarak kilitlenir.</div>';
+
+   let selected='';
+   const confirm=document.querySelector('#rs132GenderConfirm');
+   box.querySelectorAll('[data-rs132-gender]').forEach(btn=>{
+     btn.onclick=()=>{
+       selected=btn.dataset.rs132Gender;
+       box.querySelectorAll('[data-rs132-gender]').forEach(x=>x.classList.toggle('active',x===btn));
+       confirm.disabled=false;
+     };
+   });
+   confirm.onclick=()=>{
+     if(!valid(selected))return;
+     if(!confirm('Cinsiyet seçimin '+label(selected)+' olacak ve daha sonra değiştirilemeyecek. Onaylıyor musun?'))return;
+     if(!lockGender(selected))return;
+     renderSettingsGender();
+     toast('Cinsiyet seçimi kaydedildi ve kilitlendi');
+   };
+ }
+
+ enforceNewAccountGender();
+ mountSettingsGender();
+ document.querySelector('#settingsBtn')?.addEventListener('click',()=>setTimeout(mountSettingsGender,0));
+
+ // Never allow an unlocked old-account gender value to silently choose relationship candidates.
+ if(state.name&&!genderLocked()){
+   state.gender='';
+   try{save()}catch(_){}
+ }
+
+ const oldUpdate132=update;
+ update=function(){
+   const locked=genderLocked()?state.gender:'';
+   const r=oldUpdate132.apply(this,arguments);
+   if(locked){
+     state.gender=locked;
+     state.genderLocked131=true;
+   }else if(state.name){
+     state.gender='';
+   }
+   renderSettingsGender();
+   return r;
+ };
+
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.3.2';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'
+   ?'Rol Senin 1.3.2 — Kapalı Beta'
+   :'Rol Senin 1.3.2';
+})();
+</script>
 </body>
 </html>
