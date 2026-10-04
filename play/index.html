@@ -831,7 +831,7 @@ body:not(.ui-lounge) .social114{background:#0d0e11;color:#f7f7f8}.ui-modern .soc
    <section class="social114-page" data-s114-page="profile">
     <div class="social114-hero"><div class="social114-user"><div class="social114-avatar" id="social114ProfileAv">🎬</div><div><b id="social114ProfileName">Oyuncu</b><small id="social114ProfileHandle">@oyuncu</small></div></div></div>
     <div class="social114-profile-grid"><div class="social114-profile-box"><b id="social114ProfilePosts">0</b><span>Toplam gönderi</span></div><div class="social114-profile-box"><b id="social114ProfileLikes">0</b><span>Toplam beğeni</span></div><div class="social114-profile-box"><b id="social114ProfileComments">0</b><span>Toplam yorum</span></div><div class="social114-profile-box"><b id="social114ProfileGrowth">+0</b><span>Sosyal medyadan takipçi</span></div></div>
-    <div class="social114-tip" id="social114ProfileTip">Düzenli paylaşım yaptıkça profilin güçlenir.</div><div class="social114-section-title rs128-profile-post-title"><b>Gönderilerin</b><span>Profilinde görünen paylaşımlar</span></div><div class="social114-feed" id="rs128ProfilePosts"></div>
+    <div class="social114-tip" id="social114ProfileTip">Düzenli paylaşım yaptıkça profilin güçlenir.</div><div class="social114-section-title rs128-profile-posts-title"><b>Gönderilerim</b><span>Kendi paylaşımların</span></div><div class="social114-feed" id="social128ProfileFeed"></div><div class="social114-section-title rs128-profile-post-title"><b>Gönderilerin</b><span>Profilinde görünen paylaşımlar</span></div><div class="social114-feed" id="rs128ProfilePosts"></div>
    </section>
   </div>
   <div class="social114-toast" id="social114Toast">Paylaşıldı</div>
@@ -2353,241 +2353,254 @@ body.rs123-large .settings-section>p{font-size:13px!important}
 </script>
 
 
+
 <style id="rs128Style">
-/* 1.2.8 — energy-cap fix, compact secondary header, online social feed */
-body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved{padding:9px 13px!important}
-body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stats{gap:5px!important}
-body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stat{padding:7px 8px!important;border-radius:11px!important}
-body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stat b{font-size:12px!important}
-body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .stat span{font-size:7px!important}
-body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-wrap{margin-top:6px!important}
-body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-head{font-size:9px!important}
-body[data-rs122-page]:not([data-rs122-page="home"]) #rs125LevelLine{font-size:7px!important;margin-top:4px!important;gap:5px!important}
-body[data-rs122-page]:not([data-rs122-page="home"]) #rs125LevelLine b{font-size:7px!important}
-body[data-rs122-page]:not([data-rs122-page="home"]) .rs125-level-track{height:3px!important;margin-top:3px!important}
-.rs128-page-energy{display:none;width:100%;margin-top:6px;border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line));background:color-mix(in srgb,var(--accent) 8%,var(--panel2));color:var(--text);border-radius:10px;padding:7px 9px;font-size:9px;font-weight:900}
-body[data-rs122-page]:not([data-rs122-page="home"]) .rs128-page-energy{display:block}
-.rs128-energy-link{outline:1px solid color-mix(in srgb,var(--accent) 35%,transparent)!important}
-.social128-profile-title{display:flex;align-items:center;justify-content:space-between;margin:15px 2px 8px}.social128-profile-title b{font-size:12px}.social128-profile-title span{font-size:9px;color:var(--muted)}
-.social128-posts{display:grid;gap:10px}
-.social128-friend-tag{font-size:8px;font-weight:900;color:var(--accent);margin-left:5px}
-.social128-comments{border-top:1px solid var(--line);margin-top:9px;padding-top:8px;display:grid;gap:5px}
-.social128-comment{display:grid;grid-template-columns:24px 1fr;gap:6px;align-items:start;font-size:9px;line-height:1.35}
-.social128-comment>span{width:24px;height:24px;border-radius:8px;background:var(--panel2);display:grid;place-items:center}
-.social128-comment b{font-size:9px;margin-right:3px}
-.social128-refresh{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:999px;padding:5px 8px;font-size:8px;font-weight:900}
-.social128-online-note{font-size:9px;color:var(--muted);padding:8px 10px;border:1px dashed var(--line);border-radius:12px;margin-bottom:8px}
+/* 1.2.8 — energy cap fixes, compact sub-page energy UI, social feed */
+#rs128OtherEnergy{display:none}
+body:not([data-rs122-page="home"]) .profile.rs122-profile-moved{padding-top:10px!important;padding-bottom:10px!important}
+body:not([data-rs122-page="home"]) .profile.rs122-profile-moved .energy-wrap{margin-top:5px!important}
+body:not([data-rs122-page="home"]) #rs125LevelLine{font-size:7.5px!important;margin-top:3px!important;opacity:.78}
+body:not([data-rs122-page="home"]) .rs125-level-track{height:3px!important;margin-top:3px!important}
+body:not([data-rs122-page="home"]) #rs128OtherEnergy{display:flex;margin-top:6px;width:100%;min-height:31px;border:1px solid var(--line);border-radius:11px;background:color-mix(in srgb,var(--accent) 8%,var(--panel2));color:var(--text);align-items:center;justify-content:center;font-size:9px;font-weight:900}
+body:not([data-rs122-page="home"]) .energy-head{font-size:9px!important}
+body:not([data-rs122-page="home"]) .bar{height:6px!important}
+
+.rs128-feed-label{font-size:8px;color:var(--muted);margin-left:auto}
+.social114-card.rs128-friend-post{border-color:color-mix(in srgb,var(--accent) 22%,var(--line))}
+.social114-card-head .rs128-friend-tag{font-size:8px;padding:3px 6px;border-radius:99px;background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent);font-weight:900}
+.rs128-profile-posts-title{margin-top:16px!important}
+#social128ProfileFeed{margin-bottom:10px}
+.rs128-comments{display:grid;gap:5px;padding:0 12px 12px}
+.rs128-comment{display:flex;gap:6px;font-size:9px;line-height:1.35;color:var(--muted);padding:6px 7px;background:rgba(255,255,255,.025);border-radius:10px}
+.rs128-comment b{color:var(--text)}
 @media(max-width:620px){
- body[data-rs122-page]:not([data-rs122-page="home"]) .profile.rs122-profile-moved{padding:8px 10px!important}
- body[data-rs122-page]:not([data-rs122-page="home"]) #rs125LevelLine span,
- body[data-rs122-page]:not([data-rs122-page="home"]) #rs125LevelLine b{max-width:48%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ body:not([data-rs122-page="home"]) .profile.rs122-profile-moved{padding:8px 11px!important}
+ body:not([data-rs122-page="home"]) #rs128OtherEnergy{min-height:29px;font-size:8.5px}
 }
 </style>
 <script id="rs128Script">
 (()=>{
  const VERSION='1.2.8';
- const energyCfg128={
-  sleep:{icon:'😴',name:'Uyu',cost:0,gain:65,day:1},
-  water:{icon:'💧',name:'Su İç',cost:0,gain:10,day:0},
-  snack:{icon:'🍪',name:'Atıştırmalık',cost:120,gain:18,day:0},
-  coffee:{icon:'☕',name:'Kahve',cost:180,gain:26,day:0},
-  meal:{icon:'🍝',name:'Sıcak Yemek',cost:350,gain:42,day:0},
-  spa:{icon:'🧖',name:'Spa & Dinlenme',cost:750,gain:70,day:0}
- };
+ let remoteSocial128=[];
+ let socialLoading128=false;
+
  function cap128(){return typeof maxEnergy125==='function'?maxEnergy125():100}
- function syncEnergyUI128(){
+ function openEnergy128(msg){
+   try{if(msg)toast(msg)}catch(_){}
+   setTimeout(()=>{try{openEnergy111()}catch(_){document.querySelector('#energySheet111')?.classList.add('show')}},40);
+ }
+ window.openEnergy128=openEnergy128;
+
+ // Make the level-based capacity real everywhere.
+ function syncEnergy128(){
    const cap=cap128();
+   if(state.energy>cap)state.energy=cap;
    const now=document.querySelector('#energyNow111');if(now)now.textContent=Math.round(state.energy)+' / '+cap;
-   const txt=document.querySelector('#energyText');if(txt)txt.textContent=Math.round(state.energy)+' / '+cap;
+   const et=document.querySelector('#energyText');if(et)et.textContent=Math.round(state.energy)+' / '+cap;
    const fill=document.querySelector('#energyFill');if(fill)fill.style.width=Math.max(0,Math.min(100,state.energy/cap*100))+'%';
-   document.querySelectorAll('#energyList111 [data-energy-id]').forEach(b=>{
-     const o=energyCfg128[b.dataset.energyId];
-     if(o)b.disabled=state.energy>=cap||(o.cost&&state.money<o.cost);
-   });
+   const levelLine=document.querySelector('#rs125LevelLine');
+   if(levelLine&&document.body.dataset.rs122Page!=='home'){
+     const spans=levelLine.querySelectorAll('span,b');
+     if(spans[0])spans[0].textContent='Lv '+level()+' · '+cap+' enerji';
+     const next=50*Math.pow(2,Math.max(0,level()-1));
+     if(spans[1])spans[1].textContent=next.toLocaleString('tr-TR')+' ⭐';
+   }
  }
- // Fully own refill clicks so old hard-coded 100 logic can never cap the earned bonus.
- document.addEventListener('click',e=>{
-   const b=e.target.closest?.('#energyList111 [data-energy-id]');
-   if(!b)return;
-   const o=energyCfg128[b.dataset.energyId];if(!o)return;
-   e.preventDefault();e.stopImmediatePropagation();
-   const cap=cap128();
-   if(state.energy>=cap)return;
-   if(o.cost&&state.money<o.cost)return toast('Yeterli paran yok');
-   if(o.cost)state.money-=o.cost;
-   const before=Number(state.energy)||0;
-   state.energy=Math.min(cap,before+o.gain);
-   if(o.day)state.day+=o.day;
-   const gained=Math.max(0,Math.round(state.energy-before));
-   addHistory(o.icon+' '+o.name+': +'+gained+' enerji'+(o.cost?' · '+fmt(o.cost):' · ücretsiz')+(o.day?' · +1 gün':'')+'.','good');
-   toast('+'+gained+' enerji · '+Math.round(state.energy)+' / '+cap);
-   update();syncEnergyUI128();
-   if(state.energy>=cap)setTimeout(()=>window.closeEnergy111?.(),280);
- },true);
- const oldOpen128=window.openEnergy111;
- window.openEnergy111=function(){if(typeof oldOpen128==='function')oldOpen128();setTimeout(syncEnergyUI128,0)};
-
- // Energy shortcut on every non-home page.
- const ew=document.querySelector('.profile.rs122-profile-moved .energy-wrap');
- if(ew&&!document.querySelector('#rs128PageEnergy')){
-   const b=document.createElement('button');b.id='rs128PageEnergy';b.className='rs128-page-energy';b.textContent='⚡ Enerji Kazan';b.onclick=()=>window.openEnergy111?.();ew.appendChild(b);
+ const wrap=document.querySelector('.profile .energy-wrap');
+ if(wrap&&!document.querySelector('#rs128OtherEnergy')){
+   wrap.insertAdjacentHTML('beforeend','<button id="rs128OtherEnergy">⚡ Enerji Kazan</button>');
+   document.querySelector('#rs128OtherEnergy').onclick=()=>openEnergy128();
  }
 
- function need128(n,label){
-   if(state.energy>=n)return false;
-   if(typeof rs122NeedEnergy==='function')rs122NeedEnergy(n,label||'Bu işlem');
-   else window.openEnergy111?.();
-   return true;
- }
- // Core energy actions: don't leave them dead/disabled.
- document.addEventListener('click',e=>{
-   const b=e.target.closest?.('button');if(!b)return;
-   if(b.id==='awardBtn'&&state.roles>=3&&state.fame>=80&&state.day>=state.awardReadyDay&&need128(25,'Ödül gecesi')){e.preventDefault();e.stopImmediatePropagation();return}
-   if(b.id==='fanMeetBtn'&&state.fame>=50&&state.money>=1200&&state.day>=state.fanMeetReadyDay&&need128(20,'Hayran buluşması')){e.preventDefault();e.stopImmediatePropagation();return}
-   if(b.matches('[data-rs115-pr]')){
-     const n={interview:6,stylist:5,charity:7,mystery:4,party:6}[b.dataset.rs115Pr]||0;
-     if(n&&need128(n,'PR hamlesi')){e.preventDefault();e.stopImmediatePropagation();return}
-   }
-   if(b.matches('[data-rs115-prep]')){
-     const n={script:7,character:8,physical:10,promo:5}[b.dataset.rs115Prep]||0;
-     if(n&&need128(n,'Rol hazırlığı')){e.preventDefault();e.stopImmediatePropagation();return}
-   }
-   if(b.id==='social114Share'){
-     const n=document.querySelector('[data-s114-type].active')?.dataset.s114Type==='text'?6:10;
-     if(need128(n,'Sosyal medya paylaşımı')){e.preventDefault();e.stopImmediatePropagation();return}
-   }
-   const txt=(b.textContent||'').trim();
-   if((txt.includes('Tanış')||txt.includes('Buluşma'))&&need128(10,txt.includes('Tanış')?'Tanışma':'Buluşma')){e.preventDefault();e.stopImmediatePropagation();return}
- },true);
+ // Energy-required controls should route to refill instead of feeling broken.
+ function fixEnergyButtons128(){
+   const train=document.querySelector('#trainBtn');
+   if(train&&state.energy<20&&state.money>=500)train.disabled=false;
 
- function wireEnergyButtons128(){
-   const award=document.querySelector('#awardBtn');
-   if(award&&state.roles>=3&&state.fame>=80&&state.day>=state.awardReadyDay&&state.energy<25){award.disabled=false;award.classList.add('rs128-energy-link')}
+   const social=document.querySelector('#socialBtn');
+   if(social)social.disabled=false;
+
    const fan=document.querySelector('#fanMeetBtn');
-   if(fan&&state.fame>=50&&state.money>=1200&&state.day>=state.fanMeetReadyDay&&state.energy<20){fan.disabled=false;fan.classList.add('rs128-energy-link')}
-   const train=document.querySelector('#trainBtn');if(train&&state.money>=500&&state.energy<20){train.disabled=false;train.classList.add('rs128-energy-link')}
-   const social=document.querySelector('#socialBtn');if(social){social.disabled=false}
-   const share=document.querySelector('#social114Share');if(share){share.disabled=false}
-   document.querySelectorAll('#romancePanel button').forEach(b=>{
-     const t=b.textContent||'';
-     if((t.includes('Tanış')&&!state.npcPartner&&state.energy<10)||(t.includes('Buluşma')&&state.npcPartner&&state.money>=1000&&state.energy<10)){b.disabled=false;b.classList.add('rs128-energy-link')}
+   if(fan&&state.energy<20&&state.fame>=50&&state.money>=1200&&state.day>=Number(state.fanMeetReadyDay||1))fan.disabled=false;
+
+   const award=document.querySelector('#awardBtn');
+   if(award&&state.energy<25&&state.roles>=3&&state.fame>=80&&state.day>=Number(state.awardReadyDay||1))award.disabled=false;
+
+   document.querySelectorAll('.job button').forEach(b=>{
+     if(/Enerji Gerekli/i.test(b.textContent||''))b.disabled=false;
    });
-   syncEnergyUI128();
- }
 
- // SOCIAL: merge real online friend posts with local/self posts.
- let remoteFeed128=[];
- let feedLoading128=false;
+   document.querySelectorAll('button[onclick*="meetNpc"]').forEach(b=>{
+     if(state.energy<10&&!state.npcPartner)b.disabled=false;
+   });
+   document.querySelectorAll('button[onclick*="dateNpc"]').forEach(b=>{
+     if(state.energy<10&&state.npcPartner&&state.money>=1000)b.disabled=false;
+   });
+
+   const share=document.querySelector('#social114Share');
+   if(share&&share.disabled)share.disabled=false;
+ }
+ function energyCostFromButton128(btn){
+   if(!btn)return 0;
+   if(btn.id==='trainBtn')return 20;
+   if(btn.id==='fanMeetBtn')return 20;
+   if(btn.id==='awardBtn')return 25;
+   if(btn.matches('button[onclick*="meetNpc"],button[onclick*="dateNpc"]'))return 10;
+   if(btn.id==='social114Share'){
+     const t=document.querySelector('#social114Cost')?.textContent||'';
+     return Number((t.match(/(\d+)/)||[])[1]||0);
+   }
+   if(btn.matches('[data-rs115-pr]')){
+     return ({interview:6,stylist:5,charity:7,mystery:4,party:6})[btn.dataset.rs115Pr]||0;
+   }
+   if(btn.matches('[data-rs115-prep]')){
+     return ({script:7,character:8,physical:10,promo:5})[btn.dataset.rs115Prep]||0;
+   }
+   const neg=(btn.textContent||'').match(/-\s*(\d+)\s*⚡/);
+   if(neg)return Number(neg[1]||0);
+   if(btn.closest('.job')&&/Enerji Gerekli/i.test(btn.textContent||'')){
+     const m=(btn.closest('.job').textContent||'').match(/⚡\s*(\d+)/);
+     return Number(m?.[1]||0);
+   }
+   return 0;
+ }
+ document.addEventListener('click',e=>{
+   const btn=e.target.closest?.('button');
+   if(!btn)return;
+   const need=energyCostFromButton128(btn);
+   if(need>0&&state.energy<need){
+     e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+     openEnergy128('⚡ Enerjin yetersiz · '+need+' enerji gerekli');
+   }
+ },true);
+
+ const obs=new MutationObserver(()=>fixEnergyButtons128());
+ obs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled']});
+
+ // ---------- Rol Social: own + real friend posts ----------
  function esc128(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
- function fmt128(n){n=Number(n)||0;return n>=1000000?(n/1000000).toFixed(n>=10000000?0:1)+'M':n>=1000?(n/1000).toFixed(n>=10000?0:1)+'K':String(Math.round(n))}
- const style128={selfie:'🤳 Selfie',set:'🎬 Set',gala:'✨ Gala',backstage:'🎭 Kulisten',text:'✍️ Yazı'};
- const commentPool128=[
-  'bu post çok iyi olmuş','yine timelineı aldın 😭','aura seviyesi tehlikeli','yeni proje ne zaman geliyor?','bu look aşırı iyi',
-  'sette de böyle misin gerçekten','başrol enerjisi görüyorum','bunu beklemiyordum ama sevdim','caption ayrı iyi olmuş','fan club burada 🙋',
-  'bugün de algoritmayı ele geçirmiş','bu kareyi kim çekti çok iyi','stil ekibi maaşını hak etmiş','buna kalp bırakmadan geçemem',
-  'oyunculuk + sosyal medya kombosu','bir sonraki bölüm için sabırsızım','çok doğal durmuş','gala içerikleri hep iyi geliyor',
-  'kulisten daha çok post gelsin','tam magazin sayfalarının seveceği foto','enerjiye bak ya','bu dönem senin dönemin',
-  'yorumlara geldim herkes burada mı','bence bu post viral olur','kamera seni cidden seviyor','bu captionı çalabilirim',
-  'bugün timeline huzurlu','daha fazla set içeriği pls','çok iyi yakalanmış','profil fotoğrafı yapılır'
+ function fmt128(n){n=Number(n)||0;return n>=1000000?(n/1000000).toFixed(n>=10000000?0:1)+'M':n>=1000?(n/1000).toFixed(n>=10000?0:1)+'K':String(n)}
+ const commentText128=[
+  'bu post çok iyi olmuş 😭','başrol enerjisi yine burada','caption aşırı iyi','yeni projeyi bekliyoruz!','bu fotoğrafı kaydettim',
+  'Rol Social bugün kazanmış','aura seviyesi biraz fazla','çok iyi görünüyorsun ✨','set arkası içerik gelsin','ikon davranışı',
+  'bu bölüm ne zaman geliyor?','oyunculuk + stil ikilisi olmuş','şu vibe gerçekten çok iyi','gala postları ayrı güzel','fan club burada 🙋',
+  'bunu görünce projeyi merak ettim','kamera seni gerçekten seviyor','bugün feed çok iyi','devamı gelsin lütfen','bu post viral olmalı',
+  'yönetmenler bunu görsün','yeni karakter mi geliyor 👀','basın yarın bunu konuşur','ben bu dönemi sevdim','çok doğal durmuş',
+  'stil ekibi işini biliyor','şöhret yakışıyor','yine timeline benim oldu','bu captiona güldüm 😭','setten daha çok paylaş'
  ];
- const handles128=['@sinemakolik','@rolsever','@setgunlugu','@dizidelisi','@fanclubtr','@ekrankolik','@magazingo','@oyuncudunyasi','@premiereclub','@sahnearkasi','@filmdefteri','@castingroom'];
- function comments128(key,count=4){
-   state.social128Comments=state.social128Comments||{};
-   if(!state.social128Comments[key]){
-     let seed=String(key).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-     const arr=[];const n=3+(seed%4);
-     for(let i=0;i<n;i++){arr.push({h:handles128[(seed+i*7)%handles128.length],t:commentPool128[(seed+i*11)%commentPool128.length]})}
-     state.social128Comments[key]=arr;
+ const commentNames128=['@dizidelisi','@setgunlugu','@sinemakolik','@fanclub','@oyuncusever','@rolmeraklisi','@ekrankolik','@magazingozu','@castingroom','@filmsever','@geceekrani','@popcorntime'];
+ function hash128(v){let h=2166136261;for(const c of String(v)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return Math.abs(h)}
+ function comments128(p){
+   const seed=hash128((p.id||'')+'-'+(p.nickname||'self')+'-'+(p.caption||''));
+   const n=3+(seed%4),out=[];
+   for(let i=0;i<n;i++){
+     out.push({name:commentNames128[(seed+i*7)%commentNames128.length],text:commentText128[(seed+i*11)%commentText128.length]});
    }
-   return state.social128Comments[key].slice(0,count);
+   return out;
  }
- function card128(p,self=false){
-   const name=self?(state.name||'Oyuncu'):(p.actor_name||p.nickname||'Oyuncu');
+ function card128(p,isProfile=false){
+   const self=!!p.is_self||p.source==='local';
+   const name=self?(state.name||'Oyuncu'):(p.actor_name||p.nickname||'Arkadaş');
    const av=self?(state.avatar||'🎬'):(p.avatar||'🎬');
-   const key=(self?'local-':'remote-')+(p.id||p.created_at||p.caption);
-   const cs=comments128(key,5);
-   return '<article class="social114-card '+(p.viral?'social114-viral':'')+'">'+
-    '<div class="social114-card-head"><div class="social114-card-av">'+esc128(av)+'</div><div><b>'+esc128(name)+'</b>'+(self?'':'<span class="social128-friend-tag">ARKADAŞ</span>')+
-    '<small>'+(p.dayLabel?esc128(p.dayLabel):('Gün '+(p.day||p.career_day||1)))+' · Rol Social</small></div>'+(p.viral?'<span class="social114-badge">🔥 VİRAL</span>':'')+'</div>'+
-    ((p.type||p.post_type)==='photo'?'<div class="social114-photo"><span>'+esc128(style128[p.style]||'📸 Fotoğraf')+'</span></div>':'')+
-    '<div class="social114-caption">'+esc128(p.caption||'')+'</div>'+
-    '<div class="social114-eng"><span>♥ '+fmt128(p.likes)+'</span><span>💬 '+fmt128(p.comments)+'</span><span>↗ +'+fmt128(p.followers??p.followers_gain)+' takipçi</span></div>'+
-    '<div class="rs115-social-comments social128-comments">'+cs.map(c=>'<div class="social128-comment"><span>💬</span><div><b>'+esc128(c.h)+'</b>'+esc128(c.t)+'</div></div>').join('')+'</div></article>';
+   const styleNames={selfie:'🤳 Selfie',set:'🎬 Set',gala:'✨ Gala',backstage:'🎭 Kulisten',text:'✍️ Yazı'};
+   const cs=comments128(p);
+   return '<article class="social114-card '+(p.viral?'social114-viral ':'')+(!self?'rs128-friend-post':'')+'">'+
+     '<div class="social114-card-head"><div class="social114-card-av">'+esc128(av)+'</div><div><b>'+esc128(name)+'</b><small>Gün '+Number(p.day||p.career_day||1)+' · Rol Social</small></div>'+
+     (!self?'<span class="rs128-friend-tag">ARKADAŞ</span>':'')+(p.viral?'<span class="social114-badge">🔥 VİRAL</span>':'')+'</div>'+
+     ((p.type||p.post_type)==='photo'?'<div class="social114-photo"><span>'+esc128(styleNames[p.style]||'📸 Fotoğraf')+'</span></div>':'')+
+     '<div class="social114-caption">'+esc128(p.caption||'')+'</div>'+
+     '<div class="social114-eng"><span>♥ '+fmt128(p.likes)+'</span><span>💬 '+fmt128(p.comments)+'</span><span>↗ +'+fmt128(p.followers||p.followers_gain)+' takipçi</span></div>'+
+     '<div class="rs115-social-comments rs128-comments">'+cs.map(c=>'<div class="rs128-comment"><span>💬</span><div><b>'+esc128(c.name)+'</b> '+esc128(c.text)+'</div></div>').join('')+'</div>'+
+     '</article>';
  }
- async function loadRemote128(){
-   if(feedLoading128||!onlineToken)return;
-   feedLoading128=true;
-   try{const rows=await rpc('actor_social_feed',{p_token:onlineToken});remoteFeed128=Array.isArray(rows)?rows:[]}catch(_){remoteFeed128=[]}
-   feedLoading128=false;renderSocial128();
+ function localPosts128(){
+   return (state.social114?.posts||[]).map(p=>({...p,source:'local',is_self:true}));
  }
- function localPosts128(){return Array.isArray(state.social114?.posts)?state.social114.posts.slice().reverse():[]}
+ function mergedFeed128(){
+   const remote=(remoteSocial128||[]).map(p=>({...p,source:'remote'}));
+   const local=localPosts128().filter(p=>!p.remote128);
+   return [...remote,...local].sort((a,b)=>{
+     const ta=a.created_at?Date.parse(a.created_at):Number(a.id||0);
+     const tb=b.created_at?Date.parse(b.created_at):Number(b.id||0);
+     return tb-ta;
+   }).slice(0,40);
+ }
+ function ownFeed128(){
+   const remoteOwn=(remoteSocial128||[]).filter(p=>p.is_self).map(p=>({...p,source:'remote'}));
+   const local=localPosts128().filter(p=>!p.remote128);
+   return [...remoteOwn,...local].sort((a,b)=>{
+     const ta=a.created_at?Date.parse(a.created_at):Number(a.id||0);
+     const tb=b.created_at?Date.parse(b.created_at):Number(b.id||0);
+     return tb-ta;
+   }).slice(0,30);
+ }
  function renderSocial128(){
-   const feed=document.querySelector('#social114Feed');if(!feed)return;
-   const locals=localPosts128();
-   const remoteSelf=remoteFeed128.filter(p=>p.is_self);
-   const remoteFriends=remoteFeed128.filter(p=>!p.is_self);
-   const syncedCaptions=new Set(remoteSelf.map(p=>(p.caption||'')+'|'+(p.day||0)));
-   const unsynced=locals.filter(p=>!syncedCaptions.has((p.caption||'')+'|'+(p.day||0)));
-   let mixed=[
-     ...remoteFeed128.map(p=>({p,self:!!p.is_self,ts:new Date(p.created_at||0).getTime()||Number(p.id)||0})),
-     ...unsynced.map((p,i)=>({p,self:true,ts:Number(p.id)||Date.now()-i}))
-   ].sort((a,b)=>b.ts-a.ts).slice(0,18);
-   if(!mixed.length&&locals.length)mixed=locals.slice(0,18).map(p=>({p,self:true}));
-   feed.innerHTML=mixed.length?mixed.map(x=>card128(x.p,x.self)).join(''):'<div class="social114-empty"><div style="font-size:30px;margin-bottom:8px">📱</div><b>Akış henüz boş.</b><br><span>Sen veya arkadaşların paylaşım yaptığında burada görünecek.</span></div>';
-
-   let prof=document.querySelector('#social128ProfilePosts');
-   if(!prof){
-     const page=document.querySelector('[data-s114-page="profile"]');
-     if(page){page.insertAdjacentHTML('beforeend','<div class="social128-profile-title"><b>Gönderilerim</b><button class="social128-refresh" id="social128Refresh">Yenile</button></div><div class="social128-posts" id="social128ProfilePosts"></div>');prof=document.querySelector('#social128ProfilePosts');document.querySelector('#social128Refresh')?.addEventListener('click',loadRemote128)}
+   const feed=document.querySelector('#social114Feed');
+   if(feed){
+     const rows=mergedFeed128();
+     feed.innerHTML=rows.length?rows.map(p=>card128(p)).join(''):'<div class="social114-empty"><div style="font-size:30px;margin-bottom:8px">📱</div><b>Akış henüz boş.</b><br><span>Sen veya arkadaşların paylaşım yaptığında burada görünecek.</span></div>';
    }
-   if(prof){
-     const ownRemote=remoteSelf.map(p=>({p,self:true,ts:new Date(p.created_at||0).getTime()||Number(p.id)||0}));
-     const ownLocal=unsynced.map((p,i)=>({p,self:true,ts:Number(p.id)||Date.now()-i}));
-     const own=[...ownRemote,...ownLocal].sort((a,b)=>b.ts-a.ts).slice(0,18);
-     prof.innerHTML=own.length?own.map(x=>card128(x.p,true)).join(''):'<div class="social114-empty">Henüz kendi gönderin yok.</div>';
+   const profile=document.querySelector('#social128ProfileFeed');
+   if(profile){
+     const rows=ownFeed128();
+     profile.innerHTML=rows.length?rows.map(p=>card128(p,true)).join(''):'<div class="social114-empty">Henüz kendi gönderin yok.</div>';
    }
  }
- async function publishOne128(p){
-   if(!onlineToken||!p)return false;
-   state.social128Synced=state.social128Synced||[];
-   if(state.social128Synced.includes(p.id))return true;
+ async function loadSocial128(){
+   if(socialLoading128)return;
+   socialLoading128=true;
    try{
-     await rpc('actor_social_publish',{
-       p_token:onlineToken,p_type:p.type,p_style:p.type==='text'?'text':p.style,p_caption:p.caption,
-       p_likes:Math.round(p.likes||0),p_comments:Math.round(p.comments||0),p_followers:Math.round(p.followers||0),
-       p_viral:!!p.viral,p_day:Math.round(p.day||state.day||1)
-     });
-     state.social128Synced.push(p.id);state.social128Synced=state.social128Synced.slice(-80);save();return true;
-   }catch(_){return false}
+     if(onlineToken)remoteSocial128=await rpc('actor_social_feed',{p_token:onlineToken})||[];
+     else remoteSocial128=[];
+   }catch(_){remoteSocial128=[]}
+   socialLoading128=false;renderSocial128();
  }
- async function syncLatestPost128(){
-   const posts=state.social114?.posts;if(!Array.isArray(posts)||!posts.length)return;
-   await publishOne128(posts[posts.length-1]);await loadRemote128();
+ async function syncPosts128(){
+   if(!onlineToken||!state.social114?.posts?.length)return;
+   const pending=state.social114.posts.filter(p=>!p.remote128).slice(-20);
+   for(const p of pending){
+     try{
+       const r=await rpc('actor_social_publish',{
+         p_token:onlineToken,p_type:p.type||'text',p_style:p.type==='photo'?(p.style||'selfie'):'text',
+         p_caption:String(p.caption||'').slice(0,160),p_likes:Number(p.likes||0),p_comments:Number(p.comments||0),
+         p_followers:Number(p.followers||0),p_viral:!!p.viral,p_day:Number(p.day||state.day||1)
+       });
+       p.remote128=r?.id||true;
+     }catch(_){}
+   }
+   try{save()}catch(_){}
  }
- async function syncBacklog128(){
-   if(!onlineToken)return;
-   const posts=Array.isArray(state.social114?.posts)?state.social114.posts.slice(-12):[];
-   for(const p of posts)await publishOne128(p);
-   await loadRemote128();
+ async function refreshSocial128(){
+   await syncPosts128();await loadSocial128();
  }
- document.querySelector('#social114Share')?.addEventListener('click',()=>setTimeout(syncLatestPost128,120));
- document.querySelectorAll('[data-s114-tab]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{renderSocial128();if(b.dataset.s114Tab==='feed'||b.dataset.s114Tab==='profile')loadRemote128()},80)));
- document.querySelector('#socialBtn')?.addEventListener('click',()=>setTimeout(()=>{renderSocial128();syncBacklog128()},120));
+ const socialBtn=document.querySelector('#socialBtn');
+ socialBtn?.addEventListener('click',()=>setTimeout(refreshSocial128,60));
+ document.querySelectorAll('[data-s114-tab]').forEach(b=>b.addEventListener('click',()=>setTimeout(renderSocial128,25)));
+ document.querySelector('#social114Share')?.addEventListener('click',()=>setTimeout(refreshSocial128,120));
+ document.querySelector('#onlineRefresh')?.addEventListener('click',()=>setTimeout(loadSocial128,250));
 
- // Keep local UI and secondary pages synced.
+ // Keep enhanced feed after the old renderer refreshes it.
+ const socialFeed=document.querySelector('#social114Feed');
+ if(socialFeed)new MutationObserver(()=>{if(!socialFeed.dataset.rs128Busy){socialFeed.dataset.rs128Busy='1';setTimeout(()=>{renderSocial128();delete socialFeed.dataset.rs128Busy},20)}}).observe(socialFeed,{childList:true});
+
+ // Patch old comment pools with much more variation by ensuring our cards already carry comments.
  try{
    const prevUpdate128=update;
    update=function(){
      const r=prevUpdate128.apply(this,arguments);
-     wireEnergyButtons128();
+     syncEnergy128();fixEnergyButtons128();
      if(document.querySelector('#social114')?.classList.contains('show'))setTimeout(renderSocial128,0);
      return r;
    };
  }catch(_){}
- const mo128=new MutationObserver(()=>wireEnergyButtons128());
- mo128.observe(document.body,{childList:true,subtree:true});
- wireEnergyButtons128();
- if(onlineToken)setTimeout(syncBacklog128,300);
+
+ document.addEventListener('click',e=>{
+   const tab=e.target.closest?.('.tab');
+   if(tab)setTimeout(()=>{syncEnergy128();fixEnergyButtons128()},20);
+ });
+
+ syncEnergy128();fixEnergyButtons128();
+ if(onlineToken)setTimeout(refreshSocial128,300);
 
  const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
  const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.2.8';
