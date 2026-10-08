@@ -3028,22 +3028,22 @@ body input,body select,body textarea{
  ];
  const houses=[
    {id:'none',emoji:'🏠',name:'Mevcut Yaşam',cost:0,monthly:0,energy:1,desc:'Ek bonus yok.'},
-   {id:'studio',emoji:'🏙️',name:'Şehir Stüdyo Dairesi',cost:15000000,monthly:210000,energy:1.10,desc:'Enerji kazanımı +%10'},
-   {id:'loft',emoji:'🌆',name:'Oyuncu Loftu',cost:36000000,monthly:510000,energy:1.20,desc:'Enerji kazanımı +%20'},
-   {id:'penthouse',emoji:'🌃',name:'Lüks Penthouse',cost:90000000,monthly:1080000,energy:1.35,desc:'Enerji kazanımı +%35'},
-   {id:'villa',emoji:'🏡',name:'Celebrity Villa',cost:210000000,monthly:2100000,energy:1.50,desc:'Enerji kazanımı +%50'}
+   {id:'studio',emoji:'🏙️',name:'Şehir Stüdyo Dairesi',cost:25000000,monthly:250000,energy:1.10,needLevel:4,desc:'Enerji kazanımı +%10'},
+   {id:'loft',emoji:'🌆',name:'Oyuncu Loftu',cost:70000000,monthly:700000,energy:1.20,needLevel:6,desc:'Enerji kazanımı +%20'},
+   {id:'penthouse',emoji:'🌃',name:'Lüks Penthouse',cost:180000000,monthly:1800000,energy:1.35,needLevel:9,desc:'Enerji kazanımı +%35'},
+   {id:'villa',emoji:'🏡',name:'Celebrity Villa',cost:500000000,monthly:5000000,energy:1.50,needLevel:12,desc:'Enerji kazanımı +%50'}
  ];
  const cars=[
    {id:'none',emoji:'🚌',name:'Toplu Taşıma',cost:0,monthly:0,chance:0,desc:'Seçme bonusu yok.'},
-   {id:'city',emoji:'🚗',name:'City Compact',cost:7200000,monthly:120000,chance:1,desc:'Seçme şansı +%1'},
-   {id:'coupe',emoji:'🚘',name:'Executive Coupe',cost:27000000,monthly:330000,chance:3,desc:'Seçme şansı +%3'},
-   {id:'sport',emoji:'🏎️',name:'Sport GT',cost:150000000,monthly:1800000,chance:5,desc:'Seçme şansı +%5'},
-   {id:'luxury',emoji:'🚙',name:'Celebrity Luxury',cost:150000000,monthly:1800000,chance:8,desc:'Seçme şansı +%8'}
+   {id:'city',emoji:'🚗',name:'City Compact',cost:15000000,monthly:180000,chance:1,needLevel:3,desc:'Seçme şansı +%1'},
+   {id:'coupe',emoji:'🚘',name:'Executive Coupe',cost:50000000,monthly:550000,chance:3,needLevel:5,desc:'Seçme şansı +%3'},
+   {id:'sport',emoji:'🏎️',name:'Sport GT',cost:150000000,monthly:1600000,chance:5,needLevel:8,desc:'Seçme şansı +%5'},
+   {id:'luxury',emoji:'🚙',name:'Celebrity Luxury',cost:400000000,monthly:4500000,chance:8,needLevel:11,desc:'Seçme şansı +%8'}
  ];
  const baseMonthly=150000;
- const normalSpouseMonthly=6000000;
- const premiumSpouseMonthly=24000000;
- const childMonthly=8500000;
+ const normalSpouseMonthly=600000;
+ const premiumSpouseMonthly=2400000;
+ const childMonthly=850000;
 
  function ensure130(){
    if(!state.gender)state.gender='';
@@ -3108,7 +3108,7 @@ body input,body select,body textarea{
    }
  }
 
- function cost(base){return Math.round(base*100*premiumMult())}
+ function cost(base){return Math.round(base*10*premiumMult())}
  function spend(amount){
    if(Number(state.money)<amount){toast('Yeterli paran yok · '+fmt(amount)+' gerekli');return false}
    state.money-=amount;return true;
@@ -3119,7 +3119,7 @@ body input,body select,body textarea{
 
  window.meetNpc130=function(id){
    const n=candidates.find(x=>x.id===id);if(!n||state.npcPartner)return;if(level()<(n.needLevel||3))return toast('Bu ilişki adayı Lv '+(n.needLevel||3)+' seviyesinde açılır');
-   const fee=n.premium?10000000:2500000;
+   const fee=n.premium?1000000:250000;
    if(state.energy<10){toast('10 enerji gerekli');return}
    if(!spend(fee))return;
    state.energy-=10;state.day++;state.npcPartner=id;state.npcRelationship='met';state.npcBond=12;
@@ -3176,7 +3176,7 @@ body input,body select,body textarea{
    if(n.noChildren)return toast('Ayaz ile çocuk sahibi olunamıyor');
    if(state.childDueDay)return toast('Zaten çocuk bekliyorsunuz');
    const count=Number(state.children)||0;if(count>=2)return toast('En fazla 2 çocuk');
-   const fee=count===0?180000000:320000000;if(!spend(fee))return;
+   const fee=count===0?18000000:32000000;if(!spend(fee))return;
    state.childDueDay=Number(state.day)+270;
    addHistory('👶 Çocuk planı başladı. Tahmini süre 9 ay · '+fmt(fee)+'.','good');
    update();
