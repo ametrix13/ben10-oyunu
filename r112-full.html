@@ -3411,5 +3411,60 @@ body input,body select,body textarea{
   window.__RS136_WEB_ASSET_RESET__=true;
 })();
 </script>
+
+<script id="rs137BlauvesReset">
+(()=>{
+  const TARGET='blauves';
+  const FLAG='blauvesAssetReset137';
+
+  async function applyBlauvesReset137(){
+    try{
+      if(!onlineToken||typeof rpc!=='function')return false;
+      const me=await rpc('actor_me',{p_token:onlineToken});
+      const nick=String(me?.nickname||'').trim().toLowerCase();
+      if(nick!==TARGET)return false;
+      if(state?.[FLAG]===true)return false;
+
+      state.houseId='none';
+      state.carId='none';
+      state.ownedHouses=['none'];
+      state.ownedCars=['none'];
+      state.manager='none';
+      state.agency='none';
+      state[FLAG]=true;
+
+      try{addHistory('🔄 Hesap düzenlemesi: Ev, araba, menajer ve ajans kayıtların sıfırlandı. Diğer ilerlemen korundu.','')}
+      catch(_){}
+      try{save()}catch(_){
+        try{localStorage.setItem('rolSeninSave',JSON.stringify(state))}catch(__){}
+      }
+      try{update()}catch(_){}
+      try{toast('Hesap varlıkların güncellendi')}catch(_){}
+      return true;
+    }catch(_){return false}
+  }
+
+  if(typeof reconcileOnline==='function'){
+    const baseReconcile137=reconcileOnline;
+    reconcileOnline=async function(){
+      const r=await baseReconcile137.apply(this,arguments);
+      await applyBlauvesReset137();
+      return r;
+    };
+  }
+
+  if(typeof tryOnlineSession==='function'){
+    const baseTry137=tryOnlineSession;
+    tryOnlineSession=async function(){
+      const r=await baseTry137.apply(this,arguments);
+      await applyBlauvesReset137();
+      return r;
+    };
+  }
+
+  window.applyBlauvesReset137=applyBlauvesReset137;
+  setTimeout(()=>applyBlauvesReset137(),400);
+})();
+</script>
 </body>
 </html>
