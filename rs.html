@@ -3367,5 +3367,49 @@ body input,body select,body textarea{
  try{update()}catch(_){}
 })();
 </script>
+
+<script id="rs136WebAssetReset">
+(()=>{
+  const VERSION='1.3.6';
+  const MIGRATION='webAssetReset136';
+
+  function resetWebAssetsOnce(){
+    if(typeof state==='undefined'||!state||!state.name)return false;
+    if(state[MIGRATION]===true)return false;
+
+    const hadHouse=(state.houseId&&state.houseId!=='none')||(Array.isArray(state.ownedHouses)&&state.ownedHouses.some(x=>x&&x!=='none'));
+    const hadCar=(state.carId&&state.carId!=='none')||(Array.isArray(state.ownedCars)&&state.ownedCars.some(x=>x&&x!=='none'));
+    const hadManager=!!state.manager&&state.manager!=='none';
+    const hadAgency=!!state.agency&&state.agency!=='none';
+
+    state.houseId='none';
+    state.carId='none';
+    state.ownedHouses=['none'];
+    state.ownedCars=['none'];
+    state.manager='none';
+    state.agency='none';
+    state[MIGRATION]=true;
+
+    if(hadHouse||hadCar||hadManager||hadAgency){
+      try{addHistory('🔄 Web ekonomi güncellemesi: Ev, araba, menajer ve ajans seçimlerin sıfırlandı. Diğer kariyer ilerlemen korundu.','')}
+      catch(_){}
+    }
+
+    try{save()}catch(_){
+      try{localStorage.setItem('rolSeninSave',JSON.stringify(state))}catch(__){}
+    }
+    try{update()}catch(_){}
+    return true;
+  }
+
+  resetWebAssetsOnce();
+
+  const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+  const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.3.6 WEB';
+  document.title='Rol Senin 1.3.6 — Web';
+
+  window.__RS136_WEB_ASSET_RESET__=true;
+})();
+</script>
 </body>
 </html>
