@@ -270,9 +270,9 @@ const jobs = [
 ];
 const agencies = [
   {id:'none',name:'Ajanssız',cost:0,bonus:0,need:0,desc:'Kazanç bonusu yok.'},
-  {id:'starter',name:'Mavi Sahne Ajans',cost:5000,bonus:.08,need:35,desc:'Rol kazançlarına %8 bonus.'},
-  {id:'pro',name:'Spotlight Menajerlik',cost:18000,bonus:.18,need:140,desc:'Rol kazançlarına %18 bonus.'},
-  {id:'elite',name:'Golden Cast',cost:45000,bonus:.30,need:350,desc:'Rol kazançlarına %30 bonus.'}
+  {id:'starter',name:'Mavi Sahne Ajans',cost:50000,bonus:.08,need:35,desc:'Rol kazançlarına %8 bonus.'},
+  {id:'pro',name:'Spotlight Menajerlik',cost:180000,bonus:.18,need:140,desc:'Rol kazançlarına %18 bonus.'},
+  {id:'elite',name:'Golden Cast',cost:450000,bonus:.30,need:350,desc:'Rol kazançlarına %30 bonus.'}
 ];
 const milestones = [
   {label:'İlk rolünü kap',sub:'En az bir seçmeyi başarıyla geç.',test:s=>s.roles>=1},
@@ -295,9 +295,9 @@ const dailyMissionDefs=[
 ];
 const managers=[
  {id:'none',name:'Kendi Başına',fee:0,chance:0,pay:0,crisis:0,need:0,desc:'Komisyon yok, bonus yok.'},
- {id:'mert',name:'Mert Aydın',fee:6500,chance:7,pay:4,crisis:0,need:35,desc:'+%7 seçme şansı · +%4 kazanç'},
- {id:'vera',name:'Vera Talent',fee:22000,chance:4,pay:12,crisis:15,need:140,desc:'+%12 kazanç · kriz riski azalır'},
- {id:'nova',name:'Nova Global',fee:60000,chance:10,pay:15,crisis:25,need:360,desc:'Global kariyer · +%10 şans · +%15 kazanç'}
+ {id:'mert',name:'Mert Aydın',fee:65000,chance:7,pay:4,crisis:0,need:35,desc:'+%7 seçme şansı · +%4 kazanç'},
+ {id:'vera',name:'Vera Talent',fee:220000,chance:4,pay:12,crisis:15,need:140,desc:'+%12 kazanç · kriz riski azalır'},
+ {id:'nova',name:'Nova Global',fee:600000,chance:10,pay:15,crisis:25,need:360,desc:'Global kariyer · +%10 şans · +%15 kazanç'}
 ];
 const skillDefs=[
  {id:'drama',icon:'🎭',name:'Drama',desc:'Prestij ve dramatik rollerde bonus'},
@@ -2906,22 +2906,22 @@ body input,body select,body textarea{
  ];
  const houses=[
    {id:'none',emoji:'🏠',name:'Mevcut Yaşam',cost:0,monthly:0,energy:1,desc:'Ek bonus yok.'},
-   {id:'studio',emoji:'🏙️',name:'Şehir Stüdyo Dairesi',cost:2500000,monthly:35000,energy:1.10,desc:'Enerji kazanımı +%10'},
-   {id:'loft',emoji:'🌆',name:'Oyuncu Loftu',cost:6000000,monthly:85000,energy:1.20,desc:'Enerji kazanımı +%20'},
-   {id:'penthouse',emoji:'🌃',name:'Lüks Penthouse',cost:15000000,monthly:180000,energy:1.35,desc:'Enerji kazanımı +%35'},
-   {id:'villa',emoji:'🏡',name:'Celebrity Villa',cost:35000000,monthly:350000,energy:1.50,desc:'Enerji kazanımı +%50'}
+   {id:'studio',emoji:'🏙️',name:'Şehir Stüdyo Dairesi',cost:5000000,monthly:70000,energy:1.10,desc:'Enerji kazanımı +%10'},
+   {id:'loft',emoji:'🌆',name:'Oyuncu Loftu',cost:12000000,monthly:170000,energy:1.20,desc:'Enerji kazanımı +%20'},
+   {id:'penthouse',emoji:'🌃',name:'Lüks Penthouse',cost:30000000,monthly:360000,energy:1.35,desc:'Enerji kazanımı +%35'},
+   {id:'villa',emoji:'🏡',name:'Celebrity Villa',cost:70000000,monthly:700000,energy:1.50,desc:'Enerji kazanımı +%50'}
  ];
  const cars=[
    {id:'none',emoji:'🚌',name:'Toplu Taşıma',cost:0,monthly:0,chance:0,desc:'Seçme bonusu yok.'},
-   {id:'city',emoji:'🚗',name:'City Compact',cost:1200000,monthly:20000,chance:1,desc:'Seçme şansı +%1'},
-   {id:'coupe',emoji:'🚘',name:'Executive Coupe',cost:4500000,monthly:55000,chance:3,desc:'Seçme şansı +%3'},
-   {id:'sport',emoji:'🏎️',name:'Sport GT',cost:10000000,monthly:120000,chance:5,desc:'Seçme şansı +%5'},
-   {id:'luxury',emoji:'🚙',name:'Celebrity Luxury',cost:25000000,monthly:300000,chance:8,desc:'Seçme şansı +%8'}
+   {id:'city',emoji:'🚗',name:'City Compact',cost:2400000,monthly:40000,chance:1,desc:'Seçme şansı +%1'},
+   {id:'coupe',emoji:'🚘',name:'Executive Coupe',cost:9000000,monthly:110000,chance:3,desc:'Seçme şansı +%3'},
+   {id:'sport',emoji:'🏎️',name:'Sport GT',cost:20000000,monthly:240000,chance:5,desc:'Seçme şansı +%5'},
+   {id:'luxury',emoji:'🚙',name:'Celebrity Luxury',cost:50000000,monthly:600000,chance:8,desc:'Seçme şansı +%8'}
  ];
- const baseMonthly=15000;
- const normalSpouseMonthly=60000;
- const premiumSpouseMonthly=240000;
- const childMonthly=85000;
+ const baseMonthly=50000;
+ const normalSpouseMonthly=600000;
+ const premiumSpouseMonthly=2400000;
+ const childMonthly=850000;
 
  function ensure130(){
    if(!state.gender)state.gender='';
@@ -2986,7 +2986,7 @@ body input,body select,body textarea{
    }
  }
 
- function cost(base){return Math.round(base*premiumMult())}
+ function cost(base){return Math.round(base*10*premiumMult())}
  function spend(amount){
    if(Number(state.money)<amount){toast('Yeterli paran yok · '+fmt(amount)+' gerekli');return false}
    state.money-=amount;return true;
@@ -2997,7 +2997,7 @@ body input,body select,body textarea{
 
  window.meetNpc130=function(id){
    const n=candidates.find(x=>x.id===id);if(!n||state.npcPartner)return;
-   const fee=n.premium?100000:25000;
+   const fee=n.premium?1000000:250000;
    if(state.energy<10){toast('10 enerji gerekli');return}
    if(!spend(fee))return;
    state.energy-=10;state.day++;state.npcPartner=id;state.npcRelationship='met';state.npcBond=12;
@@ -3054,7 +3054,7 @@ body input,body select,body textarea{
    if(n.noChildren)return toast('Ayaz ile çocuk sahibi olunamıyor');
    if(state.childDueDay)return toast('Zaten çocuk bekliyorsunuz');
    const count=Number(state.children)||0;if(count>=2)return toast('En fazla 2 çocuk');
-   const fee=count===0?1800000:3200000;if(!spend(fee))return;
+   const fee=count===0?18000000:32000000;if(!spend(fee))return;
    state.childDueDay=Number(state.day)+270;
    addHistory('👶 Çocuk planı başladı. Tahmini süre 9 ay · '+fmt(fee)+'.','good');
    update();
@@ -3085,7 +3085,7 @@ body input,body select,body textarea{
    box.innerHTML=
     '<div class="rs130-relation-state"><h5>'+p.emoji+' '+esc(p.name)+(p.premium?'<span class="rs130-premium">PREMIUM</span>':'')+'</h5><p>'+statusLabel()+' · Yakınlık '+Math.round(state.npcBond)+'/100'+mult+'</p><div class="rs130-bond"><i style="width:'+Math.max(0,Math.min(100,state.npcBond))+'%"></i></div></div>'+
     '<div class="rs130-action-grid"><button onclick="relationshipDate130()">☕ Buluş · '+fmt(cost(25000))+' · 10⚡</button>'+next+
-    (state.npcRelationship==='married'&&!p.noChildren&&!(state.childDueDay)&&Number(state.children)<2?'<button onclick="planChild130()">👶 Çocuk Planla · '+fmt(Number(state.children)===0?1800000:3200000)+'</button>':'')+
+    (state.npcRelationship==='married'&&!p.noChildren&&!(state.childDueDay)&&Number(state.children)<2?'<button onclick="planChild130()">👶 Çocuk Planla · '+fmt(Number(state.children)===0?18000000:32000000)+'</button>':'')+
     '<button class="wide" onclick="breakRelation130()">'+(state.npcRelationship==='married'?'💔 Boşan · '+fmt(cost(750000)):'💔 İlişkiyi Bitir')+'</button></div>'+childInfo;
  };
 
@@ -3352,5 +3352,6 @@ body input,body select,body textarea{
    :'Rol Senin 1.3.3';
 })();
 </script>
+<script id="rs134Script">(()=>{const VERSION='1.3.4';const t=document.querySelector('.vtag');if(t)t.textContent=VERSION;const l=document.querySelector('#liveBuildBadge112');if(l)l.textContent='v1.3.4';document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.3.4 — Kapalı Beta':'Rol Senin 1.3.4';})();</script>
 </body>
 </html>
