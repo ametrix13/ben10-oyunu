@@ -3488,5 +3488,69 @@ body input,body select,body textarea{
  try{update()}catch(_){}
 })();
 </script>
+
+<script id="rsBlauvesAssetResetV1">
+(()=>{
+  const TARGET='blauves';
+  const LOCAL_MARK='rsTargetReset_blauves_assets_v1';
+
+  function currentOnlineNick(){
+    const fromOnline=String(window.onlineData?.me?.nickname||'').trim().toLowerCase();
+    if(fromOnline)return fromOnline;
+    try{
+      const el=document.querySelector('#onlineMeStats');
+      const m=(el?.textContent||'').match(/@([a-zA-Z0-9_.-]+)/);
+      if(m)return m[1].toLowerCase();
+    }catch(_){}
+    return '';
+  }
+
+  function applyReset(){
+    if(localStorage.getItem(LOCAL_MARK)==='done')return false;
+    if(currentOnlineNick()!==TARGET)return false;
+    if(typeof state==='undefined'||!state)return false;
+
+    state.houseId='none';
+    state.carId='none';
+    state.ownedHouses=['none'];
+    state.ownedCars=['none'];
+    state.manager='none';
+    state.agency='none';
+
+    try{localStorage.setItem(LOCAL_MARK,'done')}catch(_){}
+    try{addHistory('🔄 Hesap düzenlemesi: Ev, araba, menajer ve ajans verilerin sıfırlandı. Diğer kariyer ilerlemen korundu.','')}catch(_){}
+    try{save()}catch(_){
+      try{localStorage.setItem('rolSeninSave',JSON.stringify(state))}catch(__){}
+    }
+    try{update()}catch(_){}
+    try{toast('Ev, araba, menajer ve ajans sıfırlandı')}catch(_){}
+    return true;
+  }
+
+  const baseRenderOnline=window.renderOnline;
+  if(typeof baseRenderOnline==='function'){
+    window.renderOnline=function(){
+      const r=baseRenderOnline.apply(this,arguments);
+      applyReset();
+      return r;
+    };
+  }
+
+  const baseRefreshOnline=window.refreshOnline;
+  if(typeof baseRefreshOnline==='function'){
+    window.refreshOnline=async function(){
+      const r=await baseRefreshOnline.apply(this,arguments);
+      applyReset();
+      return r;
+    };
+  }
+
+  // Also catch already-authenticated sessions after initial page load.
+  setTimeout(applyReset,800);
+  setTimeout(applyReset,2500);
+
+  window.__RS_BLAUVES_ASSET_RESET_V1__=true;
+})();
+</script>
 </body>
 </html>
