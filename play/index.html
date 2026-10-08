@@ -3040,7 +3040,7 @@ body input,body select,body textarea{
    {id:'sport',emoji:'🏎️',name:'Sport GT',cost:150000000,monthly:1600000,chance:5,needLevel:8,desc:'Seçme şansı +%5'},
    {id:'luxury',emoji:'🚙',name:'Celebrity Luxury',cost:400000000,monthly:4500000,chance:8,needLevel:11,desc:'Seçme şansı +%8'}
  ];
- const baseMonthly=150000;
+ const baseMonthly=250000;
  const normalSpouseMonthly=600000;
  const premiumSpouseMonthly=2400000;
  const childMonthly=850000;
@@ -3301,5 +3301,192 @@ body input,body select,body textarea{
 @media(max-width:700px){.core-gender-setting134{display:grid!important}.core-gender-setting134>div:last-child{min-width:0;width:100%}}
 </style>
 <script id="rs134Script">(()=>{const VERSION='1.3.4';const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.3.4';try{syncGender134()}catch(_){}try{renderRomance()}catch(_){}document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.3.4 — Kapalı Beta':'Rol Senin 1.3.4';})();</script>
+
+<style id="rs135Style">
+.rs135-lock{padding:14px;border-radius:15px;border:1px dashed color-mix(in srgb,var(--accent) 38%,var(--line));background:color-mix(in srgb,var(--accent) 5%,transparent);text-align:center}
+.rs135-lock b{display:block;font-size:11px}.rs135-lock small{display:block;margin-top:4px;font-size:9px;line-height:1.45;color:var(--muted)}
+.rs135-lvl{display:inline-flex;margin-left:5px;padding:2px 5px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--accent);font-size:7px;font-weight:950}
+</style>
+<script id="rs135Script">
+(()=>{
+ const VERSION='1.3.5';
+ const agencyCfg={starter:{cost:50000000,lv:2},pro:{cost:180000000,lv:5},elite:{cost:500000000,lv:8}};
+ const managerCfg={mert:{fee:75000000,lv:3},vera:{fee:250000000,lv:6},nova:{fee:700000000,lv:9}};
+ const houseLv={studio:4,loft:6,penthouse:9,villa:12};
+ const carLv={city:3,coupe:5,sport:8,luxury:11};
+
+ agencies.forEach(a=>{const c=agencyCfg[a.id];if(c){a.cost=c.cost;a.needLevel=c.lv}});
+ managers.forEach(m=>{const c=managerCfg[m.id];if(c){m.fee=c.fee;m.needLevel=c.lv}});
+
+ function lockHtml(title,desc){return '<div class="rs135-lock"><b>🔒 '+title+'</b><small>'+desc+'</small></div>'}
+ function levelTag(el,lv){
+   const small=el?.querySelector('small');
+   if(small&&!small.dataset.rs135){small.dataset.rs135='1';small.insertAdjacentHTML('beforeend',' <span class="rs135-lvl">Lv '+lv+'</span>')}
+ }
+
+ const oldCareer=renderCareer;
+ renderCareer=function(){
+   const r=oldCareer.apply(this,arguments);
+   const cards=[...document.querySelectorAll('#agencies .agency-option')];
+   cards.forEach((card,i)=>{
+     const a=agencies[i];if(!a||a.id==='none')return;
+     const lv=a.needLevel||1,btn=card.querySelector('button');
+     levelTag(card,lv);
+     if(btn&&level()<lv){btn.disabled=true;btn.textContent='Lv '+lv+' gerekli'}
+   });
+   return r;
+ };
+ const oldAgency=window.chooseAgency;
+ window.chooseAgency=function(id){
+   const a=agencies.find(x=>x.id===id);
+   if(a&&level()<(a.needLevel||1))return toast('Bu ajans Lv '+a.needLevel+' seviyesinde açılır');
+   return oldAgency.apply(this,arguments);
+ };
+
+ const oldManagers=renderManagers;
+ renderManagers=function(){
+   const box=document.querySelector('#managerList');
+   if(level()<3){if(box)box.innerHTML=lockHtml('Menajer Sistemi · Lv 3','100 şöhrete ulaştığında ilk menajer açılır.');return}
+   const r=oldManagers.apply(this,arguments);
+   [...document.querySelectorAll('#managerList .manager')].forEach((card,i)=>{
+     const m=managers[i];if(!m||m.id==='none')return;
+     const lv=m.needLevel||1,btn=card.querySelector('button');
+     levelTag(card,lv);
+     if(btn&&level()<lv){btn.disabled=true;btn.textContent='Lv '+lv+' gerekli'}
+   });
+   return r;
+ };
+ const oldManager=window.chooseManager;
+ window.chooseManager=function(id){
+   const m=managers.find(x=>x.id===id);
+   if(m&&level()<(m.needLevel||1))return toast('Bu menajer Lv '+m.needLevel+' seviyesinde açılır');
+   return oldManager.apply(this,arguments);
+ };
+
+ const oldSkill=renderSkillTree;
+ renderSkillTree=function(){
+   const box=document.querySelector('#skillTree');
+   if(level()<3){if(box)box.innerHTML=lockHtml('Oyunculuk Uzmanlıkları · Lv 3','Uzmanlık eğitimi Lv 3 seviyesinde açılır.');return}
+   const r=oldSkill.apply(this,arguments);
+   [...document.querySelectorAll('#skillTree .skill-node')].forEach((card,i)=>{
+     const sk=skillDefs[i],lvl=state.specialSkills?.[sk?.id]||0,cost=250000+lvl*500000,btn=card.querySelector('button');
+     if(btn){btn.textContent='Çalış · '+fmt(cost)+' · 12⚡';btn.disabled=lvl>=10||state.money<cost||state.energy<12}
+   });
+   return r;
+ };
+ window.trainSpecial=function(id){
+   if(level()<3)return toast('Uzmanlıklar Lv 3 seviyesinde açılır');
+   const lvl=state.specialSkills[id]||0,cost=250000+lvl*500000;
+   if(lvl>=10||state.money<cost||state.energy<12)return;
+   state.money-=cost;state.energy-=12;state.day++;state.specialSkills[id]=lvl+1;state.skill+=1;
+   addHistory('🧠 '+skillDefs.find(x=>x.id===id).name+' uzmanlığın '+(lvl+1)+'. seviyeye çıktı.','good');update();
+ };
+
+ const oldBrands=renderBrands;
+ renderBrands=function(){
+   const box=document.querySelector('#brandDeals');
+   if(level()<5){if(box)box.innerHTML=lockHtml('Marka Anlaşmaları · Lv 5','Markalar Lv 5 seviyesinde seni fark etmeye başlar.');return}
+   return oldBrands.apply(this,arguments);
+ };
+ const oldInternational=renderInternational;
+ renderInternational=function(){
+   const box=document.querySelector('#internationalPanel');
+   if(level()<7){if(box)box.innerHTML=lockHtml('Uluslararası Kariyer · Lv 7','Global kariyer merkezi Lv 7 seviyesinde açılır.');return}
+   return oldInternational.apply(this,arguments);
+ };
+ const oldProduction=renderProduction;
+ renderProduction=function(){
+   const box=document.querySelector('#productionPanel');
+   if(level()<10){if(box)box.innerHTML=lockHtml('Yapım Şirketi · Lv 10','Kendi yapım şirketini Lv 10 seviyesinde kurabilirsin.');return}
+   return oldProduction.apply(this,arguments);
+ };
+
+ const oldRomance=renderRomance;
+ renderRomance=function(){
+   if(!state.genderLocked134||!['male','female'].includes(state.gender))return oldRomance.apply(this,arguments);
+   const box=document.querySelector('#romancePanel');
+   if(level()<3){if(box)box.innerHTML=lockHtml('İlişkiler · Lv 3','100 şöhrete ulaşıp Lv 3 olduğunda ilişki sistemi açılır.');return}
+   const r=oldRomance.apply(this,arguments);
+   if(!state.npcPartner){
+     [...document.querySelectorAll('#romancePanel .rs130-person')].forEach(card=>{
+       const text=card.textContent||'',premium=text.includes('Taybrina')||text.includes('Ayaz');
+       const btn=card.querySelector('button'),small=card.querySelector('small');
+       if(btn&&!premium)btn.textContent='Tanış · '+fmt(250000);
+       if(btn&&premium){
+         if(level()<10){btn.disabled=true;btn.textContent='Lv 10 gerekli'}
+         else btn.textContent='Tanış · '+fmt(1000000);
+       }
+       if(premium&&small&&!small.textContent.includes('Lv 10'))small.textContent+=' · 🔒 Premium Lv 10';
+     });
+   }
+   return r;
+ };
+
+ const meetBase=window.meetNpc130;
+ window.meetNpc130=function(id){
+   const need=(id==='ayaz'||id==='taybrina')?10:3;
+   if(level()<need)return toast('Bu ilişki adayı Lv '+need+' seviyesinde açılır');
+   return meetBase.apply(this,arguments);
+ };
+ const dateBase=window.relationshipDate130;
+ window.relationshipDate130=function(){
+   if(level()<3)return toast('İlişkiler Lv 3 seviyesinde açılır');
+   return dateBase.apply(this,arguments);
+ };
+ const stageBase=window.setRelationStage130;
+ window.setRelationStage130=function(stage){
+   const need={flirting:4,dating:5,engaged:6}[stage]||3;
+   if(level()<need)return toast('Bu ilişki adımı Lv '+need+' seviyesinde açılır');
+   return stageBase.apply(this,arguments);
+ };
+ const weddingBase=window.wedding130;
+ window.wedding130=function(){
+   if(level()<7)return toast('Düğün Lv 7 seviyesinde açılır');
+   return weddingBase.apply(this,arguments);
+ };
+ const childBase=window.planChild130;
+ window.planChild130=function(){
+   if(level()<9)return toast('Çocuk planlama Lv 9 seviyesinde açılır');
+   return childBase.apply(this,arguments);
+ };
+
+ const buyHouseBase=window.buyHouse130;
+ window.buyHouse130=function(id){
+   const need=houseLv[id]||1;if(level()<need)return toast('Bu ev Lv '+need+' seviyesinde açılır');
+   return buyHouseBase.apply(this,arguments);
+ };
+ const buyCarBase=window.buyCar130;
+ window.buyCar130=function(id){
+   const need=carLv[id]||1;if(level()<need)return toast('Bu araba Lv '+need+' seviyesinde açılır');
+   return buyCarBase.apply(this,arguments);
+ };
+
+ function decorateAssets(){
+   const map={
+     'Şehir Stüdyo Dairesi':4,'Oyuncu Loftu':6,'Lüks Penthouse':9,'Celebrity Villa':12,
+     'City Compact':3,'Executive Coupe':5,'Sport GT':8,'Celebrity Luxury':11
+   };
+   [...document.querySelectorAll('#rs130LifeRoot .rs130-store-card')].forEach(card=>{
+     const text=card.textContent||'',name=Object.keys(map).find(n=>text.includes(n));if(!name)return;
+     const need=map[name],btn=card.querySelector('button'),small=card.querySelector('small');
+     if(small&&!small.textContent.includes('Lv '+need))small.textContent+=' · Lv '+need;
+     if(btn&&level()<need&&!btn.textContent.includes('Aktif')){btn.disabled=true;btn.textContent='Lv '+need+' gerekli'}
+   });
+ }
+
+ const oldUpdate=update;
+ update=function(){
+   const r=oldUpdate.apply(this,arguments);
+   try{renderManagers();renderSkillTree();renderBrands();renderInternational();renderProduction();renderRomance();decorateAssets()}catch(_){}
+   return r;
+ };
+ decorateAssets();
+
+ const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
+ const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.3.5';
+ document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.3.5 — Kapalı Beta':'Rol Senin 1.3.5';
+ try{update()}catch(_){}
+})();
+</script>
 </body>
 </html>
