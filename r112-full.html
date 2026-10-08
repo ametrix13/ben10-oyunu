@@ -2913,26 +2913,26 @@ body input,body select,body textarea{
 (()=>{
  const VERSION='1.3.0';
  const candidates=[
-   {id:'james',gender:'male',emoji:'🧑🏻',name:'James Walker',job:'Oyuncu',premium:false},
-   {id:'logan',gender:'male',emoji:'🧑🏼',name:'Logan Reed',job:'Yönetmen',premium:false},
-   {id:'ayaz',gender:'male',emoji:'👑',name:'Ayaz',job:'Mühendis · Şarkıcı · Yapımcı · Senarist · Oyuncu',premium:true,noChildren:true},
-   {id:'tori',gender:'female',emoji:'👩🏻',name:'Tori Bennett',job:'Şarkıcı',premium:false},
-   {id:'elizabeth',gender:'female',emoji:'👩🏼',name:'Elizabeth Carter',job:'Model',premium:false},
-   {id:'taybrina',gender:'female',emoji:'💎',name:'Taybrina',job:'Oyuncu · Influencer',premium:true}
+   {id:'james',gender:'male',emoji:'🧑🏻',name:'James Walker',job:'Oyuncu',premium:false,needLevel:3},
+   {id:'logan',gender:'male',emoji:'🧑🏼',name:'Logan Reed',job:'Yönetmen',premium:false,needLevel:3},
+   {id:'ayaz',gender:'male',emoji:'👑',name:'Ayaz',job:'Mühendis · Şarkıcı · Yapımcı · Senarist · Oyuncu',premium:true,noChildren:true,needLevel:10},
+   {id:'tori',gender:'female',emoji:'👩🏻',name:'Tori Bennett',job:'Şarkıcı',premium:false,needLevel:3},
+   {id:'elizabeth',gender:'female',emoji:'👩🏼',name:'Elizabeth Carter',job:'Model',premium:false,needLevel:3},
+   {id:'taybrina',gender:'female',emoji:'💎',name:'Taybrina',job:'Oyuncu · Influencer',premium:true,needLevel:10}
  ];
  const houses=[
    {id:'none',emoji:'🏠',name:'Mevcut Yaşam',cost:0,monthly:0,energy:1,desc:'Ek bonus yok.'},
-   {id:'studio',emoji:'🏙️',name:'Şehir Stüdyo Dairesi',cost:10000000,monthly:140000,energy:1.10,desc:'Enerji kazanımı +%10'},
-   {id:'loft',emoji:'🌆',name:'Oyuncu Loftu',cost:24000000,monthly:340000,energy:1.20,desc:'Enerji kazanımı +%20'},
-   {id:'penthouse',emoji:'🌃',name:'Lüks Penthouse',cost:60000000,monthly:720000,energy:1.35,desc:'Enerji kazanımı +%35'},
-   {id:'villa',emoji:'🏡',name:'Celebrity Villa',cost:140000000,monthly:1400000,energy:1.50,desc:'Enerji kazanımı +%50'}
+   {id:'studio',emoji:'🏙️',name:'Şehir Stüdyo Dairesi',cost:25000000,monthly:250000,energy:1.10,needLevel:4,desc:'Enerji kazanımı +%10'},
+   {id:'loft',emoji:'🌆',name:'Oyuncu Loftu',cost:70000000,monthly:700000,energy:1.20,needLevel:6,desc:'Enerji kazanımı +%20'},
+   {id:'penthouse',emoji:'🌃',name:'Lüks Penthouse',cost:180000000,monthly:1800000,energy:1.35,needLevel:9,desc:'Enerji kazanımı +%35'},
+   {id:'villa',emoji:'🏡',name:'Celebrity Villa',cost:500000000,monthly:5000000,energy:1.50,needLevel:12,desc:'Enerji kazanımı +%50'}
  ];
  const cars=[
    {id:'none',emoji:'🚌',name:'Toplu Taşıma',cost:0,monthly:0,chance:0,desc:'Seçme bonusu yok.'},
-   {id:'city',emoji:'🚗',name:'City Compact',cost:4800000,monthly:80000,chance:1,desc:'Seçme şansı +%1'},
-   {id:'coupe',emoji:'🚘',name:'Executive Coupe',cost:18000000,monthly:220000,chance:3,desc:'Seçme şansı +%3'},
-   {id:'sport',emoji:'🏎️',name:'Sport GT',cost:40000000,monthly:480000,chance:5,desc:'Seçme şansı +%5'},
-   {id:'luxury',emoji:'🚙',name:'Celebrity Luxury',cost:100000000,monthly:1200000,chance:8,desc:'Seçme şansı +%8'}
+   {id:'city',emoji:'🚗',name:'City Compact',cost:15000000,monthly:180000,chance:1,needLevel:3,desc:'Seçme şansı +%1'},
+   {id:'coupe',emoji:'🚘',name:'Executive Coupe',cost:50000000,monthly:550000,chance:3,needLevel:5,desc:'Seçme şansı +%3'},
+   {id:'sport',emoji:'🏎️',name:'Sport GT',cost:150000000,monthly:1600000,chance:5,needLevel:8,desc:'Seçme şansı +%5'},
+   {id:'luxury',emoji:'🚙',name:'Celebrity Luxury',cost:400000000,monthly:4500000,chance:8,needLevel:11,desc:'Seçme şansı +%8'}
  ];
  const baseMonthly=100000;
  const normalSpouseMonthly=600000;
@@ -3122,14 +3122,14 @@ body input,body select,body textarea{
     '<div class="card rs130-expense"><div class="rs130-expense-head"><div><h4>📅 Aylık Giderler</h4><span class="rs130-month-pill">Sonraki ödeme: Gün '+state.monthlyNextDay+'</span></div><div class="rs130-expense-total">'+fmt(total)+'</div></div><div class="rs130-expense-list"><div><b>'+fmt(b.base)+'</b><small>Temel yaşam</small></div><div><b>'+fmt(b.house)+'</b><small>Ev</small></div><div><b>'+fmt(b.car)+'</b><small>Araba</small></div><div><b>'+fmt(b.spouse)+'</b><small>Eş</small></div><div><b>'+fmt(b.children)+'</b><small>Çocuk</small></div></div></div>';
  }
  window.buyHouse130=function(id){
-   const x=houses.find(v=>v.id===id);if(!x)return;
+   const x=houses.find(v=>v.id===id);if(!x)return;if(level()<(x.needLevel||1))return toast('Bu ev Lv '+x.needLevel+' seviyesinde açılır');
    if(state.ownedHouses.includes(id)){state.houseId=id;addHistory('🏠 '+x.name+' aktif evin oldu.','good');update();return}
    if(!spend(x.cost))return;
    state.ownedHouses.push(id);state.houseId=id;
    addHistory('🏠 '+x.name+' satın aldın. Enerji kazanımı artık +%'+Math.round((x.energy-1)*100)+'.','good');update();
  };
  window.buyCar130=function(id){
-   const x=cars.find(v=>v.id===id);if(!x)return;
+   const x=cars.find(v=>v.id===id);if(!x)return;if(level()<(x.needLevel||1))return toast('Bu araba Lv '+x.needLevel+' seviyesinde açılır');
    if(state.ownedCars.includes(id)){state.carId=id;addHistory('🚗 '+x.name+' aktif araban oldu.','good');update();return}
    if(!spend(x.cost))return;
    state.ownedCars.push(id);state.carId=id;
