@@ -241,7 +241,7 @@ html{scroll-behavior:smooth;scrollbar-gutter:stable}body{background-attachment:f
 </main></div></div></div>
 <div class="tour103" id="tour103"><div class="rank" id="tourCount103">1 / 9</div><h3 id="tourTitle103">Hoş geldin</h3><p id="tourText103"></p><div class="tour103-foot"><span>Rehberi ❔ ile istediğin zaman açabilirsin.</span><button id="tourSkip103">Atla</button><button id="tourPrev103">←</button><button class="primary" id="tourNext103">İleri →</button></div></div>
 
-<div class="modal" id="startModal"><div class="modal-card"><h2>Perde açılıyor.</h2><p>Sıfırdan başla, seçmelere gir, roller kap ve oyunculuk kariyerini büyüt.</p><input id="nameInput" maxlength="18" placeholder="Oyuncu adın" /><p style="margin-bottom:5px">Avatarını seç</p><div class="faces" id="faces"><button class="face sel">🎬</button><button class="face">😎</button><button class="face">✨</button><button class="face">🎭</button></div><button class="go" id="startBtn">Kariyere Başla</button></div></div>
+<div class="modal" id="startModal"><div class="modal-card"><h2>Perde açılıyor.</h2><p>Sıfırdan başla, seçmelere gir, roller kap ve oyunculuk kariyerini büyüt.</p><input id="nameInput" maxlength="18" placeholder="Oyuncu adın" /><div class="core-gender134"><p style="margin-bottom:6px"><b>⚧ Cinsiyetini seç</b> <small>Zorunlu · sonradan değiştirilemez</small></p><div class="core-gender-grid134"><button type="button" class="core-gender-btn134" data-core-gender134="male">♂ Erkek</button><button type="button" class="core-gender-btn134" data-core-gender134="female">♀ Kadın</button></div><div class="core-gender-warn134" id="coreGenderWarn134">Kariyere başlamadan önce cinsiyetini seçmelisin.</div></div><p style="margin-bottom:5px">Avatarını seç</p><div class="faces" id="faces"><button class="face sel">🎬</button><button class="face">😎</button><button class="face">✨</button><button class="face">🎭</button></div><button class="go" id="startBtn">Kariyere Başla</button></div></div>
 <div class="modal" id="resultModal"><div class="modal-card" style="text-align:center"><div style="font-size:54px" id="resultIcon">🎉</div><h2 id="resultTitle">Rol senin!</h2><p id="resultText"></p><button class="go" id="resultClose">Devam Et</button></div></div>
 <div class="modal" id="playerProfileModal"><div class="modal-card"><div class="profile-modal-head"><div class="avatar" id="profileModalAvatar">🎬</div><div><div class="rank">ONLINE PROFİL</div><h2 id="profileModalName">Oyuncu</h2><p id="profileModalNick" style="margin:2px 0"></p></div></div><div class="profile-modal-stats" id="profileModalStats"></div><div class="notice" id="profileModalRelation" style="margin-top:10px"></div><div class="modal-actions" id="profileModalActions"></div><button class="online-btn" id="profileModalClose" style="width:100%;margin-top:10px">Kapat</button></div></div>
 <div class="modal" id="projectModal"><div class="modal-card"><h2>🎞️ Ortak Proje</h2><p><b id="projectTarget">Oyuncu</b> ile ortak proje daveti gönder.</p><input id="projectTitleInput" maxlength="42" placeholder="Proje adı"><select class="online-select" id="projectTypeInput"><option>Dizi</option><option>Film</option><option>Reklam</option><option>Ortak Sahne</option></select><div class="modal-actions"><button class="online-btn primary" id="projectSendBtn">Daveti Gönder</button><button class="online-btn" id="projectCancelBtn">Vazgeç</button></div></div></div>
@@ -325,12 +325,13 @@ const achievementDefs=[
  {id:'producer',name:'Kamera Arkası',desc:'Kendi yapımını üret',test:s=>s.productions>=1}
 ];
 
-let state = {name:'',avatar:'🎬',day:1,money:2500,fame:0,skill:10,followers:120,energy:100,roles:0,agency:'none',history:[],leadWon:false,awards:0,scandals:0,magazine:[],awardReadyDay:1,npcPartner:null,npcRelationship:'single',npcBond:0,filmography:[],fanMeetReadyDay:1,dailyKey:'',dailyProgress:{audition:0,training:0,social:0},dailyClaimed:{audition:false,training:false,social:false},dailySetClaimed:false,onlineCollabs:0,theme:'midnight',manager:'none',specialSkills:{drama:0,comedy:0,action:0,improv:0,diction:0,dance:0,combat:0,language:0},activeContracts:[],criticScore:50,fanLoyalty:20,brandDeal:null,brandReadyDay:1,productionCompany:null,productions:0,internationalRoles:0,voiceRoles:0,interviewReadyDay:1,careerXP:0,achievements:[],lastRecapDay:0};
+let state = {name:'',avatar:'🎬',gender:'',genderLocked134:false,day:1,money:2500,fame:0,skill:10,followers:120,energy:100,roles:0,agency:'none',history:[],leadWon:false,awards:0,scandals:0,magazine:[],awardReadyDay:1,npcPartner:null,npcRelationship:'single',npcBond:0,filmography:[],fanMeetReadyDay:1,dailyKey:'',dailyProgress:{audition:0,training:0,social:0},dailyClaimed:{audition:false,training:false,social:false},dailySetClaimed:false,onlineCollabs:0,theme:'midnight',manager:'none',specialSkills:{drama:0,comedy:0,action:0,improv:0,diction:0,dance:0,combat:0,language:0},activeContracts:[],criticScore:50,fanLoyalty:20,brandDeal:null,brandReadyDay:1,productionCompany:null,productions:0,internationalRoles:0,voiceRoles:0,interviewReadyDay:1,careerXP:0,achievements:[],lastRecapDay:0};
 let selectedAvatar='🎬';
+let selectedGender134='';
 let onlineToken=localStorage.getItem('rolSeninOnlineToken')||'';
 let onlineData=null, activeChat='', onlineTimer=null, cloudTimer=null;
 
-function load(){const raw=localStorage.getItem('rolSeninSave'); if(raw){try{state={...state,...JSON.parse(raw)}}catch(e){}} else document.querySelector('#startModal').classList.add('show');}
+function load(){const raw=localStorage.getItem('rolSeninSave'); if(raw){try{state={...state,...JSON.parse(raw)}}catch(e){} if(state.name&&!state.genderLocked134){state.gender='';state.genderLocked134=false}} else document.querySelector('#startModal').classList.add('show');}
 function save(){localStorage.setItem('rolSeninSave',JSON.stringify(state)); scheduleCloudSync();}
 function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function ensureDaily(){const k=todayKey();if(state.dailyKey!==k){state.dailyKey=k;state.dailyProgress={audition:0,training:0,social:0};state.dailyClaimed={audition:false,training:false,social:false};state.dailySetClaimed=false}}
@@ -366,8 +367,8 @@ function renderDailyMissions(){
 }
 window.claimDaily=function(id){ensureDaily();const done=(state.dailyProgress[id]||0)>=1;if(!done||state.dailyClaimed[id])return;state.dailyClaimed[id]=true;if(id==='audition'){state.money+=750;state.fame+=2}else if(id==='training'){state.money+=500;state.skill+=1}else if(id==='social'){state.followers+=500}addHistory(`✅ Günlük görev ödülü alındı: ${dailyMissionDefs.find(x=>x.id===id)?.label}.`,'good');const all=dailyMissionDefs.every(m=>state.dailyClaimed[m.id]);if(all&&!state.dailySetClaimed){state.dailySetClaimed=true;state.money+=1500;state.fame+=5;addHistory('✅ Günlük görev setini tamamladın. +₺1.500 ve +5 şöhret.','good');toast('Günlük set bonusu!')}update()}
 function renderFilmography(){const list=document.querySelector('#filmographyList'),count=document.querySelector('#filmographyCount');if(!list||!count)return;const rows=state.filmography||[];count.textContent=rows.length;list.innerHTML=rows.length?rows.map(f=>`<div class="film-card"><div><b>${esc(f.title)}</b><small>${esc(f.character||f.type)} · ${esc(f.type)} · ⭐ ${f.rating||'-'} · Gün ${f.day} · ${fmt(f.pay||0)}</small></div><div class="film-icon">${esc(f.icon||'🎬')}</div></div>`).join(''):'<div class="empty" style="grid-column:1/-1">İlk rolünü kazandığında filmografin burada başlayacak.</div>'}
-function renderFanMeet(){const btn=document.querySelector('#fanMeetBtn'),info=document.querySelector('#fanMeetInfo');if(!btn||!info)return;const wait=Math.max(0,(state.fanMeetReadyDay||1)-state.day),ok=state.fame>=50&&state.energy>=20&&state.money>=250000&&wait===0;btn.disabled=!ok;info.textContent=state.fame<50?'En az 50 şöhret gerekli.':wait>0?`${wait} kariyer günü sonra yeniden yapabilirsin.`:state.energy<20?'20 enerji gerekli.':state.money<250000?'₺250.000 gerekli.':'Hazır · ₺250.000 ve 20 enerji harcar.'}
-function fanMeet(){const wait=Math.max(0,(state.fanMeetReadyDay||1)-state.day);if(state.fame<50||state.energy<20||state.money<250000||wait>0)return;state.money-=250000;state.energy-=20;state.day++;state.fanMeetReadyDay=state.day+7;const fans=900+Math.floor(Math.random()*1700),fg=5+Math.floor(Math.random()*6);state.followers+=fans;state.fame+=fg;addHistory(`🌟 Hayran buluşması yaptın. +${fans.toLocaleString('tr-TR')} takipçi ve +${fg} şöhret.`,'good');if(Math.random()<.08)maybeScandal('fan');toast('Hayran buluşması çok iyi geçti!');update()}
+function renderFanMeet(){const btn=document.querySelector('#fanMeetBtn'),info=document.querySelector('#fanMeetInfo');if(!btn||!info)return;const wait=Math.max(0,(state.fanMeetReadyDay||1)-state.day),ok=state.fame>=50&&state.energy>=20&&state.money>=1200&&wait===0;btn.disabled=!ok;info.textContent=state.fame<50?'En az 50 şöhret gerekli.':wait>0?`${wait} kariyer günü sonra yeniden yapabilirsin.`:state.energy<20?'20 enerji gerekli.':state.money<1200?'₺1.200 gerekli.':'Hazır · ₺1.200 ve 20 enerji harcar.'}
+function fanMeet(){const wait=Math.max(0,(state.fanMeetReadyDay||1)-state.day);if(state.fame<50||state.energy<20||state.money<1200||wait>0)return;state.money-=1200;state.energy-=20;state.day++;state.fanMeetReadyDay=state.day+7;const fans=900+Math.floor(Math.random()*1700),fg=5+Math.floor(Math.random()*6);state.followers+=fans;state.fame+=fg;addHistory(`🌟 Hayran buluşması yaptın. +${fans.toLocaleString('tr-TR')} takipçi ve +${fg} şöhret.`,'good');if(Math.random()<.08)maybeScandal('fan');toast('Hayran buluşması çok iyi geçti!');update()}
 function syncButtons(){document.querySelector('#trainBtn').disabled=state.money<5000||state.energy<20; document.querySelector('#socialBtn').disabled=state.energy<10; document.querySelector('#headshotBtn').disabled=state.money<10000||state.energy<12}
 function toast(t){const x=document.querySelector('#toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1900)}
 function maybeScandal(source=''){if(state.fame<40)return;const mgr=managers.find(x=>x.id===state.manager);const risk=Math.min(.15,.035+state.fame/6000)*(1-(mgr?.crisis||0)/100);if(Math.random()>risk)return;const events=[
@@ -402,8 +403,8 @@ function maybeCreateContract(j,meta){if(!['Dizi','Platform Dizisi','Başrol'].in
 function renderStudio(){const tr=getTrend();let el=document.querySelector('#industryTrendTitle');if(!el)return;el.textContent=`${tr.icon} Sektör Trendi: ${tr.name}`;document.querySelector('#industryTrendText').textContent=`${tr.types.join(', ')} projelerinde +%${Math.round(tr.pay*100)} kazanç ve +%${Math.round(tr.fame*100)} şöhret bonusu.`;document.querySelector('#industryTrendIcon').textContent=tr.icon;document.querySelector('#careerScoreBadge').textContent=`Kariyer Skoru ${careerScore().toLocaleString('tr-TR')}`;document.querySelector('#criticMetric').textContent=Math.round(state.criticScore||50);document.querySelector('#loyaltyMetric').textContent=Math.round(state.fanLoyalty||20);document.querySelector('#marketMetric').textContent=marketClass();renderManagers();renderSkillTree();renderContracts();renderBrands();renderInternational();renderProduction();renderAchievements();renderPosterFilmography();const ib=document.querySelector('#interviewBtn');const wait=Math.max(0,(state.interviewReadyDay||1)-state.day);ib.disabled=state.fame<35||state.energy<10||wait>0;ib.textContent=wait?`🎤 ${wait} gün sonra röportaj`:'🎤 Röportaja Katıl'}
 function renderManagers(){const box=document.querySelector('#managerList');box.innerHTML=managers.map(m=>`<div class="manager ${state.manager===m.id?'active':''}"><div class="manager-head"><div><b>${m.name}</b><small>${m.desc}</small></div><button class="mini-btn ${state.manager!==m.id?'primary':''}" onclick="chooseManager('${m.id}')" ${(state.manager===m.id||state.fame<m.need||state.money<m.fee)?'disabled':''}>${state.manager===m.id?'Aktif':m.fee?fmt(m.fee):'Seç'}</button></div></div>`).join('')}
 window.chooseManager=function(id){const m=managers.find(x=>x.id===id);if(!m||state.manager===id||state.fame<m.need||state.money<m.fee)return;state.money-=m.fee;state.manager=id;addHistory(`🧑‍💼 ${m.name} artık menajerin.`,'good');toast('Menajer anlaşması tamamlandı');update()}
-function renderSkillTree(){const box=document.querySelector('#skillTree');box.innerHTML=skillDefs.map(s=>{const lvl=state.specialSkills?.[s.id]||0,cost=250000+lvl*175000;return `<div class="skill-node ${lvl?'owned':''}"><div class="skill-head"><div><b>${s.icon} ${s.name}</b><small>${s.desc}</small></div><div class="lvl">${lvl}/10</div></div><button class="mini-btn" style="width:100%;margin-top:8px" onclick="trainSpecial('${s.id}')" ${(lvl>=10||state.money<cost||state.energy<12)?'disabled':''}>Çalış · ${fmt(cost)} · 12⚡</button></div>`}).join('')}
-window.trainSpecial=function(id){const lvl=state.specialSkills[id]||0,cost=250000+lvl*175000;if(lvl>=10||state.money<cost||state.energy<12)return;state.money-=cost;state.energy-=12;state.day++;state.specialSkills[id]=lvl+1;state.skill+=1;addHistory(`🧠 ${skillDefs.find(x=>x.id===id).name} uzmanlığın ${lvl+1}. seviyeye çıktı.`,'good');update()}
+function renderSkillTree(){const box=document.querySelector('#skillTree');box.innerHTML=skillDefs.map(s=>{const lvl=state.specialSkills?.[s.id]||0,cost=700+lvl*650;return `<div class="skill-node ${lvl?'owned':''}"><div class="skill-head"><div><b>${s.icon} ${s.name}</b><small>${s.desc}</small></div><div class="lvl">${lvl}/10</div></div><button class="mini-btn" style="width:100%;margin-top:8px" onclick="trainSpecial('${s.id}')" ${(lvl>=10||state.money<cost||state.energy<12)?'disabled':''}>Çalış · ${fmt(cost)} · 12⚡</button></div>`}).join('')}
+window.trainSpecial=function(id){const lvl=state.specialSkills[id]||0,cost=700+lvl*650;if(lvl>=10||state.money<cost||state.energy<12)return;state.money-=cost;state.energy-=12;state.day++;state.specialSkills[id]=lvl+1;state.skill+=1;addHistory(`🧠 ${skillDefs.find(x=>x.id===id).name} uzmanlığın ${lvl+1}. seviyeye çıktı.`,'good');update()}
 function renderContracts(){const box=document.querySelector('#activeContracts');const rows=(state.activeContracts||[]);box.innerHTML=rows.length?rows.map(c=>`<div class="contract"><div class="contract-head"><div><b>${esc(c.title)}</b><small>${esc(c.character)} · Sezon ${c.seasons} · Bölüm ${c.episode}/${c.total} · Reyting ${Number(c.rating).toFixed(1)}</small></div><span class="badge">${c.status==='active'?'Yayında':'Bitti'}</span></div>${c.status==='active'?`<button class="mini-btn primary" style="width:100%;margin-top:8px" onclick="shootEpisode('${c.id}')" ${state.energy<18?'disabled':''}>🎬 Sonraki Bölümü Çek · 18⚡</button>`:''}</div>`).join(''):'<div class="empty">Bir dizi veya platform rolü kazandığında sözleşmen burada görünür.</div>'}
 window.shootEpisode=function(id){const c=(state.activeContracts||[]).find(x=>x.id===id);if(!c||c.status!=='active'||state.energy<18)return;state.energy-=18;state.day++;c.episode++;let delta=(Math.random()-.43)*1.2+(state.skill-35)/160;c.rating=Math.max(2.5,Math.min(10,c.rating+delta));const pay=Math.round(c.payPerEpisode*(1+(managers.find(x=>x.id===state.manager)?.pay||0)/100));state.money+=pay;state.fame+=Math.max(2,Math.round(c.rating/2));state.followers+=Math.round(180*c.rating);state.fanLoyalty=Math.min(100,(state.fanLoyalty||20)+1);if(c.rating<3.7&&Math.random()<.55){c.status='cancelled';addMagazine(`📉 <b>${c.title}</b> düşük reyting nedeniyle yayından kaldırıldı.`,'bad')}else if(c.episode>c.total){if(c.rating>=6.6&&c.seasons<4){c.seasons++;c.episode=1;c.total=Math.max(8,c.total);c.payPerEpisode=Math.round(c.payPerEpisode*1.18);addHistory(`📺 ${c.title} yeni sezon onayı aldı! Bölüm ücretin %18 arttı.`,'good')}else{c.status='completed';addHistory(`🎬 ${c.title} sezon finaliyle tamamlandı.`,'good')}}else addHistory(`📺 ${c.title} ${c.episode}. bölüm çekimi tamamlandı. Reyting ${c.rating.toFixed(1)}.`,'good');update()}
 function renderBrands(){const box=document.querySelector('#brandDeals');if(state.brandDeal){const b=state.brandDeal,wait=Math.max(0,b.readyDay-state.day);box.innerHTML=`<div class="brand-offer"><b>✨ ${esc(b.name)}</b><small>Kampanya yüzüsün · çekim başına ${fmt(b.pay)}</small><button class="mini-btn primary" style="width:100%;margin-top:8px" onclick="shootBrand()" ${wait||state.energy<12?'disabled':''}>${wait?`${wait} gün sonra çekim`:'Kampanya Çekimi Yap'}</button></div>`;return}const offers=[{name:'Luma Wear',need:120,pay:8500},{name:'Volt Mobile',need:260,pay:22000},{name:'Noir Fragrance',need:480,pay:52000}];box.innerHTML=offers.map(b=>`<div class="brand-offer"><b>${b.name}</b><small>${b.need} şöhret · ${fmt(b.pay)} kampanya ücreti</small><button class="mini-btn" style="width:100%;margin-top:8px" onclick="signBrand('${b.name}',${b.pay})" ${state.fame<b.need?'disabled':''}>Anlaş</button></div>`).join('')}
@@ -411,8 +412,8 @@ window.signBrand=function(name,pay){state.brandDeal={name,pay,readyDay:state.day
 function renderInternational(){const box=document.querySelector('#internationalPanel');const lang=state.specialSkills.language||0;box.innerHTML=`<div class="notice">Yabancı Dil ${lang}/10 · Global roller için 4 seviye ve 300 şöhret gerekir.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px"><button class="mini-btn primary" onclick="globalAudition()" ${(lang<4||state.fame<300||state.energy<28)?'disabled':''}>🌍 Global Seçme</button><button class="mini-btn" onclick="voiceAct()" ${(state.skill<30||state.energy<16)?'disabled':''}>🎙️ Seslendirme</button></div>`}
 window.globalAudition=function(){if((state.specialSkills.language||0)<4||state.fame<300||state.energy<28)return;state.energy-=28;state.day++;const ok=Math.random()*100<Math.min(88,38+state.skill*.45+(state.specialSkills.language||0)*5+(managers.find(x=>x.id===state.manager)?.chance||0));if(ok){const pay=65000+Math.round(state.fame*85);state.money+=pay;state.fame+=90;state.followers+=18000;state.internationalRoles=(state.internationalRoles||0)+1;state.filmography.unshift({id:'global-'+Date.now(),title:'Northline',type:'Global Streaming',icon:'🌍',day:state.day,pay,genre:'Thriller',character:'Deniz Akay',rating:'8.1',boxOffice:0,critic:84});addHistory(`🌍 İlk global projen: Northline. ${fmt(pay)} kazandın!`,'good');showResult(true,'Global rol senin!','Uluslararası kariyerin resmen başladı.')}else{state.skill+=2;addHistory('🌍 Global seçmede elendin ama +2 oyunculuk deneyimi kazandın.','bad');showResult(false,'Callback gelmedi','Global seçme zordu; deneyim kazandın.')}update()}
 window.voiceAct=function(){if(state.skill<30||state.energy<16)return;state.energy-=16;state.day++;const pay=3500+state.skill*120;state.money+=pay;state.voiceRoles=(state.voiceRoles||0)+1;state.skill+=1;state.fame+=2;addHistory(`🎙️ Bir animasyon/oyun seslendirme işi yaptın. ${fmt(pay)} kazandın.`,'good');update()}
-function renderProduction(){const box=document.querySelector('#productionPanel');if(!state.productionCompany){box.innerHTML=`<div class="notice">Kendi şirketin için 500 şöhret ve ₺25.000.000 sermaye gerekiyor.</div><button class="mini-btn primary" style="width:100%;margin-top:8px" onclick="openCompany()" ${(state.fame<500||state.money<25000000)?'disabled':''}>🏢 Yapım Şirketini Kur · ₺25.000.000</button>`;return}box.innerHTML=`<div class="notice"><b>${esc(state.productionCompany.name)}</b> · ${state.productions||0} yapım</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px"><button class="mini-btn" onclick="produceOwn('Dizi',8000000)" ${state.money<8000000?'disabled':''}>📺 Dizi<br>${fmt(8000000)}</button><button class="mini-btn" onclick="produceOwn('Film',20000000)" ${state.money<20000000?'disabled':''}>🎥 Film<br>${fmt(20000000)}</button><button class="mini-btn" onclick="produceOwn('Prestij Film',50000000)" ${state.money<50000000?'disabled':''}>🏆 Prestij<br>${fmt(50000000)}</button></div>`}
-window.openCompany=function(){if(state.fame<500||state.money<25000000)return;state.money-=25000000;state.productionCompany={name:(state.name||'Yıldız')+' Studios'};state.productions=0;addHistory(`🏢 ${state.productionCompany.name} kuruldu. Artık yapımcısın!`,'good');update()};window.produceOwn=function(type,budget){if(!state.productionCompany||state.money<budget)return;state.money-=budget;state.energy=Math.max(0,state.energy-25);state.day+=3;const quality=Math.min(95,35+state.skill*.45+state.criticScore*.25+Math.random()*22);const success=Math.random()*100<quality;const revenue=Math.round(budget*(success?(1.2+Math.random()*2.4):(.25+Math.random()*.55)));state.money+=revenue;state.productions=(state.productions||0)+1;state.fame+=success?45:8;state.criticScore=Math.max(0,Math.min(100,state.criticScore+(success?4:-5)));state.filmography.unshift({id:'own-'+Date.now(),title:`${state.productionCompany.name}: Proje ${state.productions}`,type:'Yapımcı · '+type,icon:'🏢',day:state.day,pay:revenue-budget,genre:type,character:'Yapımcı',rating:(success?7+Math.random()*2:3.5+Math.random()*2).toFixed(1),boxOffice:revenue,critic:Math.round(quality)});addHistory(`${success?'🎉':'📉'} Kendi ${type.toLowerCase()} projen ${success?'başarılı oldu':'beklentinin altında kaldı'}. Net ${fmt(revenue-budget)}.` ,success?'good':'bad');update()}
+function renderProduction(){const box=document.querySelector('#productionPanel');if(!state.productionCompany){box.innerHTML=`<div class="notice">Kendi şirketin için 500 şöhret ve ₺150.000 sermaye gerekiyor.</div><button class="mini-btn primary" style="width:100%;margin-top:8px" onclick="openCompany()" ${(state.fame<500||state.money<150000)?'disabled':''}>🏢 Yapım Şirketini Kur · ₺150.000</button>`;return}box.innerHTML=`<div class="notice"><b>${esc(state.productionCompany.name)}</b> · ${state.productions||0} yapım</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px"><button class="mini-btn" onclick="produceOwn('Dizi',60000)" ${state.money<60000?'disabled':''}>📺 Dizi<br>${fmt(60000)}</button><button class="mini-btn" onclick="produceOwn('Film',110000)" ${state.money<110000?'disabled':''}>🎥 Film<br>${fmt(110000)}</button><button class="mini-btn" onclick="produceOwn('Prestij Film',180000)" ${state.money<180000?'disabled':''}>🏆 Prestij<br>${fmt(180000)}</button></div>`}
+window.openCompany=function(){if(state.fame<500||state.money<150000)return;state.money-=150000;state.productionCompany={name:(state.name||'Yıldız')+' Studios'};state.productions=0;addHistory(`🏢 ${state.productionCompany.name} kuruldu. Artık yapımcısın!`,'good');update()};window.produceOwn=function(type,budget){if(!state.productionCompany||state.money<budget)return;state.money-=budget;state.energy=Math.max(0,state.energy-25);state.day+=3;const quality=Math.min(95,35+state.skill*.45+state.criticScore*.25+Math.random()*22);const success=Math.random()*100<quality;const revenue=Math.round(budget*(success?(1.2+Math.random()*2.4):(.25+Math.random()*.55)));state.money+=revenue;state.productions=(state.productions||0)+1;state.fame+=success?45:8;state.criticScore=Math.max(0,Math.min(100,state.criticScore+(success?4:-5)));state.filmography.unshift({id:'own-'+Date.now(),title:`${state.productionCompany.name}: Proje ${state.productions}`,type:'Yapımcı · '+type,icon:'🏢',day:state.day,pay:revenue-budget,genre:type,character:'Yapımcı',rating:(success?7+Math.random()*2:3.5+Math.random()*2).toFixed(1),boxOffice:revenue,critic:Math.round(quality)});addHistory(`${success?'🎉':'📉'} Kendi ${type.toLowerCase()} projen ${success?'başarılı oldu':'beklentinin altında kaldı'}. Net ${fmt(revenue-budget)}.` ,success?'good':'bad');update()}
 function checkAchievements(){state.achievements=state.achievements||[];achievementDefs.forEach(a=>{if(a.test(state)&&!state.achievements.includes(a.id)){state.achievements.push(a.id);state.fame+=3;toast(`🏆 Başarım: ${a.name}`)}})}
 function renderAchievements(){const box=document.querySelector('#achievementList');box.innerHTML=achievementDefs.map(a=>`<div class="achievement ${state.achievements?.includes(a.id)?'done':''}"><b>${state.achievements?.includes(a.id)?'✓':'○'} ${a.name}</b><small>${a.desc}</small></div>`).join('')}
 function renderPosterFilmography(){const box=document.querySelector('#posterFilmography');const rows=(state.filmography||[]).slice(0,6);box.innerHTML=rows.length?rows.map(f=>`<div class="poster"><b>${esc(f.title)}</b><small>${esc(f.character||f.type)} · ⭐ ${f.rating||'-'} ${f.boxOffice?`· Gişe ${fmt(f.boxOffice)}`:''}</small></div>`).join(''):'<div class="empty" style="grid-column:1/-1">Henüz posterlik bir projen yok.</div>'}
@@ -474,7 +475,8 @@ document.querySelector('#headshotBtn').onclick=()=>{if(state.money<10000||state.
 document.querySelector('#awardBtn').onclick=attendAwards;document.querySelector('#fanMeetBtn').onclick=fanMeet;
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelector(`.page[data-page="${b.dataset.tab}"]`).classList.add('active');if(b.dataset.tab==='online'&&onlineToken)refreshOnline(true);window.scrollTo({top:0,behavior:'smooth'})});
 document.querySelectorAll('.face').forEach(b=>b.onclick=()=>{document.querySelectorAll('.face').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selectedAvatar=b.textContent});
-document.querySelector('#startBtn').onclick=()=>{let n=document.querySelector('#nameInput').value.trim();if(!n)n='Oyuncu';state.name=n;state.avatar=selectedAvatar;addHistory('🎬 Oyunculuk kariyerine başladın. İlk hedef: ilk rolünü kapmak!','good');document.querySelector('#startModal').classList.remove('show');update()};
+document.querySelectorAll('[data-core-gender134]').forEach(b=>b.onclick=()=>{selectedGender134=b.dataset.coreGender134;document.querySelectorAll('[data-core-gender134]').forEach(x=>x.classList.toggle('active',x===b));document.querySelector('#coreGenderWarn134')?.classList.remove('show')});
+document.querySelector('#startBtn').onclick=()=>{if(!['male','female'].includes(selectedGender134)){document.querySelector('#coreGenderWarn134')?.classList.add('show');toast('Önce cinsiyetini seç');return}let n=document.querySelector('#nameInput').value.trim();if(!n)n='Oyuncu';state.name=n;state.avatar=selectedAvatar;state.gender=selectedGender134;state.genderLocked134=true;addHistory('🎬 Oyunculuk kariyerine başladın. İlk hedef: ilk rolünü kapmak!','good');document.querySelector('#startModal').classList.remove('show');update()};
 document.querySelector('#resultClose').onclick=()=>document.querySelector('#resultModal').classList.remove('show');
 document.querySelector('#resetBtn').onclick=()=>{if(confirm('Kariyer kaydını sıfırlamak istiyor musun? Online hesabın silinmez ama bu cihazdan çıkış yapılır.')){localStorage.removeItem('rolSeninSave');localStorage.removeItem('rolSeninOnlineToken');location.reload()}};
 document.querySelector('#onlineLoginBtn').onclick=()=>doAuth('login');document.querySelector('#onlineSignupBtn').onclick=()=>doAuth('signup');document.querySelector('#onlineRefresh').onclick=()=>refreshOnline();document.querySelector('#onlineLogout').onclick=logoutOnline;document.querySelector('#lobbySend').onclick=sendLobby;document.querySelector('#friendSearchBtn').onclick=searchFriends;document.querySelector('#dmSend').onclick=sendDM;document.querySelector('#profileModalClose').onclick=()=>document.querySelector('#playerProfileModal').classList.remove('show');document.querySelector('#projectCancelBtn').onclick=()=>document.querySelector('#projectModal').classList.remove('show');document.querySelector('#projectSendBtn').onclick=sendProjectInvite;document.querySelectorAll('#leaderSort button').forEach(b=>b.onclick=()=>{leaderboardSort=b.dataset.sort;document.querySelectorAll('#leaderSort button').forEach(x=>x.classList.toggle('active',x===b));renderOnline()});
@@ -559,9 +561,23 @@ const V='1.1',COST=2000000000;
 document.title='Rol Senin 1.1 — Yeni Yüz';const vt=document.querySelector('.vtag');if(vt)vt.textContent='1.1';
 if(typeof state!=='undefined'){if(!state.uiMode)state.uiMode='modern';if(state.nameChangeCount==null)state.nameChangeCount=0;}
 const oldReset=document.querySelector('#resetBtn');if(oldReset){const b=document.createElement('button');b.className='settings-top-btn';b.id='settingsBtn';b.title='Ayarlar';b.innerHTML='⚙️ <span>Ayarlar</span>';oldReset.replaceWith(b)}
-if(!document.querySelector('#settingsModal'))document.body.insertAdjacentHTML('beforeend',`<div class="modal" id="settingsModal"><div class="modal-card settings-card"><div class="settings-head"><button class="settings-close" id="settingsClose">×</button><div class="rank">ROL SENİN AYARLARI</div><h2>⚙️ Ayarlar Merkezi</h2><p>Kariyerini, hesabını ve oyun görünümünü tek yerden yönet.</p></div><div class="settings-body"><section class="settings-section"><h3>✨ Görünüm</h3><p>1.1 ile yeni modern tasarım varsayılan oldu. İstersen eski 1.0.3 görünümüne anında dönebilirsin.</p><div class="setting-row"><div class="setting-row-info"><b>Arayüz stili</b><small>Oynanış değişmez; sadece görünüm değişir.</small></div><div class="setting-actions"><button class="settings-btn" id="modernUiBtn">✨ Yeni Tasarım</button><button class="settings-btn" id="classicUiBtn">↩️ Klasik Tasarım</button></div></div><div class="classic-note">💡 Eski görünümü istersen <b>Ayarlar → Görünüm → Klasik Tasarım</b>.</div></section><section class="settings-section"><h3>🎭 Kariyer Profili</h3><p>Oyuncu adını değiştirir; online @nick'in aynı kalır.</p><div class="setting-row"><div class="setting-row-info"><b>Oyuncu adını değiştir</b><small id="renameHelp"></small></div><span class="settings-price" id="renamePrice"></span></div><div class="settings-form"><input class="settings-input" id="renameInput" maxlength="18" placeholder="Yeni oyuncu adı"><button class="settings-btn primary" id="renameBtn">İsmi Değiştir</button></div></section><section class="settings-section"><h3>🔐 Hesap</h3><p>Online hesap güvenliği ve oturum işlemleri.</p><div class="setting-row"><div class="setting-row-info"><b>Online hesap</b><small id="settingsAccountStatus">Çevrimdışı</small></div><button class="settings-btn" id="settingsLogoutBtn">Çıkış Yap</button></div><div id="passwordArea"><div class="password-form"><input class="settings-input" type="password" id="oldPasswordInput" maxlength="72" placeholder="Mevcut şifre"><input class="settings-input" type="password" id="newPasswordInput" maxlength="72" placeholder="Yeni şifre (6-72)"><button class="settings-btn primary" id="changePasswordBtn">Şifreyi Değiştir</button></div><small style="display:block;color:var(--muted);margin-top:8px">Şifre değişince diğer cihazlardaki oturumlar kapatılır.</small></div></section><section class="settings-section"><h3>🧨 Kariyer Yönetimi</h3><p>Sıfırlama artık burada. Online hesabın silinmez.</p><div class="setting-row"><div class="setting-row-info"><b>Oyunu sıfırla</b><small>Kariyer ilerlemesini baştan başlatır.</small></div><button class="settings-btn danger" id="settingsResetBtn">Oyunu Sıfırla</button></div></section></div></div></div>`);
+if(!document.querySelector('#settingsModal'))document.body.insertAdjacentHTML('beforeend',`<div class="modal" id="settingsModal"><div class="modal-card settings-card"><div class="settings-head"><button class="settings-close" id="settingsClose">×</button><div class="rank">ROL SENİN AYARLARI</div><h2>⚙️ Ayarlar Merkezi</h2><p>Kariyerini, hesabını ve oyun görünümünü tek yerden yönet.</p></div><div class="settings-body"><section class="settings-section"><h3>✨ Görünüm</h3><p>1.1 ile yeni modern tasarım varsayılan oldu. İstersen eski 1.0.3 görünümüne anında dönebilirsin.</p><div class="setting-row"><div class="setting-row-info"><b>Arayüz stili</b><small>Oynanış değişmez; sadece görünüm değişir.</small></div><div class="setting-actions"><button class="settings-btn" id="modernUiBtn">✨ Yeni Tasarım</button><button class="settings-btn" id="classicUiBtn">↩️ Klasik Tasarım</button></div></div><div class="classic-note">💡 Eski görünümü istersen <b>Ayarlar → Görünüm → Klasik Tasarım</b>.</div></section><section class="settings-section"><h3>🎭 Kariyer Profili</h3><p>Oyuncu adını değiştirir; online @nick'in aynı kalır.</p><div class="setting-row"><div class="setting-row-info"><b>Oyuncu adını değiştir</b><small id="renameHelp"></small></div><span class="settings-price" id="renamePrice"></span></div><div class="settings-form"><input class="settings-input" id="renameInput" maxlength="18" placeholder="Yeni oyuncu adı"><button class="settings-btn primary" id="renameBtn">İsmi Değiştir</button></div><div class="setting-row core-gender-setting134"><div class="setting-row-info"><b>⚧ Cinsiyet</b><small>Eski hesaplarda bir kez seçilir; sonra değiştirilemez.</small></div><div id="settingsGender134"></div></div></section><section class="settings-section"><h3>🔐 Hesap</h3><p>Online hesap güvenliği ve oturum işlemleri.</p><div class="setting-row"><div class="setting-row-info"><b>Online hesap</b><small id="settingsAccountStatus">Çevrimdışı</small></div><button class="settings-btn" id="settingsLogoutBtn">Çıkış Yap</button></div><div id="passwordArea"><div class="password-form"><input class="settings-input" type="password" id="oldPasswordInput" maxlength="72" placeholder="Mevcut şifre"><input class="settings-input" type="password" id="newPasswordInput" maxlength="72" placeholder="Yeni şifre (6-72)"><button class="settings-btn primary" id="changePasswordBtn">Şifreyi Değiştir</button></div><small style="display:block;color:var(--muted);margin-top:8px">Şifre değişince diğer cihazlardaki oturumlar kapatılır.</small></div></section><section class="settings-section"><h3>🧨 Kariyer Yönetimi</h3><p>Sıfırlama artık burada. Online hesabın silinmez.</p><div class="setting-row"><div class="setting-row-info"><b>Oyunu sıfırla</b><small>Kariyer ilerlemesini baştan başlatır.</small></div><button class="settings-btn danger" id="settingsResetBtn">Oyunu Sıfırla</button></div></section></div></div></div>`);
 function ui(){const m=state.uiMode||'modern';document.body.classList.toggle('ui-modern',m==='modern');document.querySelector('#modernUiBtn')?.classList.toggle('active',m==='modern');document.querySelector('#classicUiBtn')?.classList.toggle('active',m==='classic')}
-function sync(){const c=Number(state.nameChangeCount||0),paid=c>=1;const rp=document.querySelector('#renamePrice'),rh=document.querySelector('#renameHelp'),ri=document.querySelector('#renameInput');if(rp)rp.textContent=paid?'₺2.000.000.000':'İLK DEĞİŞİM ÜCRETSİZ';if(rh)rh.textContent=paid?'Her yeni değişiklik ₺2.000.000.000.':'İlk isim değişikliğin ücretsiz; sonrakiler ₺2.000.000.000.';if(ri)ri.value=state.name||'';const on=!!onlineToken,st=document.querySelector('#settingsAccountStatus'),lo=document.querySelector('#settingsLogoutBtn'),pa=document.querySelector('#passwordArea');if(st){st.textContent=on?'● Online hesaba bağlı':'○ Online hesaba giriş yapılmadı';st.classList.toggle('online',on)}if(lo)lo.disabled=!on;if(pa)pa.style.opacity=on?'1':'.45';document.querySelectorAll('#passwordArea input,#changePasswordBtn').forEach(x=>x.disabled=!on);ui()}
+let pendingGender134='';
+function validGender134(g){return g==='male'||g==='female'}
+function genderLabel134(g){return g==='male'?'Erkek':'Kadın'}
+function syncGender134(){
+ const box=document.querySelector('#settingsGender134');if(!box)return;
+ const locked=!!state.genderLocked134&&validGender134(state.gender);
+ document.querySelector('#settingsBtn')?.classList.toggle('needs-gender134',!!state.name&&!locked);
+ if(locked){box.innerHTML='<div class="gender-locked134">🔒 <b>'+genderLabel134(state.gender)+'</b><small>Seçim kilitlendi; artık değiştirilemez.</small></div>';return}
+ box.innerHTML='<div class="gender-settings-grid134"><button type="button" class="settings-btn" data-settings-gender134="male">♂ Erkek</button><button type="button" class="settings-btn" data-settings-gender134="female">♀ Kadın</button></div><button type="button" class="settings-btn primary gender-confirm134" id="genderConfirm134" disabled>Seçimi Onayla</button>';
+ pendingGender134='';
+ const confirmBtn=box.querySelector('#genderConfirm134');
+ box.querySelectorAll('[data-settings-gender134]').forEach(btn=>btn.onclick=()=>{pendingGender134=btn.dataset.settingsGender134;box.querySelectorAll('[data-settings-gender134]').forEach(x=>x.classList.toggle('active',x===btn));confirmBtn.disabled=false});
+ confirmBtn.onclick=()=>{if(!validGender134(pendingGender134)||state.genderLocked134)return;if(!confirm('Cinsiyet seçimin '+genderLabel134(pendingGender134)+' olacak ve daha sonra değiştirilemeyecek. Onaylıyor musun?'))return;state.gender=pendingGender134;state.genderLocked134=true;save();syncGender134();try{renderRomance()}catch(_){}try{update()}catch(_){}toast('Cinsiyet seçimi kaydedildi ve kilitlendi')};
+}
+function sync(){const c=Number(state.nameChangeCount||0),paid=c>=1;const rp=document.querySelector('#renamePrice'),rh=document.querySelector('#renameHelp'),ri=document.querySelector('#renameInput');if(rp)rp.textContent=paid?'₺2.000.000.000':'İLK DEĞİŞİM ÜCRETSİZ';if(rh)rh.textContent=paid?'Her yeni değişiklik ₺2.000.000.000.':'İlk isim değişikliğin ücretsiz; sonrakiler ₺2.000.000.000.';if(ri)ri.value=state.name||'';const on=!!onlineToken,st=document.querySelector('#settingsAccountStatus'),lo=document.querySelector('#settingsLogoutBtn'),pa=document.querySelector('#passwordArea');if(st){st.textContent=on?'● Online hesaba bağlı':'○ Online hesaba giriş yapılmadı';st.classList.toggle('online',on)}if(lo)lo.disabled=!on;if(pa)pa.style.opacity=on?'1':'.45';document.querySelectorAll('#passwordArea input,#changePasswordBtn').forEach(x=>x.disabled=!on);ui();syncGender134()}
 function open(){sync();document.querySelector('#settingsModal').classList.add('show')}function close(){document.querySelector('#settingsModal').classList.remove('show')}
 function rename(){const n=(document.querySelector('#renameInput').value||'').trim();if(!n)return toast('Yeni isim boş olamaz');if(n===state.name)return toast('Bu isim zaten kullanılıyor');const c=Number(state.nameChangeCount||0),cost=c>=1?COST:0;if(cost&&state.money<cost)return toast('İsim değişikliği için ₺2.000.000.000 gerekiyor');if(cost&&!confirm('₺2.000.000.000 ödeyerek ismini değiştirmek istiyor musun?'))return;if(cost)state.money-=cost;const old=state.name||'Oyuncu';state.name=n;state.nameChangeCount=c+1;addHistory('✏️ Oyuncu adın '+old+' → '+n+' olarak değişti.'+(cost?' ₺2.000.000.000 ödendi.':' İlk değişiklik ücretsizdi.'),'good');update();sync();toast(cost?'İsim değiştirildi · ₺2 milyar ödendi':'İlk isim değişikliği ücretsiz yapıldı')}
 async function pw(){if(!onlineToken)return toast('Önce online hesaba giriş yap');const o=document.querySelector('#oldPasswordInput').value,n=document.querySelector('#newPasswordInput').value;if(!o||!n)return toast('Mevcut ve yeni şifreyi yaz');if(n.length<6||n.length>72)return toast('Yeni şifre 6-72 karakter olmalı');const b=document.querySelector('#changePasswordBtn');b.disabled=true;b.textContent='Değiştiriliyor…';try{await rpc('actor_change_password',{p_token:onlineToken,p_old_password:o,p_new_password:n});document.querySelector('#oldPasswordInput').value='';document.querySelector('#newPasswordInput').value='';toast('Şifre değiştirildi · diğer oturumlar kapatıldı')}catch(e){toast(e.message)}finally{b.disabled=false;b.textContent='Şifreyi Değiştir'}}
@@ -1646,7 +1662,7 @@ body[data-rs122-page]:not([data-rs122-page="home"]) .hero{grid-template-columns:
  const headshot=document.querySelector('#headshotBtn');if(headshot){headshot.disabled=true;headshot.setAttribute('aria-hidden','true')}
  const classic=document.querySelector('#classicUiBtn');if(classic)classic.remove();document.querySelectorAll('.classic-note').forEach(x=>x.remove());
  const settings=document.querySelector('#settingsModal');if(settings){settings.querySelectorAll('.settings-section').forEach(sec=>{const h=sec.querySelector('h3');if(h?.textContent.includes('Görünüm')){const p=sec.querySelector('p');if(p)p.textContent='Kapalı beta görünümü artık tek ve güncel tasarım üzerinden devam ediyor.'}})}
- agencies.forEach(a=>{a.rs122=true});managers.forEach(m=>{m.rs122=true});
+ agencies.forEach(a=>{if(a.id!=='none'&&!a.rs122){a.cost*=100;a.rs122=true}});managers.forEach(m=>{if(m.id!=='none'&&!m.rs122){m.fee*=100;m.rs122=true}});
  function setPage(p){document.body.dataset.rs122Page=p||'home'}setPage(document.querySelector('.tab.active')?.dataset.tab||'home');
  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>setPage(b.dataset.tab),0)));
  try{const oldGo=goPage103;goPage103=function(p){oldGo(p);setPage(p)}}catch(_){}
@@ -2906,22 +2922,22 @@ body input,body select,body textarea{
  ];
  const houses=[
    {id:'none',emoji:'🏠',name:'Mevcut Yaşam',cost:0,monthly:0,energy:1,desc:'Ek bonus yok.'},
-   {id:'studio',emoji:'🏙️',name:'Şehir Stüdyo Dairesi',cost:25000000,monthly:350000,energy:1.10,desc:'Enerji kazanımı +%10'},
-   {id:'loft',emoji:'🌆',name:'Oyuncu Loftu',cost:60000000,monthly:850000,energy:1.20,desc:'Enerji kazanımı +%20'},
-   {id:'penthouse',emoji:'🌃',name:'Lüks Penthouse',cost:150000000,monthly:1800000,energy:1.35,desc:'Enerji kazanımı +%35'},
-   {id:'villa',emoji:'🏡',name:'Celebrity Villa',cost:350000000,monthly:3500000,energy:1.50,desc:'Enerji kazanımı +%50'}
+   {id:'studio',emoji:'🏙️',name:'Şehir Stüdyo Dairesi',cost:10000000,monthly:140000,energy:1.10,desc:'Enerji kazanımı +%10'},
+   {id:'loft',emoji:'🌆',name:'Oyuncu Loftu',cost:24000000,monthly:340000,energy:1.20,desc:'Enerji kazanımı +%20'},
+   {id:'penthouse',emoji:'🌃',name:'Lüks Penthouse',cost:60000000,monthly:720000,energy:1.35,desc:'Enerji kazanımı +%35'},
+   {id:'villa',emoji:'🏡',name:'Celebrity Villa',cost:140000000,monthly:1400000,energy:1.50,desc:'Enerji kazanımı +%50'}
  ];
  const cars=[
    {id:'none',emoji:'🚌',name:'Toplu Taşıma',cost:0,monthly:0,chance:0,desc:'Seçme bonusu yok.'},
-   {id:'city',emoji:'🚗',name:'City Compact',cost:12000000,monthly:200000,chance:1,desc:'Seçme şansı +%1'},
-   {id:'coupe',emoji:'🚘',name:'Executive Coupe',cost:45000000,monthly:550000,chance:3,desc:'Seçme şansı +%3'},
-   {id:'sport',emoji:'🏎️',name:'Sport GT',cost:250000000,monthly:3000000,chance:5,desc:'Seçme şansı +%5'},
+   {id:'city',emoji:'🚗',name:'City Compact',cost:4800000,monthly:80000,chance:1,desc:'Seçme şansı +%1'},
+   {id:'coupe',emoji:'🚘',name:'Executive Coupe',cost:18000000,monthly:220000,chance:3,desc:'Seçme şansı +%3'},
+   {id:'sport',emoji:'🏎️',name:'Sport GT',cost:40000000,monthly:480000,chance:5,desc:'Seçme şansı +%5'},
    {id:'luxury',emoji:'🚙',name:'Celebrity Luxury',cost:100000000,monthly:1200000,chance:8,desc:'Seçme şansı +%8'}
  ];
- const baseMonthly=250000;
- const normalSpouseMonthly=6000000;
- const premiumSpouseMonthly=24000000;
- const childMonthly=8500000;
+ const baseMonthly=100000;
+ const normalSpouseMonthly=600000;
+ const premiumSpouseMonthly=2400000;
+ const childMonthly=850000;
 
  function ensure130(){
    if(!state.gender)state.gender='';
@@ -2986,7 +3002,7 @@ body input,body select,body textarea{
    }
  }
 
- function cost(base){return Math.round(base*100*premiumMult())}
+ function cost(base){return Math.round(base*10*premiumMult())}
  function spend(amount){
    if(Number(state.money)<amount){toast('Yeterli paran yok · '+fmt(amount)+' gerekli');return false}
    state.money-=amount;return true;
@@ -2997,7 +3013,7 @@ body input,body select,body textarea{
 
  window.meetNpc130=function(id){
    const n=candidates.find(x=>x.id===id);if(!n||state.npcPartner)return;
-   const fee=n.premium?10000000:2500000;
+   const fee=n.premium?1000000:250000;
    if(state.energy<10){toast('10 enerji gerekli');return}
    if(!spend(fee))return;
    state.energy-=10;state.day++;state.npcPartner=id;state.npcRelationship='met';state.npcBond=12;
@@ -3054,7 +3070,7 @@ body input,body select,body textarea{
    if(n.noChildren)return toast('Ayaz ile çocuk sahibi olunamıyor');
    if(state.childDueDay)return toast('Zaten çocuk bekliyorsunuz');
    const count=Number(state.children)||0;if(count>=2)return toast('En fazla 2 çocuk');
-   const fee=count===0?180000000:320000000;if(!spend(fee))return;
+   const fee=count===0?18000000:32000000;if(!spend(fee))return;
    state.childDueDay=Number(state.day)+270;
    addHistory('👶 Çocuk planı başladı. Tahmini süre 9 ay · '+fmt(fee)+'.','good');
    update();
@@ -3064,8 +3080,8 @@ body input,body select,body textarea{
    ensure130();
    const box=document.querySelector('#romancePanel');if(!box)return;
    const p=partner();
-   if(!state.gender){
-     box.innerHTML='<div class="notice">İlişki adaylarını görmek için cinsiyet seçimi gerekli.</div>';
+   if(!state.genderLocked134||!['male','female'].includes(state.gender)){
+     box.innerHTML='<div class="notice">⚧ İlişki adaylarını görmek için önce <b>Ayarlar → Kariyer Profili → Cinsiyet</b> bölümünden tek seferlik seçimini yap.</div>';
      return;
    }
    if(!p){
@@ -3085,7 +3101,7 @@ body input,body select,body textarea{
    box.innerHTML=
     '<div class="rs130-relation-state"><h5>'+p.emoji+' '+esc(p.name)+(p.premium?'<span class="rs130-premium">PREMIUM</span>':'')+'</h5><p>'+statusLabel()+' · Yakınlık '+Math.round(state.npcBond)+'/100'+mult+'</p><div class="rs130-bond"><i style="width:'+Math.max(0,Math.min(100,state.npcBond))+'%"></i></div></div>'+
     '<div class="rs130-action-grid"><button onclick="relationshipDate130()">☕ Buluş · '+fmt(cost(25000))+' · 10⚡</button>'+next+
-    (state.npcRelationship==='married'&&!p.noChildren&&!(state.childDueDay)&&Number(state.children)<2?'<button onclick="planChild130()">👶 Çocuk Planla · '+fmt(Number(state.children)===0?180000000:320000000)+'</button>':'')+
+    (state.npcRelationship==='married'&&!p.noChildren&&!(state.childDueDay)&&Number(state.children)<2?'<button onclick="planChild130()">👶 Çocuk Planla · '+fmt(Number(state.children)===0?18000000:32000000)+'</button>':'')+
     '<button class="wide" onclick="breakRelation130()">'+(state.npcRelationship==='married'?'💔 Boşan · '+fmt(cost(750000)):'💔 İlişkiyi Bitir')+'</button></div>'+childInfo;
  };
 
@@ -3149,355 +3165,20 @@ body input,body select,body textarea{
 </script>
 
 
-<style id="rs133Style">
-.rs133-gender-block{margin:12px 0 14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}
-.rs133-gender-block>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.rs133-gender-block b{font-size:12px}.rs133-gender-block small{display:block;color:var(--muted);font-size:8.5px;margin-top:2px}
-.rs133-gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.rs133-gender-btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:12px;border-radius:13px;font-weight:950}
-.rs133-gender-btn.active{outline:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--panel2))}
-.rs133-gender-warning{display:none;margin-top:8px;padding:8px 10px;border-radius:11px;border:1px solid color-mix(in srgb,var(--bad) 35%,var(--line));background:color-mix(in srgb,var(--bad) 8%,transparent);color:var(--bad);font-size:9px;font-weight:850}
-.rs133-gender-warning.show{display:block}
-.rs133-settings-gender{border-color:color-mix(in srgb,var(--accent) 20%,var(--line))!important}
-.rs133-settings-box{display:grid;gap:8px;min-width:min(320px,100%)}
-.rs133-settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.rs133-settings-actions .settings-btn.active{outline:2px solid var(--accent)}
-.rs133-gender-confirm{width:100%}
-.rs133-locked{padding:10px 11px;border-radius:12px;border:1px solid color-mix(in srgb,var(--good) 28%,var(--line));background:color-mix(in srgb,var(--good) 7%,transparent);font-size:10px;color:var(--muted);line-height:1.45}
-.rs133-locked b{color:var(--text)}
-.rs133-needed-badge{display:inline-flex;padding:4px 7px;border-radius:999px;background:color-mix(in srgb,var(--bad) 12%,transparent);border:1px solid color-mix(in srgb,var(--bad) 28%,var(--line));color:var(--bad);font-size:8px;font-weight:1000}
-#settingsBtn.rs133-needs-gender{position:relative}
-#settingsBtn.rs133-needs-gender:after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:var(--bad);right:3px;top:3px;box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 18%,transparent)}
-@media(max-width:700px){.rs133-settings-box{width:100%;min-width:0}}
-</style>
-
-<script id="rs133Script">
-(()=>{
- const VERSION='1.3.3';
- const MIGRATION='rsGenderV133';
- const valid=g=>g==='male'||g==='female';
- const label=g=>g==='male'?'Erkek':'Kadın';
-
- function isNewCareer(){
-   return !String(state.name||'').trim() && document.querySelector('#startModal')?.classList.contains('show');
- }
- function isLocked(){
-   return localStorage.getItem(MIGRATION)==='locked' && valid(state.gender);
- }
- function persistGender(g){
-   if(isLocked()||!valid(g))return false;
-   state.gender=g;
-   state.genderLocked131=true;
-   localStorage.setItem(MIGRATION,'locked');
-   try{save()}catch(_){}
-   try{renderRomance()}catch(_){}
-   return true;
- }
- function forceLegacyNeedsChoice(){
-   if(isNewCareer()||isLocked())return;
-   // Every pre-1.3.3 existing career gets one clean manual choice,
-   // even if an older broken patch silently stored a default gender.
-   state.gender='';
-   state.genderLocked131=false;
-   try{save()}catch(_){}
- }
-
- function mountNewCareer(){
-   if(!isNewCareer())return;
-   const card=document.querySelector('#startModal .modal-card');
-   const faces=document.querySelector('#faces');
-   const startBtn=document.querySelector('#startBtn');
-   if(!card||!faces||!startBtn)return;
-
-   document.querySelector('#rs133StartGender')?.remove();
-   const block=document.createElement('div');
-   block.id='rs133StartGender';
-   block.className='rs133-gender-block';
-   block.innerHTML=
-     '<div><div><b>⚧ Cinsiyet</b><small>İlişki adayların buna göre belirlenecek.</small></div><span class="rs133-needed-badge">ZORUNLU</span></div>'+
-     '<div class="rs133-gender-grid">'+
-       '<button type="button" class="rs133-gender-btn" data-rs133-new="male">♂ Erkek</button>'+
-       '<button type="button" class="rs133-gender-btn" data-rs133-new="female">♀ Kadın</button>'+
-     '</div>'+
-     '<div class="rs133-gender-warning">Kariyere başlamadan önce cinsiyetini seçmelisin.</div>';
-   faces.insertAdjacentElement('beforebegin',block);
-
-   let selected='';
-   const warning=block.querySelector('.rs133-gender-warning');
-   block.querySelectorAll('[data-rs133-new]').forEach(btn=>{
-     btn.onclick=()=>{
-       selected=btn.dataset.rs133New;
-       block.querySelectorAll('.rs133-gender-btn').forEach(x=>x.classList.toggle('active',x===btn));
-       warning.classList.remove('show');
-     };
-   });
-
-   startBtn.onclick=()=>{
-     if(!valid(selected)){
-       warning.classList.add('show');
-       toast('Önce cinsiyetini seç');
-       return;
-     }
-     const n=(document.querySelector('#nameInput')?.value||'').trim()||'Oyuncu';
-     state.name=n;
-     state.avatar=selectedAvatar;
-     state.gender=selected;
-     state.genderLocked131=true;
-     localStorage.setItem(MIGRATION,'locked');
-     addHistory('🎬 Oyunculuk kariyerine başladın. İlk hedef: ilk rolünü kapmak!','good');
-     document.querySelector('#startModal')?.classList.remove('show');
-     update();
-   };
- }
-
- function settingsCareerSection(){
-   const modal=document.querySelector('#settingsModal');
-   if(!modal)return null;
-   return [...modal.querySelectorAll('.settings-section')].find(sec=>sec.querySelector('h3')?.textContent.includes('Kariyer Profili'))||null;
- }
- function renderSettingsGender(){
-   const section=settingsCareerSection();
-   if(!section)return;
-   let row=document.querySelector('#rs133GenderSetting');
-   if(!row){
-     row=document.createElement('div');
-     row.id='rs133GenderSetting';
-     row.className='setting-row rs133-settings-gender';
-     const form=section.querySelector('.settings-form');
-     if(form)form.insertAdjacentElement('afterend',row);else section.appendChild(row);
-   }
-
-   const locked=isLocked();
-   document.querySelector('#settingsBtn')?.classList.toggle('rs133-needs-gender',!locked&&!isNewCareer());
-
-   if(locked){
-     row.innerHTML=
-       '<div class="setting-row-info"><b>⚧ Cinsiyet</b><small>İlişki sistemi için kullanılan kalıcı seçim.</small></div>'+
-       '<div class="rs133-settings-box"><div class="rs133-locked">🔒 Cinsiyet: <b>'+label(state.gender)+'</b><br>Bu seçim bir kez yapıldı ve artık değiştirilemez.</div></div>';
-     return;
-   }
-
-   row.innerHTML=
-     '<div class="setting-row-info"><b>⚧ Cinsiyet</b><small>Eski hesabın için bir kez seç. Onayladıktan sonra değiştirilemez.</small></div>'+
-     '<div class="rs133-settings-box">'+
-       '<div class="rs133-settings-actions">'+
-         '<button type="button" class="settings-btn" data-rs133-old="male">♂ Erkek</button>'+
-         '<button type="button" class="settings-btn" data-rs133-old="female">♀ Kadın</button>'+
-       '</div>'+
-       '<button type="button" class="settings-btn primary rs133-gender-confirm" id="rs133GenderConfirm" disabled>Seçimi Onayla</button>'+
-     '</div>';
-
-   let selected='';
-   const confirmBtn=row.querySelector('#rs133GenderConfirm');
-   row.querySelectorAll('[data-rs133-old]').forEach(btn=>{
-     btn.onclick=()=>{
-       selected=btn.dataset.rs133Old;
-       row.querySelectorAll('[data-rs133-old]').forEach(x=>x.classList.toggle('active',x===btn));
-       confirmBtn.disabled=false;
-     };
-   });
-   confirmBtn.onclick=()=>{
-     if(!valid(selected))return;
-     if(!confirm('Cinsiyet seçimin '+label(selected)+' olacak. Bu seçim daha sonra değiştirilemez. Onaylıyor musun?'))return;
-     if(!persistGender(selected))return;
-     renderSettingsGender();
-     try{update()}catch(_){}
-     toast('Cinsiyet kaydedildi ve kilitlendi');
-   };
- }
-
- // Relationship panel for old accounts points to Settings until selection is made.
- const baseRenderRomance133=renderRomance;
- renderRomance=function(){
-   if(state.name&&!isLocked()){
-     const box=document.querySelector('#romancePanel');
-     if(box){
-       box.innerHTML='<div class="notice">⚧ İlişki adaylarını açmak için önce <b>Ayarlar → Kariyer Profili → Cinsiyet</b> bölümünden tek seferlik seçimini yap.</div>';
-     }
-     return;
-   }
-   return baseRenderRomance133.apply(this,arguments);
- };
-
- forceLegacyNeedsChoice();
- mountNewCareer();
- renderSettingsGender();
-
- const settingsBtn=document.querySelector('#settingsBtn');
- if(settingsBtn){
-   settingsBtn.addEventListener('click',()=>setTimeout(renderSettingsGender,0));
-   settingsBtn.classList.toggle('rs133-needs-gender',!!state.name&&!isLocked());
- }
-
- const baseUpdate133=update;
- update=function(){
-   const lockedGender=isLocked()?state.gender:'';
-   const r=baseUpdate133.apply(this,arguments);
-   if(isLocked()){
-     state.gender=lockedGender;
-     state.genderLocked131=true;
-   }else if(state.name){
-     state.gender='';
-     state.genderLocked131=false;
-   }
-   renderSettingsGender();
-   return r;
- };
-
- try{renderRomance()}catch(_){}
- const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
- const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.3.3';
- document.title=document.documentElement.dataset.playConsole==='closed-beta'
-   ?'Rol Senin 1.3.3 — Kapalı Beta'
-   :'Rol Senin 1.3.3';
-})();
-</script>
 <script id="rs134Script">(()=>{const VERSION='1.3.4';const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.3.4';document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.3.4 — Kapalı Beta':'Rol Senin 1.3.4';})();</script>
-
 <style id="rs134Style">
-.rs134-lockable{position:relative!important;overflow:hidden!important}
-.rs134-lockable.rs134-locked>*:not(.rs134-lock-cover){filter:blur(1.4px);opacity:.20;pointer-events:none!important;user-select:none!important}
-.rs134-lock-cover{
- position:absolute;inset:0;z-index:25;display:grid;place-items:center;padding:16px;
- background:linear-gradient(145deg,color-mix(in srgb,var(--panel) 93%,transparent),color-mix(in srgb,var(--panel2) 95%,transparent));
- backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
- text-align:center
-}
-.rs134-lock-inner{max-width:260px}
-.rs134-lock-icon{font-size:28px;margin-bottom:6px}
-.rs134-lock-inner b{display:block;font-size:13px}
-.rs134-lock-inner span{display:block;color:var(--muted);font-size:9px;line-height:1.45;margin-top:4px}
-.rs134-lock-level{display:inline-flex!important;margin-top:8px!important;padding:5px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));background:color-mix(in srgb,var(--accent) 8%,transparent);color:var(--accent)!important;font-weight:950}
-.rs134-next{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:5px;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid var(--line);font-size:8px;color:var(--muted)}
-.rs134-next b{color:var(--accent);font-size:8px}
-.rs134-price-note{margin-top:7px;padding:7px 9px;border-radius:10px;border:1px solid color-mix(in srgb,var(--accent) 20%,var(--line));background:color-mix(in srgb,var(--accent) 5%,transparent);font-size:8px;color:var(--muted)}
-@media(max-width:620px){.rs134-lock-cover{padding:11px}.rs134-lock-icon{font-size:23px}.rs134-lock-inner b{font-size:11px}.rs134-lock-inner span{font-size:8px}}
+.core-gender134{margin:11px 0 13px;padding:11px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025)}
+.core-gender134 p{margin-top:0}.core-gender134 small{color:var(--muted);font-size:8px}
+.core-gender-grid134,.gender-settings-grid134{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.core-gender-btn134{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:11px;border-radius:12px;font-weight:900}
+.core-gender-btn134.active,.gender-settings-grid134 .settings-btn.active{outline:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 13%,var(--panel2))}
+.core-gender-warn134{display:none;margin-top:7px;padding:7px 9px;border-radius:10px;color:var(--bad);background:color-mix(in srgb,var(--bad) 8%,transparent);border:1px solid color-mix(in srgb,var(--bad) 30%,var(--line));font-size:9px;font-weight:850}
+.core-gender-warn134.show{display:block}
+.core-gender-setting134{align-items:flex-start!important}.core-gender-setting134>div:last-child{min-width:min(320px,100%)}
+.gender-confirm134{width:100%;margin-top:7px}.gender-locked134{padding:9px 10px;border-radius:11px;border:1px solid color-mix(in srgb,var(--good) 28%,var(--line));background:color-mix(in srgb,var(--good) 7%,transparent);font-size:10px;color:var(--muted)}.gender-locked134 b{color:var(--text)}.gender-locked134 small{display:block;margin-top:2px}
+#settingsBtn.needs-gender134{position:relative}#settingsBtn.needs-gender134:after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;right:3px;top:3px;background:var(--bad);box-shadow:0 0 0 3px color-mix(in srgb,var(--bad) 18%,transparent)}
+@media(max-width:700px){.core-gender-setting134{display:grid!important}.core-gender-setting134>div:last-child{min-width:0;width:100%}}
 </style>
-<script id="rs134Script">
-(()=>{
- const VERSION='1.3.4';
-
- // Stable absolute prices. No cumulative multipliers on reload.
- const agencyPrices={starter:60000000,pro:200000000,elite:650000000};
- const managerPrices={mert:90000000,vera:300000000,nova:900000000};
- agencies.forEach(a=>{if(agencyPrices[a.id]!=null)a.cost=agencyPrices[a.id]});
- managers.forEach(m=>{if(managerPrices[m.id]!=null)m.fee=managerPrices[m.id]});
-
- const unlocks=[
-   {level:2,label:'Ajanslar',icon:'🤝',selector:'#agencies'},
-   {level:3,label:'Sosyal Hayat & İlişkiler',icon:'❤️',selector:'#romancePanel'},
-   {level:4,label:'Menajerler',icon:'🧑‍💼',selector:'#managerList'},
-   {level:5,label:'Ödül Sezonu',icon:'🏆',selector:'#awardBtn'},
-   {level:6,label:'Oyunculuk Uzmanlıkları',icon:'🧠',selector:'#skillTree'},
-   {level:7,label:'Hayran Buluşmaları',icon:'🌟',selector:'#fanMeetBtn'},
-   {level:8,label:'Marka Anlaşmaları',icon:'🤝',selector:'#brandDeals'},
-   {level:9,label:'Evler',icon:'🏠',special:'house'},
-   {level:10,label:'Arabalar',icon:'🚗',special:'car'},
-   {level:11,label:'Basın Röportajları',icon:'🎤',selector:'#interviewBtn'},
-   {level:12,label:'Uluslararası Kariyer',icon:'🌍',selector:'#internationalPanel'},
-   {level:13,label:'Yapım Şirketi',icon:'🏢',selector:'#productionPanel'}
- ];
-
- function fameForLevel134(l){
-   if(l<=1)return 0;
-   return Math.round(50*Math.pow(2,l-2));
- }
- function targetFor134(def){
-   if(def.special==='house')return document.querySelectorAll('#rs130LifeRoot .rs130-life-card')[0]||null;
-   if(def.special==='car')return document.querySelectorAll('#rs130LifeRoot .rs130-life-card')[1]||null;
-   const el=document.querySelector(def.selector);
-   return el?.closest('.card')||el||null;
- }
- function lockCard134(card,def,locked){
-   if(!card)return;
-   card.classList.add('rs134-lockable');
-   let cover=card.querySelector(':scope > .rs134-lock-cover');
-   if(!locked){
-     card.classList.remove('rs134-locked');
-     cover?.remove();
-     return;
-   }
-   card.classList.add('rs134-locked');
-   if(!cover){
-     cover=document.createElement('div');
-     cover.className='rs134-lock-cover';
-     card.appendChild(cover);
-   }
-   const fame=fameForLevel134(def.level);
-   cover.innerHTML='<div class="rs134-lock-inner"><div class="rs134-lock-icon">🔒</div><b>'+def.icon+' '+def.label+'</b><span>Yeni oyuncular için bu sistem daha sonra açılır.</span><span class="rs134-lock-level">Lv '+def.level+' · '+fame.toLocaleString('tr-TR')+' şöhret</span></div>';
- }
- function renderUnlocks134(){
-   const l=level();
-   unlocks.forEach(def=>lockCard134(targetFor134(def),def,l<def.level));
-   let next=unlocks.find(x=>l<x.level);
-   let box=document.querySelector('#rs134NextUnlock');
-   const track=document.querySelector('.rs125-level-track');
-   if(track&&!box){
-     box=document.createElement('div');box.id='rs134NextUnlock';box.className='rs134-next';
-     track.insertAdjacentElement('afterend',box);
-   }
-   if(box){
-     box.innerHTML=next
-       ? '<span>Sonraki açılım: '+next.icon+' '+next.label+'</span><b>Lv '+next.level+'</b>'
-       : '<span>✨ Tüm kariyer sistemleri açık</span><b>MAX AÇILIM</b>';
-   }
- }
- function guard134(name,need,label){
-   const old=window[name];
-   if(typeof old!=='function'||old.rs134Guard)return;
-   const fn=function(){
-     if(level()<need){toast('🔒 '+label+' Lv '+need+' seviyesinde açılır');return}
-     return old.apply(this,arguments);
-   };
-   fn.rs134Guard=true;
-   window[name]=fn;
- }
- [
-  ['chooseAgency',2,'Ajanslar'],
-  ['meetNpc130',3,'İlişkiler'],['relationshipDate130',3,'İlişkiler'],['setRelationStage130',3,'İlişkiler'],['wedding130',3,'İlişkiler'],['breakRelation130',3,'İlişkiler'],['planChild130',3,'İlişkiler'],
-  ['chooseManager',4,'Menajerler'],
-  ['trainSpecial',6,'Oyunculuk uzmanlıkları'],
-  ['fanMeet',7,'Hayran buluşmaları'],
-  ['signBrand',8,'Marka anlaşmaları'],['shootBrand',8,'Marka anlaşmaları'],
-  ['buyHouse130',9,'Evler'],
-  ['buyCar130',10,'Arabalar'],
-  ['careerInterview',11,'Röportajlar'],
-  ['globalAudition',12,'Uluslararası kariyer'],['voiceAct',12,'Uluslararası kariyer'],
-  ['openCompany',13,'Yapım şirketi'],['produceOwn',13,'Yapım şirketi']
- ].forEach(x=>guard134(...x));
-
- const oldUpdate134=update;
- update=function(){
-   const r=oldUpdate134.apply(this,arguments);
-   // Prices may be re-rendered, so keep exact absolute values.
-   agencies.forEach(a=>{if(agencyPrices[a.id]!=null)a.cost=agencyPrices[a.id]});
-   managers.forEach(m=>{if(managerPrices[m.id]!=null)m.fee=managerPrices[m.id]});
-   // Re-render affected price cards once after arrays are normalized.
-   try{renderCareer()}catch(_){}
-   try{renderManagers()}catch(_){}
-   renderUnlocks134();
-   return r;
- };
-
- // Add a subtle economy note to relationships.
- const romance=document.querySelector('#romancePanel');
- if(romance?.parentElement&&!romance.parentElement.querySelector('.rs134-price-note')){
-   const n=document.createElement('div');n.className='rs134-price-note';
-   n.textContent='💸 İlişki ekonomisi zorlaştırıldı: tanışma, buluşma, nişan, düğün, boşanma ve çocuk planı artık çok daha pahalı.';
-   romance.insertAdjacentElement('beforebegin',n);
- }
-
- // First render after all older patches have loaded.
- agencies.forEach(a=>{if(agencyPrices[a.id]!=null)a.cost=agencyPrices[a.id]});
- managers.forEach(m=>{if(managerPrices[m.id]!=null)m.fee=managerPrices[m.id]});
- try{renderCareer()}catch(_){}
- try{renderManagers()}catch(_){}
- renderUnlocks134();
-
- const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;
- const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.3.4';
- document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.3.4 — Kapalı Beta':'Rol Senin 1.3.4';
-})();
-</script>
+<script id="rs134Script">(()=>{const VERSION='1.3.4';const tag=document.querySelector('.vtag');if(tag)tag.textContent=VERSION;const live=document.querySelector('#liveBuildBadge112');if(live)live.textContent='v1.3.4';try{syncGender134()}catch(_){}try{renderRomance()}catch(_){}document.title=document.documentElement.dataset.playConsole==='closed-beta'?'Rol Senin 1.3.4 — Kapalı Beta':'Rol Senin 1.3.4';})();</script>
 </body>
 </html>
